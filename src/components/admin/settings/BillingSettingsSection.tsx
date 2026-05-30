@@ -35,7 +35,7 @@ export function BillingSettingsSection() {
   return (
     <SettingsSection
       id="billing"
-      title={<>Billing &amp; <span className="italic text-ink-500">plan</span>.</>}
+      title={<>Billing &amp; <span className="italic text-text-secondary">plan</span>.</>}
       description="Your subscription, usage, and invoices."
       isDirty={isDirty}
       onSave={handleSave}
@@ -43,18 +43,18 @@ export function BillingSettingsSection() {
     >
       
       {/* Design Moment: Plan Summary Card */}
-      <div className="rounded-lg border border-ink-200 dark:border-ink-800 p-6 bg-gradient-to-br from-accent-500/5 dark:from-accent-500/10 to-transparent">
+      <div className="rounded-lg border border-text-secondary/15 p-6 bg-gradient-to-br from-primary/500 to-transparent">
         <div className="flex items-start justify-between">
           <div>
-            <div className="text-[11px] uppercase tracking-[0.12em] text-ink-500 font-medium">Current plan</div>
-            <div className="mt-2 font-display text-[40px] leading-none text-ink-900 dark:text-ink-50 capitalize">
+            <div className="text-[11px] uppercase tracking-[0.12em] text-text-secondary font-medium">Current plan</div>
+            <div className="mt-2 font-sans font-bold text-[40px] leading-none text-text-primary capitalize">
               {form.plan}
             </div>
-            <div className="mt-2 text-[14px] text-ink-500">
+            <div className="mt-2 text-[14px] text-text-secondary">
               $1,200/month &middot; billed {form.billingPeriod}
             </div>
           </div>
-          <button type="button" className="btn-primary px-4 py-2 rounded-md bg-accent-500 text-white text-[13px] font-medium hover:bg-accent-600 transition-colors">
+          <button type="button" className="btn-primary px-4 py-2 rounded-md bg-primary text-white text-[13px] font-medium hover:bg-primary transition-colors">
             Manage plan
           </button>
         </div>
@@ -62,14 +62,14 @@ export function BillingSettingsSection() {
         {/* Seats progress */}
         <div className="mt-8">
           <div className="flex items-baseline justify-between mb-2">
-            <div className="text-[13px] text-ink-500">Seats in use</div>
-            <div className="font-mono text-[13px] text-ink-900 dark:text-ink-50">
-              {form.seats.used} <span className="text-ink-400">/ {form.seats.total}</span>
+            <div className="text-[13px] text-text-secondary">Seats in use</div>
+            <div className="font-mono text-[13px] text-text-primary">
+              {form.seats.used} <span className="text-text-secondary">/ {form.seats.total}</span>
             </div>
           </div>
-          <div className="h-2 bg-ink-100 dark:bg-ink-800 rounded-full overflow-hidden">
+          <div className="h-2 bg-accent-light rounded-full overflow-hidden">
             <div 
-              className="h-full bg-accent-500 rounded-full transition-all duration-500" 
+              className="h-full bg-primary rounded-full transition-all duration-500" 
               style={{ width: `${seatsPercent}%` }} 
             />
           </div>
@@ -78,33 +78,33 @@ export function BillingSettingsSection() {
 
       {/* 1. Usage this period */}
       <div className="pt-2">
-        <h3 className="text-[14px] font-medium text-ink-900 dark:text-ink-50 mb-4">
+        <h3 className="text-[14px] font-medium text-text-primary mb-4">
           Usage this period
         </h3>
         
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="p-4 rounded-md border hairline bg-white dark:bg-ink-900">
-            <div className="text-[12px] text-ink-500 mb-1">Active users</div>
-            <div className="text-[20px] font-mono text-ink-900 dark:text-ink-50 leading-tight">
+          <div className="p-4 rounded-md border hairline bg-white">
+            <div className="text-[12px] text-text-secondary mb-1">Active users</div>
+            <div className="text-[20px] font-mono text-text-primary leading-tight">
               {form.currentMonthUsage.activeUsers}
             </div>
           </div>
-          <div className="p-4 rounded-md border hairline bg-white dark:bg-ink-900">
-            <div className="text-[12px] text-ink-500 mb-1">Inspections</div>
+          <div className="p-4 rounded-md border hairline bg-white">
+            <div className="text-[12px] text-text-secondary mb-1">Inspections</div>
             <div className="flex items-baseline gap-2">
-              <div className="text-[20px] font-mono text-ink-900 dark:text-ink-50 leading-tight">
+              <div className="text-[20px] font-mono text-text-primary leading-tight">
                 {form.currentMonthUsage.inspectionsCompleted}
               </div>
-              <div className="text-[10px] uppercase tracking-wider text-signal-green font-medium">No limit</div>
+              <div className="text-[10px] uppercase tracking-wider text-status-pass font-medium">No limit</div>
             </div>
           </div>
-          <div className="p-4 rounded-md border hairline bg-white dark:bg-ink-900">
-            <div className="text-[12px] text-ink-500 mb-1">Storage used</div>
+          <div className="p-4 rounded-md border hairline bg-white">
+            <div className="text-[12px] text-text-secondary mb-1">Storage used</div>
             <div className="flex items-baseline gap-2">
-              <div className="text-[20px] font-mono text-ink-900 dark:text-ink-50 leading-tight">
-                {form.currentMonthUsage.storageGb} <span className="text-[14px] text-ink-400">GB</span>
+              <div className="text-[20px] font-mono text-text-primary leading-tight">
+                {form.currentMonthUsage.storageGb} <span className="text-[14px] text-text-secondary">GB</span>
               </div>
-              <div className="text-[10px] text-ink-400">of 100 GB</div>
+              <div className="text-[10px] text-text-secondary">of 100 GB</div>
             </div>
           </div>
         </div>
@@ -112,7 +112,7 @@ export function BillingSettingsSection() {
 
       {/* 2. Billing details */}
       <div className="pt-6 border-t hairline">
-        <h3 className="text-[14px] font-medium text-ink-900 dark:text-ink-50 mb-6">
+        <h3 className="text-[14px] font-medium text-text-primary mb-6">
           Billing details
         </h3>
         
@@ -122,7 +122,7 @@ export function BillingSettingsSection() {
               type="email"
               value={form.billingEmail}
               onChange={(e) => setForm({ ...form, billingEmail: e.target.value })}
-              className="focus-ring w-full max-w-sm px-3 py-2 rounded-md border border-ink-200 dark:border-ink-700 bg-white dark:bg-ink-800 text-[13px] text-ink-900 dark:text-ink-50"
+              className="focus-ring w-full max-w-sm px-3 py-2 rounded-md border border-text-secondary/15 bg-white text-[13px] text-text-primary"
             />
           </SettingsField>
 
@@ -134,9 +134,9 @@ export function BillingSettingsSection() {
                   name="billingPeriod"
                   checked={form.billingPeriod === 'monthly'}
                   onChange={() => setForm({ ...form, billingPeriod: 'monthly' })}
-                  className="w-4 h-4 accent-accent-500"
+                  className="w-4 h-4 accent-primary"
                 />
-                <span className="text-[13px] text-ink-900 dark:text-ink-50 group-hover:text-accent-600 transition-colors">Monthly</span>
+                <span className="text-[13px] text-text-primary group-hover:text-primary transition-colors">Monthly</span>
               </label>
               <label className="flex items-center gap-2.5 cursor-pointer group">
                 <input
@@ -144,28 +144,28 @@ export function BillingSettingsSection() {
                   name="billingPeriod"
                   checked={form.billingPeriod === 'annual'}
                   onChange={() => setForm({ ...form, billingPeriod: 'annual' })}
-                  className="w-4 h-4 accent-accent-500"
+                  className="w-4 h-4 accent-primary"
                 />
-                <span className="text-[13px] text-ink-900 dark:text-ink-50 group-hover:text-accent-600 transition-colors">
-                  Annual <span className="ml-1 px-1.5 py-0.5 rounded bg-signal-green/10 text-signal-green text-[10px] font-medium uppercase tracking-wider">Save 20%</span>
+                <span className="text-[13px] text-text-primary group-hover:text-primary transition-colors">
+                  Annual <span className="ml-1 px-1.5 py-0.5 rounded bg-status-pass/10 text-status-pass text-[10px] font-medium uppercase tracking-wider">Save 20%</span>
                 </span>
               </label>
             </div>
           </SettingsField>
 
           <SettingsField label="Next billing date" description="When your card will be charged next.">
-            <div className="text-[13px] font-mono text-ink-900 dark:text-ink-50 py-2">
+            <div className="text-[13px] font-mono text-text-primary py-2">
               {new Date(form.nextBillingDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
             </div>
           </SettingsField>
 
           <SettingsField label="Payment method">
             <div className="flex items-center gap-4 py-1">
-              <div className="flex items-center gap-2 px-3 py-1.5 rounded border hairline bg-ink-50 dark:bg-ink-900">
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded border hairline bg-accent-light">
                 <div className="w-8 h-5 bg-white rounded-sm border hairline flex items-center justify-center text-[10px] font-bold italic text-[#1A1F71]">VISA</div>
-                <span className="text-[13px] font-mono text-ink-900 dark:text-ink-50">&bull;&bull;&bull;&bull; 4242</span>
+                <span className="text-[13px] font-mono text-text-primary">&bull;&bull;&bull;&bull; 4242</span>
               </div>
-              <button type="button" className="text-[12px] font-medium text-accent-600 hover:underline">
+              <button type="button" className="text-[12px] font-medium text-primary hover:underline">
                 Update
               </button>
             </div>
@@ -175,31 +175,31 @@ export function BillingSettingsSection() {
 
       {/* 3. Invoices */}
       <div className="pt-6 border-t hairline">
-        <h3 className="text-[14px] font-medium text-ink-900 dark:text-ink-50 mb-4">
+        <h3 className="text-[14px] font-medium text-text-primary mb-4">
           Invoices
         </h3>
         
-        <div className="rounded-md border hairline bg-white dark:bg-ink-900 overflow-hidden">
+        <div className="rounded-md border hairline bg-white overflow-hidden">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="border-b hairline bg-ink-50/50 dark:bg-ink-800/30">
-                <th className="px-4 py-2.5 text-[10px] font-medium uppercase tracking-wider text-ink-500">Date</th>
-                <th className="px-4 py-2.5 text-[10px] font-medium uppercase tracking-wider text-ink-500">Invoice Number</th>
-                <th className="px-4 py-2.5 text-[10px] font-medium uppercase tracking-wider text-ink-500">Amount</th>
-                <th className="px-4 py-2.5 text-[10px] font-medium uppercase tracking-wider text-ink-500">Status</th>
+              <tr className="border-b hairline bg-accent-light/50">
+                <th className="px-4 py-2.5 text-[10px] font-medium uppercase tracking-wider text-text-secondary">Date</th>
+                <th className="px-4 py-2.5 text-[10px] font-medium uppercase tracking-wider text-text-secondary">Invoice Number</th>
+                <th className="px-4 py-2.5 text-[10px] font-medium uppercase tracking-wider text-text-secondary">Amount</th>
+                <th className="px-4 py-2.5 text-[10px] font-medium uppercase tracking-wider text-text-secondary">Status</th>
                 <th className="px-4 py-2.5 w-24"></th>
               </tr>
             </thead>
             <tbody className="divide-y hairline">
               {INVOICES.map(inv => (
-                <tr key={inv.id} className="hover:bg-ink-50/50 dark:hover:bg-ink-800/30 transition-colors">
-                  <td className="px-4 py-3 text-[13px] text-ink-900 dark:text-ink-50 whitespace-nowrap">
+                <tr key={inv.id} className="hover:bg-accent-light/50 transition-colors">
+                  <td className="px-4 py-3 text-[13px] text-text-primary whitespace-nowrap">
                     {new Date(inv.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                   </td>
-                  <td className="px-4 py-3 font-mono text-[12px] text-ink-600 dark:text-ink-400">
+                  <td className="px-4 py-3 font-mono text-[12px] text-text-secondary">
                     {inv.id}
                   </td>
-                  <td className="px-4 py-3 font-mono text-[13px] text-ink-900 dark:text-ink-50">
+                  <td className="px-4 py-3 font-mono text-[13px] text-text-primary">
                     {inv.amount}
                   </td>
                   <td className="px-4 py-3">
@@ -208,7 +208,7 @@ export function BillingSettingsSection() {
                     </div>
                   </td>
                   <td className="px-4 py-3 text-right">
-                    <button type="button" className="text-[12px] font-medium text-accent-600 hover:underline whitespace-nowrap">
+                    <button type="button" className="text-[12px] font-medium text-primary hover:underline whitespace-nowrap">
                       Download PDF
                     </button>
                   </td>

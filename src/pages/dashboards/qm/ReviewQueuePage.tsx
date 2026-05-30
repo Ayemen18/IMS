@@ -9,6 +9,7 @@ import { BulkActionBar } from '../../../components/admin/BulkActionBar'
 import { QueueRow } from '../../../components/reviewQueue/QueueRow'
 import { PreviewPane } from '../../../components/reviewQueue/PreviewPane'
 import type { InspectionDomain } from '../../../types/inspection'
+import { PageBanner } from '../../../components/shell/PageBanner'
 
 type SortOption = 'oldest' | 'newest' | 'site' | 'inspector'
 
@@ -59,9 +60,6 @@ export function ReviewQueuePage({ domain = 'quality' }: { domain?: InspectionDom
 
   // Auto-advance logic
   const handleActionComplete = useCallback((actedOnIds: string[]) => {
-    // If we're acting on the current item, try to stay at the same index
-    // The queue will shrink, so the NEXT item will fall into this index naturally
-    // If we act on the last item, the useEffect above will clamp the index down
     setCheckedIds(prev => {
       const next = new Set(prev)
       actedOnIds.forEach(id => next.delete(id))
@@ -129,7 +127,6 @@ export function ReviewQueuePage({ domain = 'quality' }: { domain?: InspectionDom
   // Keyboard Navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Ignore if user is typing in an input or textarea
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
         return
       }
@@ -191,92 +188,85 @@ export function ReviewQueuePage({ domain = 'quality' }: { domain?: InspectionDom
   ]
 
   return (
-    <div className="max-w-[1400px] mx-auto px-6 py-8 animate-fade-in flex flex-col h-full">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-6 shrink-0">
-        <div>
-          <div className="flex items-center gap-2 text-[12px] font-medium text-ink-500 mb-3">
-            <span>{domain === 'safety' ? 'Safety Manager' : 'Quality Manager'}</span>
-            <Icon name="chevron_right" className="w-3 h-3" />
-            <span className="text-ink-900 dark:text-ink-50">Review queue</span>
+    <div className="space-y-6">
+      {/* Header Banner */}
+      <PageBanner
+        title={`Review queue`}
+        subline={`${queue.length} submissions waiting ${ queue.length > 0 && oldestWaiting ? `· oldest is ${formatRelativeTime(oldestWaiting.submittedAt || oldestWaiting.updatedAt)}` : '' }`}
+        actions={
+          <button
+            onClick={() => nav.push(`${prefix}/inspections`)}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-white/40 bg-white/10 hover:bg-white/20 text-white text-[13px] font-semibold transition"
+          >
+            View all inspections
+          </button>
+        }
+      />
+
+      {/* Filter and Split Layout Area */}
+      <div className="flex flex-col gap-4">
+        {queue.length > 0 && (
+          <div className="flex justify-end items-center px-2">
+            <div className="relative">
+              <select
+                value={sort}
+                onChange={e => setSort(e.target.value as SortOption)}
+                className="appearance-none pl-4 pr-10 py-2 rounded-lg border border-text-secondary/15 bg-white text-[13px] font-semibold text-text-primary hover:bg-accent-light transition-colors cursor-pointer outline-none focus:border-primary focus:ring-2 focus:ring-primary/15"
+              >
+                <option value="oldest">Oldest first</option>
+                <option value="newest">Newest first</option>
+                <option value="site">Site</option>
+                <option value="inspector">Inspector</option>
+              </select>
+              <Icon name="chevron_down" className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-text-secondary pointer-events-none" />
+            </div>
           </div>
-          <h1 className="font-display text-4xl text-ink-900 dark:text-ink-50 tracking-tight mb-2">
-            Review <span className="italic text-ink-500 dark:text-ink-400">queue</span>.
-          </h1>
-          <p className="text-[14px] text-ink-600 dark:text-ink-300">
-            {queue.length} submissions waiting {queue.length > 0 && oldestWaiting && `· oldest is ${formatRelativeTime(oldestWaiting.submittedAt || oldestWaiting.updatedAt)}`}
-          </p>
-        </div>
-        
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2 text-[12px] font-medium">
-            <span className="text-ink-500">Sort:</span>
-            <select
-              value={sort}
-              onChange={e => setSort(e.target.value as SortOption)}
-              className="bg-transparent border-none text-ink-900 dark:text-ink-50 font-medium focus:ring-0 p-0 pr-4 cursor-pointer"
+        )}
+
+        {queue.length === 0 ? (
+          <div className="flex flex-col items-center justify-center border border-dashed border-text-secondary/15 rounded-2xl py-32 text-center bg-white shadow-soft">
+            <div className="w-14 h-14 rounded-full bg-accent-light flex items-center justify-center mb-4 text-status-pass">
+              <Icon name="check" className="w-6 h-6" />
+            </div>
+            <h2 className="text-[16px] font-semibold text-text-primary mb-1">All caught up.</h2>
+            <p className="text-[13px] text-text-secondary mb-6">You have no submissions waiting for review.</p>
+            <button
+              onClick={() => nav.push(`${prefix}/inspections`)}
+              className="text-[13px] font-semibold text-primary hover:text-primary transition-colors"
             >
-              <option value="oldest">Oldest first</option>
-              <option value="newest">Newest first</option>
-              <option value="site">Site</option>
-              <option value="inspector">Inspector</option>
-            </select>
+              View all inspections
+            </button>
           </div>
-          
-          <button
-            onClick={() => nav.push(`${prefix}/inspections`)}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-md border hairline text-ink-700 dark:text-ink-200 text-[12px] font-medium hover:bg-ink-50 dark:hover:bg-ink-800 transition-colors"
-          >
-            View all inspections
-          </button>
-        </div>
-      </div>
+        ) : (
+          <div className="flex flex-col lg:flex-row border border-text-secondary/15 rounded-2xl overflow-hidden bg-white shadow-soft min-h-[500px]">
+            {/* Left Pane: Queue List */}
+            <div className="w-full lg:w-[380px] shrink-0 border-b lg:border-b-0 lg:border-r border-text-secondary/15 bg-white flex flex-col max-h-[400px] lg:max-h-none overflow-y-auto relative">
+              {queue.map((inspection, i) => (
+                <QueueRow
+                  key={inspection.id}
+                  inspection={inspection}
+                  isSelected={i === selectedIndex}
+                  isChecked={checkedIds.has(inspection.id)}
+                  onSelect={() => setSelectedIndex(i)}
+                  onToggleCheck={() => toggleCheck(inspection.id)}
+                />
+              ))}
+            </div>
 
-      {/* Split Layout */}
-      {queue.length === 0 ? (
-        <div className="flex-1 flex flex-col items-center justify-center border hairline border-dashed rounded-xl py-32 text-center bg-white/50 dark:bg-ink-950/50">
-          <div className="w-12 h-12 rounded-full border hairline bg-white dark:bg-ink-900 flex items-center justify-center mb-4 text-signal-green">
-            <Icon name="check" className="w-5 h-5" />
-          </div>
-          <h2 className="text-[16px] font-medium text-ink-900 dark:text-ink-50 mb-1">All caught up.</h2>
-          <p className="text-[13px] text-ink-500 mb-6">You have no submissions waiting for review.</p>
-          <button
-            onClick={() => nav.push(`${prefix}/inspections`)}
-            className="text-[13px] font-medium text-ink-600 dark:text-ink-400 hover:text-ink-900 dark:hover:text-ink-50 transition-colors"
-          >
-            View all inspections
-          </button>
-        </div>
-      ) : (
-        <div className="flex-1 flex flex-col lg:flex-row border hairline rounded-xl overflow-hidden bg-ink-50/30 dark:bg-ink-950/30 min-h-[500px]">
-          
-          {/* Left Pane: Queue List */}
-          <div className="w-full lg:w-[380px] shrink-0 border-b lg:border-b-0 lg:border-r hairline bg-white dark:bg-ink-900 flex flex-col max-h-[400px] lg:max-h-none overflow-y-auto relative">
-            {queue.map((inspection, i) => (
-              <QueueRow
-                key={inspection.id}
-                inspection={inspection}
-                isSelected={i === selectedIndex}
-                isChecked={checkedIds.has(inspection.id)}
-                onSelect={() => setSelectedIndex(i)}
-                onToggleCheck={() => toggleCheck(inspection.id)}
+            {/* Right Pane: Preview */}
+            <div className="flex-1 relative bg-white overflow-hidden flex flex-col">
+              <PreviewPane
+                key={selectedItem?.id}
+                inspection={selectedItem}
+                template={selectedTemplate}
+                onApprove={handleApproveSelected}
+                onReject={() => setRejectModalOpen(true)}
+                onViewFull={() => selectedItem && nav.push(`${prefix}/inspections/${selectedItem.id}`)}
               />
-            ))}
+            </div>
           </div>
-
-          {/* Right Pane: Preview */}
-          <div className="flex-1 relative bg-white dark:bg-ink-950 overflow-hidden flex flex-col">
-            <PreviewPane
-              key={selectedItem?.id} // force re-mount when item changes
-              inspection={selectedItem}
-              template={selectedTemplate}
-              onApprove={handleApproveSelected}
-              onReject={() => setRejectModalOpen(true)}
-              onViewFull={() => selectedItem && nav.push(`${prefix}/inspections/${selectedItem.id}`)}
-            />
-          </div>
-        </div>
-      )}
+        )}
+      </div>
 
       {/* Bulk Action Bar */}
       {checkedIds.size > 0 && (
@@ -307,7 +297,7 @@ export function ReviewQueuePage({ domain = 'quality' }: { domain?: InspectionDom
               type="button"
               onClick={() => setRejectModalOpen(false)}
               disabled={submitting}
-              className="px-4 py-2 rounded-md border hairline bg-white dark:bg-ink-900 text-[13px] font-medium text-ink-700 dark:text-ink-200 hover:bg-ink-50 dark:hover:bg-ink-800 transition-colors disabled:opacity-50"
+              className="px-4 py-2 rounded-lg border border-text-secondary/15 bg-white text-[13px] font-semibold text-text-secondary hover:bg-accent-light transition-colors disabled:opacity-50"
             >
               Cancel
             </button>
@@ -315,14 +305,14 @@ export function ReviewQueuePage({ domain = 'quality' }: { domain?: InspectionDom
               type="button"
               onClick={handleRejectSelectedSubmit}
               disabled={submitting || !rejectNote.trim()}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-signal-red text-white text-[13px] font-medium hover:bg-signal-red/90 transition-colors disabled:opacity-50"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-status-fail text-white text-[13px] font-semibold hover:bg-status-fail/90 transition-colors disabled:opacity-50"
             >
               {submitting ? 'Sending…' : 'Send back to inspector'}
             </button>
           </>
         }
       >
-        <label htmlFor="reject-note" className="block text-[11px] font-medium uppercase tracking-[0.12em] text-ink-500 dark:text-ink-400 mb-2">
+        <label htmlFor="reject-note" className="block text-[11px] font-bold uppercase tracking-[0.12em] text-text-secondary mb-2">
           Reason
         </label>
         <textarea
@@ -331,8 +321,8 @@ export function ReviewQueuePage({ domain = 'quality' }: { domain?: InspectionDom
           onChange={(e) => setRejectNote(e.target.value)}
           placeholder="What needs to be addressed before this can be approved?"
           rows={4}
-          autoFocus // helps keyboard users
-          className="focus-ring w-full px-3 py-2.5 rounded-md border border-ink-200 dark:border-ink-700 bg-white dark:bg-ink-800 text-[13px] text-ink-900 dark:text-ink-50 placeholder:text-ink-400 dark:placeholder:text-ink-500 transition-colors resize-none"
+          autoFocus
+          className="w-full px-3 py-2.5 rounded-lg border border-text-secondary/15 bg-white text-[13px] text-text-primary placeholder:text-text-secondary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/15 transition resize-none"
         />
       </Modal>
 
@@ -354,7 +344,7 @@ export function ReviewQueuePage({ domain = 'quality' }: { domain?: InspectionDom
               type="button"
               onClick={() => setBulkRejectModalOpen(false)}
               disabled={submitting}
-              className="px-4 py-2 rounded-md border hairline bg-white dark:bg-ink-900 text-[13px] font-medium text-ink-700 dark:text-ink-200 hover:bg-ink-50 dark:hover:bg-ink-800 transition-colors disabled:opacity-50"
+              className="px-4 py-2 rounded-lg border border-text-secondary/15 bg-white text-[13px] font-semibold text-text-secondary hover:bg-accent-light transition-colors disabled:opacity-50"
             >
               Cancel
             </button>
@@ -362,14 +352,14 @@ export function ReviewQueuePage({ domain = 'quality' }: { domain?: InspectionDom
               type="button"
               onClick={handleBulkRejectSubmit}
               disabled={submitting || !rejectNote.trim()}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-signal-red text-white text-[13px] font-medium hover:bg-signal-red/90 transition-colors disabled:opacity-50"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-status-fail text-white text-[13px] font-semibold hover:bg-status-fail/90 transition-colors disabled:opacity-50"
             >
               {submitting ? 'Sending…' : 'Send back to inspectors'}
             </button>
           </>
         }
       >
-        <label htmlFor="bulk-reject-note" className="block text-[11px] font-medium uppercase tracking-[0.12em] text-ink-500 dark:text-ink-400 mb-2">
+        <label htmlFor="bulk-reject-note" className="block text-[11px] font-bold uppercase tracking-[0.12em] text-text-secondary mb-2">
           Reason
         </label>
         <textarea
@@ -379,9 +369,10 @@ export function ReviewQueuePage({ domain = 'quality' }: { domain?: InspectionDom
           placeholder="What needs to be addressed before these can be approved?"
           rows={4}
           autoFocus
-          className="focus-ring w-full px-3 py-2.5 rounded-md border border-ink-200 dark:border-ink-700 bg-white dark:bg-ink-800 text-[13px] text-ink-900 dark:text-ink-50 placeholder:text-ink-400 dark:placeholder:text-ink-500 transition-colors resize-none"
+          className="w-full px-3 py-2.5 rounded-lg border border-text-secondary/15 bg-white text-[13px] text-text-primary placeholder:text-text-secondary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/15 transition resize-none"
         />
       </Modal>
     </div>
   )
 }
+

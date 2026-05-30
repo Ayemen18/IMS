@@ -13,6 +13,7 @@ import { Icon } from '../../../components/primitives/Icon'
 import { Avatar } from '../../../components/primitives/Avatar'
 import { IssueStatePill } from '../../../components/primitives/IssueStatePill'
 import { Modal } from '../../../components/primitives/Modal'
+import { PageBanner } from '../../../components/shell/PageBanner'
 import type { InspectionTimelineEvent, InspectionDomain } from '../../../types/inspection'
 import type { IconName } from '../../../types/role'
 
@@ -38,7 +39,7 @@ export function IssueDetailPage({ domain = 'quality' }: { domain?: InspectionDom
   
   if (!context) {
     return (
-      <div className="stagger max-w-[1400px] mx-auto px-6 py-8">
+      <div className="space-y-6">
         <Breadcrumb onBack={() => nav.push(`${prefix}/issues`)} />
         <NotFoundCard
           title="Issue not found"
@@ -70,13 +71,13 @@ export function IssueDetailPage({ domain = 'quality' }: { domain?: InspectionDom
   const getBannerConfig = (): { tone: 'green' | 'amber' | 'red' | 'neutral', icon: IconName, label: string, message: string } | null => {
     switch (issue.state) {
       case 'open':
-        return { tone: 'amber', icon: 'alert', label: 'Unassigned or pending', message: 'This issue has not been picked up by anyone yet.' }
+        return { tone: 'amber', icon: 'alert', label: 'Unassigned or Pending', message: 'This issue has not been picked up by anyone yet.' }
       case 'in_progress':
-        return { tone: 'neutral', icon: 'user', label: 'In progress', message: `${issue.assigneeName ?? 'Someone'} is working on the corrective action.` }
+        return { tone: 'neutral', icon: 'user', label: 'In Progress', message: `${issue.assigneeName ?? 'Someone'} is working on the corrective action.` }
       case 'awaiting_verification':
-        return { tone: 'amber', icon: 'alert', label: 'Ready for review', message: `${issue.assigneeName ?? 'The assignee'} submitted a fix and is awaiting your verification.` }
+        return { tone: 'amber', icon: 'alert', label: 'Ready for Review', message: `${issue.assigneeName ?? 'The assignee'} submitted a fix and is awaiting your verification.` }
       case 'closed':
-        return { tone: 'green', icon: 'check', label: 'Verified closed', message: `This issue was verified closed by ${issue.reviewNotes ? 'you or another manager' : 'a manager'}.` }
+        return { tone: 'green', icon: 'check', label: 'Verified Closed', message: `This issue was verified closed by ${issue.reviewNotes ? 'you or another manager' : 'a manager'}.` }
       case 'reopened':
         return { tone: 'red', icon: 'alert', label: 'Reopened', message: 'Reopened — see review notes below for what still needs to be done.' }
       default:
@@ -117,129 +118,126 @@ export function IssueDetailPage({ domain = 'quality' }: { domain?: InspectionDom
   }
 
   return (
-    <div className="stagger max-w-[1400px] mx-auto px-6 py-8">
-      <Breadcrumb
-        onBack={() => nav.push(`${prefix}/issues`)}
-        issueId={issue.id}
-      />
+    <div className="space-y-6">
+      {/* Top Breadcrumb Row with info pills */}
+      <div className="flex items-center justify-between">
+        <Breadcrumb
+          onBack={() => nav.push(`${prefix}/issues`)}
+          issueId={issue.id}
+        />
+        <div className="flex items-center gap-2">
+          <span className="font-mono text-[10px] font-bold text-text-primary bg-accent-light px-2 py-0.5 rounded-lg border border-text-secondary/15">
+            {issue.id}
+          </span>
+          <button
+            onClick={() => nav.push(`${prefix}/inspections/${inspection.id}`)}
+            className="font-mono text-[10px] text-text-primary hover:text-primary bg-accent-light px-2 py-0.5 rounded-lg border border-text-secondary/15 font-bold hover:bg-accent-light transition-colors"
+          >
+            {inspection.number}
+          </button>
+          <IssueStatePill state={issue.state} />
+        </div>
+      </div>
 
       {banner && (
         <Banner tone={banner.tone} icon={banner.icon} label={banner.label} message={banner.message} />
       )}
 
-      {/* ============ Hero ============ */}
-      <div className="mt-6 flex items-start justify-between flex-wrap gap-6">
-        <div className="min-w-0 max-w-[680px]">
-          <div className="flex items-center gap-3 flex-wrap">
-            <span className="font-mono text-[11px] text-ink-700 dark:text-ink-200 px-2 py-0.5 rounded border hairline">
-              {issue.id}
-            </span>
+      {/* Page Banner with corrective action text as title */}
+      <PageBanner
+        title={issue.itemPrompt}
+        subline={`Raised at ${inspection.siteName} during ${inspection.templateName} v${inspection.templateVersion}`}
+        actions={
+          <div className="flex items-center gap-2">
             <button
               onClick={() => nav.push(`${prefix}/inspections/${inspection.id}`)}
-              className="font-mono text-[11px] text-accent-600 dark:text-accent-400 hover:underline px-2 py-0.5 rounded border hairline border-accent-200 dark:border-accent-800 bg-accent-50 dark:bg-accent-950/30 transition-colors"
+              className="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-white/40 bg-white/10 hover:bg-white/20 text-[12px] font-bold text-white transition-all shadow-sm"
             >
-              {inspection.number}
+              <Icon name="arrow_right" className="w-3.5 h-3.5" />
+              View Parent Inspection
             </button>
-            <span className="font-mono text-[11px] text-ink-500 dark:text-ink-400">
-              {inspection.templateName} v{inspection.templateVersion}
-            </span>
-            <IssueStatePill state={issue.state} />
+            
+            {(issue.state === 'open' || issue.state === 'in_progress') && (
+              <button
+                onClick={() => setReassignModalOpen(true)}
+                className="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-white/40 bg-white/10 hover:bg-white/20 text-[12px] font-bold text-white transition-all shadow-sm"
+              >
+                <Icon name="users" className="w-3.5 h-3.5" />
+                Reassign
+              </button>
+            )}
+
+            {issue.state === 'awaiting_verification' && (
+              <>
+                <button
+                  onClick={() => setVerifyModal('reopen')}
+                  className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-status-fail hover:bg-status-fail/90 text-white text-[12px] font-bold transition-all shadow-sm"
+                >
+                  <Icon name="close" className="w-3.5 h-3.5" />
+                  Reopen
+                </button>
+                <button
+                  onClick={() => setVerifyModal('verify')}
+                  className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-warning hover:bg-warning/90 text-text-primary text-[12px] font-bold transition-all shadow-sm"
+                >
+                  <Icon name="check" className="w-3.5 h-3.5" />
+                  Verify Fix
+                </button>
+              </>
+            )}
           </div>
-          <h1 className="mt-4 font-display text-[32px] leading-[1.1] tracking-tight text-ink-900 dark:text-ink-50">
-            {issue.itemPrompt}
-          </h1>
-        </div>
-
-        {/* Action cluster */}
-        <div className="flex items-center gap-2 shrink-0">
-          <button
-            onClick={() => nav.push(`${prefix}/inspections/${inspection.id}`)}
-            className="inline-flex items-center gap-2 px-3 py-2 rounded-md border hairline bg-white dark:bg-ink-900 text-[12px] font-medium text-ink-700 dark:text-ink-200 hover:bg-ink-50 dark:hover:bg-ink-800 transition-colors"
-          >
-            <Icon name="arrow_right" className="w-3.5 h-3.5" />
-            View parent inspection
-          </button>
-          
-          {(issue.state === 'open' || issue.state === 'in_progress') && (
-            <button
-              onClick={() => setReassignModalOpen(true)}
-              className="inline-flex items-center gap-2 px-3 py-2 rounded-md border hairline bg-white dark:bg-ink-900 text-[12px] font-medium text-ink-700 dark:text-ink-200 hover:bg-ink-50 dark:hover:bg-ink-800 transition-colors"
-            >
-              <Icon name="users" className="w-3.5 h-3.5" />
-              Reassign
-            </button>
-          )}
-
-          {issue.state === 'awaiting_verification' && (
-            <>
-              <button
-                onClick={() => setVerifyModal('reopen')}
-                className="inline-flex items-center gap-2 px-3 py-2 rounded-md border border-signal-red text-signal-red text-[12px] font-medium hover:bg-signal-red/5 transition-colors"
-              >
-                <Icon name="close" className="w-3.5 h-3.5" />
-                Reopen
-              </button>
-              <button
-                onClick={() => setVerifyModal('verify')}
-                className="inline-flex items-center gap-2 px-3 py-2 rounded-md bg-signal-green text-white text-[12px] font-medium hover:bg-signal-green/90 transition-colors"
-              >
-                <Icon name="check" className="w-3.5 h-3.5" />
-                Verify
-              </button>
-            </>
-          )}
-        </div>
-      </div>
+        }
+      />
 
       {/* ============ Stat row ============ */}
-      <div className="mt-8 grid grid-cols-2 lg:grid-cols-5 gap-px bg-ink-200/60 dark:bg-ink-800 border hairline rounded-xl overflow-hidden">
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-px bg-accent-light border border-text-secondary/15 rounded-2xl overflow-hidden shadow-soft">
         <Stat label="Age" value={formatRelativeTime(issue.createdAt).replace(' ago', '')} tone={Date.now() - new Date(issue.createdAt).getTime() > SEVEN_DAYS_MS && issue.state !== 'closed' ? 'red' : undefined} />
         <Stat label="State" value={issue.state.replace('_', ' ')} capitalize />
         <Stat label="Assignee" value={issue.assigneeName ?? 'Unassigned'} />
         <Stat label="Site" value={inspection.siteName} />
-        <Stat label="Last update" value={formatRelativeTime(issue.updatedAt)} />
+        <Stat label="Last Update" value={formatRelativeTime(issue.updatedAt)} />
       </div>
 
       {/* ============ Two-column body ============ */}
-      <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         {/* Left: Cards */}
         <div className="lg:col-span-2 space-y-6">
           {/* Original finding */}
-          <div className="rounded-xl border hairline bg-white dark:bg-ink-900 overflow-hidden">
-            <div className="px-5 py-4 border-b hairline">
-              <div className="text-[14px] font-medium text-ink-900 dark:text-ink-50">Original finding</div>
+          <div className="rounded-2xl border border-text-secondary/15 bg-white overflow-hidden shadow-soft">
+            <div className="px-5 py-4 border-b border-text-secondary/15 bg-accent-light/50">
+              <div className="text-[13px] font-bold text-text-primary">Original Finding</div>
             </div>
             <div className="p-5">
               {originalSection && (
-                <div className="mb-3 text-[11px] font-medium uppercase tracking-[0.12em] text-ink-500 dark:text-ink-400">
+                <div className="mb-2 text-[10px] font-bold uppercase tracking-wider text-text-secondary">
                   {originalSection.title}
                 </div>
               )}
-              <div className="text-[14px] font-medium text-ink-900 dark:text-ink-50 mb-4">
+              <div className="text-[14px] font-bold text-text-primary mb-4">
                 {issue.itemPrompt}
               </div>
               
               {response ? (
-                <div className="space-y-4 border-l-2 border-signal-red/40 pl-4 ml-1">
-                  <div className="inline-flex items-center gap-2 px-2 py-1 rounded bg-signal-red/10 text-signal-red text-[12px] font-medium">
+                <div className="space-y-4 border-l-2 border-status-fail/30 pl-4 ml-1">
+                  <div className="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-status-fail/10 text-status-fail text-[12px] font-bold">
                     <Icon name="close" className="w-3.5 h-3.5" />
                     Fail
-                    {response.reading != null && <span className="font-mono text-[11px] ml-1 opacity-80">{response.reading} {originalItem?.numericUnit}</span>}
+                    {response.reading != null && <span className="font-mono text-[11px] ml-1 opacity-80 font-bold">{response.reading} {originalItem?.numericUnit}</span>}
                   </div>
 
                   {response.observation && (
                     <div>
-                      <div className="text-[10px] uppercase tracking-[0.12em] text-signal-red/80 font-medium mb-1">Observation</div>
-                      <p className="text-[13px] text-ink-700 dark:text-ink-200 leading-relaxed">{response.observation}</p>
+                      <div className="text-[10px] uppercase tracking-wider text-status-fail font-bold mb-1">Observation</div>
+                      <p className="text-[13px] text-text-secondary leading-relaxed font-medium">{response.observation}</p>
                     </div>
                   )}
 
                   {response.attachments && response.attachments.length > 0 && (
                     <div className="flex items-center gap-1.5 flex-wrap">
                       {response.attachments.map((att, i) => (
-                        <span key={i} className="inline-flex items-center gap-1 text-[11px] font-mono text-ink-600 dark:text-ink-300 px-2 py-0.5 rounded bg-ink-100 dark:bg-ink-800 border hairline">
-                          <Icon name="link" className="w-3 h-3" />
+                        <span key={i} className="inline-flex items-center gap-1.5 text-[10px] font-mono text-text-primary font-bold px-2 py-0.5 rounded bg-accent-light border border-text-secondary/15 shadow-sm" title={att}>
+                          <Icon name="link" className="w-3 h-3 text-text-secondary" />
                           {att}
                         </span>
                       ))}
@@ -247,30 +245,30 @@ export function IssueDetailPage({ domain = 'quality' }: { domain?: InspectionDom
                   )}
                 </div>
               ) : (
-                <div className="text-[13px] text-ink-500 italic">Finding data unavailable.</div>
+                <div className="text-[13px] text-text-secondary italic">Finding data unavailable.</div>
               )}
             </div>
           </div>
 
           {/* Fix evidence */}
-          <div className="rounded-xl border hairline bg-white dark:bg-ink-900 overflow-hidden">
-            <div className="px-5 py-4 border-b hairline">
-              <div className="text-[14px] font-medium text-ink-900 dark:text-ink-50">Fix evidence</div>
+          <div className="rounded-2xl border border-text-secondary/15 bg-white overflow-hidden shadow-soft">
+            <div className="px-5 py-4 border-b border-text-secondary/15 bg-accent-light/50">
+              <div className="text-[13px] font-bold text-text-primary">Fix Evidence</div>
             </div>
             <div className="p-5">
               {issue.state === 'open' || issue.state === 'in_progress' ? (
-                <div className="text-[13px] text-ink-500 italic text-center py-6">
-                  No fix submitted yet.
+                <div className="text-[13px] text-text-secondary italic text-center py-6">
+                  No fix submitted yet. Corrective action is currently active.
                 </div>
               ) : (
-                <div className="space-y-4 border-l-2 border-signal-green/40 pl-4 ml-1">
+                <div className="space-y-4 border-l-2 border-status-pass/30 pl-4 ml-1">
                   <div>
-                    <div className="text-[10px] uppercase tracking-[0.12em] text-signal-green/80 font-medium mb-1">Submitted notes</div>
-                    <p className="text-[13px] text-ink-700 dark:text-ink-200 leading-relaxed">
-                      {issue.fixNotes || <span className="italic text-ink-400">No notes provided.</span>}
+                    <div className="text-[10px] uppercase tracking-wider text-status-pass font-bold mb-1">Submitted Notes</div>
+                    <p className="text-[13px] text-text-primary leading-relaxed font-semibold">
+                      {issue.fixNotes || <span className="italic text-text-secondary font-normal">No notes provided by assignee.</span>}
                     </p>
                   </div>
-                  <div className="text-[11px] text-ink-500 dark:text-ink-400 font-mono">
+                  <div className="text-[10px] text-text-secondary font-mono">
                     Submitted {formatRelativeTime(issue.fixSubmittedAt)}
                   </div>
                 </div>
@@ -280,15 +278,15 @@ export function IssueDetailPage({ domain = 'quality' }: { domain?: InspectionDom
 
           {/* Review notes */}
           {(issue.state === 'closed' || issue.state === 'reopened') && issue.reviewNotes && (
-            <div className="rounded-xl border hairline bg-white dark:bg-ink-900 overflow-hidden">
-              <div className="px-5 py-4 border-b hairline">
-                <div className="text-[14px] font-medium text-ink-900 dark:text-ink-50">Review notes</div>
+            <div className="rounded-2xl border border-text-secondary/15 bg-white overflow-hidden shadow-soft">
+              <div className="px-5 py-4 border-b border-text-secondary/15 bg-accent-light/50">
+                <div className="text-[13px] font-bold text-text-primary">Review Notes</div>
               </div>
-              <div className="p-5 border-l-2 border-ink-200 dark:border-ink-700 pl-4 ml-1">
-                <p className="text-[13px] text-ink-700 dark:text-ink-200 leading-relaxed">
+              <div className="p-5 border-l-2 border-text-secondary/15 pl-4 ml-1">
+                <p className="text-[13px] text-text-primary leading-relaxed font-semibold">
                   {issue.reviewNotes}
                 </p>
-                <div className="mt-3 text-[11px] text-ink-500 dark:text-ink-400 font-mono">
+                <div className="mt-3 text-[10px] text-text-secondary font-mono">
                   Reviewed {formatRelativeTime(issue.verifiedAt || issue.updatedAt)}
                 </div>
               </div>
@@ -299,51 +297,51 @@ export function IssueDetailPage({ domain = 'quality' }: { domain?: InspectionDom
 
         {/* Right rail */}
         <div className="space-y-6">
-          <div className="rounded-xl border hairline bg-white dark:bg-ink-900 overflow-hidden">
-            <div className="px-5 py-4 border-b hairline">
-              <div className="text-[14px] font-medium text-ink-900 dark:text-ink-50">Assignee</div>
+          <div className="rounded-2xl border border-text-secondary/15 bg-white overflow-hidden shadow-soft">
+            <div className="px-5 py-4 border-b border-text-secondary/15 bg-accent-light/50">
+              <div className="text-[13px] font-bold text-text-primary">Assignee</div>
             </div>
             <div className="p-5">
               <div className="flex items-center gap-3">
                 <Avatar name={issue.assigneeName ?? '?'} size="w-10 h-10 text-[14px]" />
                 <div>
-                  <div className="text-[10px] uppercase tracking-[0.12em] text-ink-500 dark:text-ink-400">Assigned to</div>
-                  <div className="text-[14px] font-medium text-ink-900 dark:text-ink-50 mt-0.5">{issue.assigneeName ?? 'Unassigned'}</div>
+                  <div className="text-[10px] font-bold uppercase tracking-wider text-text-secondary">Assigned To</div>
+                  <div className="text-[14px] font-bold text-text-primary mt-0.5">{issue.assigneeName ?? 'Unassigned'}</div>
                 </div>
               </div>
               {(issue.state === 'open' || issue.state === 'in_progress') && (
                 <button
                   onClick={() => setReassignModalOpen(true)}
-                  className="mt-4 w-full py-2 rounded border hairline bg-ink-50 dark:bg-ink-800 text-ink-600 dark:text-ink-300 hover:text-ink-900 dark:hover:text-ink-50 text-[12px] font-medium transition-colors"
+                  className="mt-4 w-full py-2 rounded-lg border border-text-secondary/15 bg-accent-light text-text-secondary hover:bg-accent-light hover:text-text-primary text-[12px] font-bold transition-all"
                 >
-                  Reassign
+                  Reassign Task
                 </button>
               )}
             </div>
           </div>
 
-          <div className="rounded-xl border hairline bg-white dark:bg-ink-900 overflow-hidden">
-            <div className="px-5 py-4 border-b hairline">
-              <div className="text-[14px] font-medium text-ink-900 dark:text-ink-50">Inspection Context</div>
+          <div className="rounded-2xl border border-text-secondary/15 bg-white overflow-hidden shadow-soft">
+            <div className="px-5 py-4 border-b border-text-secondary/15 bg-accent-light/50">
+              <div className="text-[13px] font-bold text-text-primary">Inspection Context</div>
             </div>
-            <div className="p-4 space-y-3 text-[13px]">
-              <div className="flex justify-between">
-                <span className="text-ink-500 dark:text-ink-400">Inspection</span>
-                <button onClick={() => nav.push(`${prefix}/inspections/${inspection.id}`)} className="text-accent-600 dark:text-accent-400 hover:underline font-mono">
+            <div className="p-4 space-y-3 text-[12px]">
+              <div className="flex justify-between items-center">
+                <span className="text-text-secondary font-bold uppercase text-[10px]">Inspection</span>
+                <button onClick={() => nav.push(`${prefix}/inspections/${inspection.id}`)} className="text-text-primary hover:text-primary transition-colors font-mono font-bold underline">
                   {inspection.number}
                 </button>
               </div>
-              <div className="flex flex-col gap-1 mt-2 pt-2 border-t hairline">
-                <span className="text-[11px] uppercase tracking-[0.12em] text-ink-500 dark:text-ink-400">Template</span>
-                <span className="text-ink-900 dark:text-ink-50 font-medium">{inspection.templateName}</span>
+              <div className="flex flex-col gap-1 mt-2 pt-2 border-t border-text-secondary/15">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-text-secondary">Template</span>
+                <span className="text-text-primary font-bold">{inspection.templateName}</span>
               </div>
-              <div className="flex flex-col gap-1 mt-2 pt-2 border-t hairline">
-                <span className="text-[11px] uppercase tracking-[0.12em] text-ink-500 dark:text-ink-400">Location</span>
-                <span className="text-ink-900 dark:text-ink-50 font-medium">{inspection.siteName}{inspection.area ? ` · ${inspection.area}` : ''}</span>
+              <div className="flex flex-col gap-1 mt-2 pt-2 border-t border-text-secondary/15">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-text-secondary">Location</span>
+                <span className="text-text-primary font-bold">{inspection.siteName}{inspection.area ? ` · ${inspection.area}` : ''}</span>
               </div>
-              <div className="flex flex-col gap-1 mt-2 pt-2 border-t hairline">
-                <span className="text-[11px] uppercase tracking-[0.12em] text-ink-500 dark:text-ink-400">Inspector</span>
-                <span className="text-ink-900 dark:text-ink-50 font-medium">{inspection.inspectorName}</span>
+              <div className="flex flex-col gap-1 mt-2 pt-2 border-t border-text-secondary/15">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-text-secondary">Inspector</span>
+                <span className="text-text-primary font-bold">{inspection.inspectorName}</span>
               </div>
             </div>
           </div>
@@ -374,7 +372,7 @@ export function IssueDetailPage({ domain = 'quality' }: { domain?: InspectionDom
               type="button"
               onClick={() => setVerifyModal(null)}
               disabled={submitting}
-              className="px-4 py-2 rounded-md border hairline bg-white dark:bg-ink-900 text-[13px] font-medium text-ink-700 dark:text-ink-200 hover:bg-ink-50 dark:hover:bg-ink-800 transition-colors disabled:opacity-50"
+              className="px-4 py-2 rounded-lg border border-text-secondary/15 bg-white text-[13px] font-bold text-text-secondary hover:bg-accent-light transition-colors disabled:opacity-50"
             >
               Cancel
             </button>
@@ -382,11 +380,7 @@ export function IssueDetailPage({ domain = 'quality' }: { domain?: InspectionDom
               type="button"
               onClick={handleVerifyReopen}
               disabled={submitting || (verifyModal === 'reopen' && !verifyNote.trim())}
-              className={`inline-flex items-center gap-2 px-4 py-2 rounded-md text-white text-[13px] font-medium transition-colors disabled:opacity-50 ${
-                verifyModal === 'verify'
-                  ? 'bg-signal-green hover:bg-signal-green/90'
-                  : 'bg-signal-red hover:bg-signal-red/90'
-              }`}
+              className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg text-white text-[13px] font-bold transition-colors disabled:opacity-50 ${ verifyModal === 'verify' ? 'bg-status-pass hover:bg-status-pass/90' : 'bg-status-fail hover:bg-status-fail/90' }`}
             >
               {submitting
                 ? 'Saving…'
@@ -396,7 +390,7 @@ export function IssueDetailPage({ domain = 'quality' }: { domain?: InspectionDom
         }
       >
         <div>
-          <label htmlFor="verify-note" className="block text-[11px] font-medium uppercase tracking-[0.12em] text-ink-500 dark:text-ink-400 mb-2">
+          <label htmlFor="verify-note" className="block text-[11px] font-bold uppercase tracking-[0.12em] text-text-secondary mb-2">
             {verifyModal === 'verify' ? 'Optional note' : 'What still needs to be done?'}
           </label>
           <textarea
@@ -405,7 +399,7 @@ export function IssueDetailPage({ domain = 'quality' }: { domain?: InspectionDom
             onChange={(e) => setVerifyNote(e.target.value)}
             placeholder={verifyModal === 'verify' ? 'Anything to note for the audit trail…' : 'Be specific so the assignee knows what to fix.'}
             rows={3}
-            className="focus-ring w-full px-3 py-2.5 rounded-md border border-ink-200 dark:border-ink-700 bg-white dark:bg-ink-800 text-[13px] text-ink-900 dark:text-ink-50 placeholder:text-ink-400 dark:placeholder:text-ink-500 transition-colors resize-none"
+            className="focus-ring w-full px-3 py-2.5 rounded-lg border border-text-secondary/15 bg-white text-[13px] text-text-primary placeholder:text-text-secondary transition-all shadow-inner resize-none"
           />
         </div>
       </Modal>
@@ -429,7 +423,7 @@ export function IssueDetailPage({ domain = 'quality' }: { domain?: InspectionDom
               type="button"
               onClick={() => setReassignModalOpen(false)}
               disabled={submitting}
-              className="px-4 py-2 rounded-md border hairline bg-white dark:bg-ink-900 text-[13px] font-medium text-ink-700 dark:text-ink-200 hover:bg-ink-50 dark:hover:bg-ink-800 transition-colors disabled:opacity-50"
+              className="px-4 py-2 rounded-lg border border-text-secondary/15 bg-white text-[13px] font-bold text-text-secondary hover:bg-accent-light transition-colors disabled:opacity-50"
             >
               Cancel
             </button>
@@ -437,7 +431,7 @@ export function IssueDetailPage({ domain = 'quality' }: { domain?: InspectionDom
               type="button"
               onClick={handleReassign}
               disabled={submitting || !selectedAssignee || !reassignNote.trim()}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-accent-500 text-white text-[13px] font-medium transition-colors hover:bg-accent-600 disabled:opacity-50"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-white text-[13px] font-bold transition-all hover:bg-primary disabled:opacity-50 shadow-sm"
             >
               {submitting ? 'Reassigning…' : 'Reassign'}
             </button>
@@ -446,29 +440,29 @@ export function IssueDetailPage({ domain = 'quality' }: { domain?: InspectionDom
       >
         <div className="space-y-4">
           <div>
-            <label className="block text-[11px] font-medium uppercase tracking-[0.12em] text-ink-500 dark:text-ink-400 mb-2">New Assignee</label>
+            <label className="block text-[11px] font-bold uppercase tracking-[0.12em] text-text-secondary mb-2">New Assignee</label>
             <div className="relative">
               <select
                 value={selectedAssignee}
                 onChange={(e) => setSelectedAssignee(e.target.value)}
-                className="focus-ring appearance-none w-full pl-3 pr-9 py-2.5 rounded-md border hairline bg-white dark:bg-ink-800 text-[13px] text-ink-900 dark:text-ink-50 transition-colors cursor-pointer"
+                className="focus-ring appearance-none w-full pl-3 pr-9 py-2.5 rounded-lg border border-text-secondary/15 bg-white text-[13px] text-text-primary font-semibold transition-all cursor-pointer shadow-sm"
               >
                 <option value="" disabled>Select an employee…</option>
                 {employeeUsers.map(u => (
                   <option key={u.id} value={u.id}>{u.name}</option>
                 ))}
               </select>
-              <Icon name="chevron_down" className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-ink-400 pointer-events-none" />
+              <Icon name="chevron_down" className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-text-secondary pointer-events-none" />
             </div>
           </div>
           <div>
-            <label className="block text-[11px] font-medium uppercase tracking-[0.12em] text-ink-500 dark:text-ink-400 mb-2">Reason (required)</label>
+            <label className="block text-[11px] font-bold uppercase tracking-[0.12em] text-text-secondary mb-2">Reason (required)</label>
             <textarea
               value={reassignNote}
               onChange={(e) => setReassignNote(e.target.value)}
               placeholder="Why is this being reassigned?"
               rows={3}
-              className="focus-ring w-full px-3 py-2.5 rounded-md border border-ink-200 dark:border-ink-700 bg-white dark:bg-ink-800 text-[13px] text-ink-900 dark:text-ink-50 placeholder:text-ink-400 dark:placeholder:text-ink-500 transition-colors resize-none"
+              className="focus-ring w-full px-3 py-2.5 rounded-lg border border-text-secondary/15 bg-white text-[13px] text-text-primary placeholder:text-text-secondary transition-all shadow-inner resize-none"
             />
           </div>
         </div>
@@ -481,13 +475,13 @@ export function IssueDetailPage({ domain = 'quality' }: { domain?: InspectionDom
 const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000
 
 function Stat({ label, value, tone, capitalize }: { label: string; value: string; tone?: 'green' | 'amber' | 'red'; capitalize?: boolean }) {
-  const colorClass = tone === 'green' ? 'text-signal-green' : tone === 'amber' ? 'text-signal-amber' : tone === 'red' ? 'text-signal-red' : 'text-ink-900 dark:text-ink-50'
+  const colorClass = tone === 'green' ? 'text-status-pass' : tone === 'amber' ? 'text-warning' : tone === 'red' ? 'text-status-fail' : 'text-text-primary'
   return (
-    <div className="bg-white dark:bg-ink-900 px-5 py-4 flex flex-col justify-center">
-      <div className="text-[11px] font-medium uppercase tracking-[0.12em] text-ink-500 dark:text-ink-400">
+    <div className="bg-white px-5 py-4 flex flex-col justify-center">
+      <div className="text-[10px] font-bold uppercase tracking-wider text-text-secondary">
         {label}
       </div>
-      <div className={`mt-1 font-display text-[24px] ${colorClass} ${capitalize ? 'capitalize' : ''}`}>
+      <div className={`mt-1 text-[22px] font-bold tracking-tight ${colorClass} ${capitalize ? 'capitalize' : ''}`}>
         {value}
       </div>
     </div>
@@ -495,16 +489,16 @@ function Stat({ label, value, tone, capitalize }: { label: string; value: string
 }
 
 function Banner({ tone, icon, label, message }: { tone: 'green' | 'amber' | 'red' | 'neutral', icon: IconName, label: string, message: string }) {
-  const bg = tone === 'green' ? 'bg-signal-green/10 border-signal-green/20 text-signal-green' : 
-             tone === 'amber' ? 'bg-signal-amber/10 border-signal-amber/20 text-signal-amber' : 
-             tone === 'red' ? 'bg-signal-red/10 border-signal-red/20 text-signal-red' : 
-             'bg-ink-100 border-ink-200 dark:bg-ink-800 dark:border-ink-700 text-ink-700 dark:text-ink-200'
+  const bg = tone === 'green' ? 'bg-status-pass/10 border-status-pass/20 text-status-pass' : 
+             tone === 'amber' ? 'bg-warning/10 border-warning/20 text-warning' : 
+             tone === 'red' ? 'bg-status-fail/10 border-status-fail/20 text-status-fail' : 
+             'bg-accent-light border border-text-secondary/15 text-text-primary'
   return (
-    <div className={`mt-6 rounded-lg border hairline ${bg} p-4 flex items-start gap-3`}>
+    <div className={`rounded-xl border ${bg} p-4 flex items-start gap-3 shadow-sm`}>
       <Icon name={icon} className="w-5 h-5 shrink-0 mt-0.5" />
       <div>
-        <div className="text-[13px] font-medium">{label}</div>
-        <div className="mt-1 text-[12px] opacity-90 leading-relaxed">{message}</div>
+        <div className="text-[13px] font-bold">{label}</div>
+        <div className="mt-0.5 text-[12px] opacity-90 leading-relaxed font-medium">{message}</div>
       </div>
     </div>
   )
@@ -512,15 +506,15 @@ function Banner({ tone, icon, label, message }: { tone: 'green' | 'amber' | 'red
 
 function Breadcrumb({ onBack, issueId }: { onBack: () => void, issueId?: string }) {
   return (
-    <div className="flex items-center gap-2 text-[12px] text-ink-500 dark:text-ink-400">
-      <button onClick={onBack} className="hover:text-ink-900 dark:hover:text-ink-50 transition-colors flex items-center gap-1">
-        <Icon name="arrow_left" className="w-3 h-3" />
+    <div className="flex items-center gap-1.5 text-[12px] text-text-secondary font-bold">
+      <button onClick={onBack} className="hover:text-text-primary transition-colors flex items-center gap-1">
+        <Icon name="arrow_left" className="w-3.5 h-3.5" />
         Issues
       </button>
       {issueId && (
         <>
-          <Icon name="chevron_right" className="w-3 h-3" />
-          <span className="text-ink-900 dark:text-ink-50 font-mono">{issueId}</span>
+          <Icon name="chevron_right" className="w-3.5 h-3.5 text-text-secondary" />
+          <span className="text-text-primary font-mono">{issueId}</span>
         </>
       )}
     </div>
@@ -529,13 +523,13 @@ function Breadcrumb({ onBack, issueId }: { onBack: () => void, issueId?: string 
 
 function NotFoundCard({ title, message, backLabel, onBack }: { title: string, message: string, backLabel: string, onBack: () => void }) {
   return (
-    <div className="mt-8 rounded-xl border hairline bg-white dark:bg-ink-900 p-8 text-center max-w-[400px]">
-      <div className="inline-flex items-center justify-center w-12 h-12 rounded-full border hairline border-dashed mb-4">
-        <Icon name="alert" className="w-5 h-5 text-signal-red" />
+    <div className="rounded-2xl border border-text-secondary/15 bg-white p-8 text-center max-w-[400px] mx-auto shadow-soft">
+      <div className="inline-flex items-center justify-center w-12 h-12 rounded-full border border-dashed border-text-secondary/15 bg-accent-light/50 mb-4">
+        <Icon name="alert" className="w-5 h-5 text-status-fail" />
       </div>
-      <h2 className="text-[16px] font-medium text-ink-900 dark:text-ink-50">{title}</h2>
-      <p className="mt-2 text-[13px] text-ink-500 dark:text-ink-400">{message}</p>
-      <button onClick={onBack} className="mt-6 inline-flex items-center gap-2 px-4 py-2 rounded-md bg-accent-500 text-white text-[12px] font-medium hover:bg-accent-600 transition-colors">
+      <h2 className="text-[15px] font-bold text-text-primary">{title}</h2>
+      <p className="mt-2 text-[13px] text-text-secondary leading-relaxed">{message}</p>
+      <button onClick={onBack} className="mt-6 inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary hover:bg-primary text-white text-[12px] font-bold transition-colors shadow-sm">
         {backLabel}
       </button>
     </div>
@@ -545,24 +539,24 @@ function NotFoundCard({ title, message, backLabel, onBack }: { title: string, me
 function TimelinePanel({ timeline }: { timeline: InspectionTimelineEvent[] }) {
   if (timeline.length === 0) return null
   return (
-    <div className="rounded-xl border hairline bg-white dark:bg-ink-900 overflow-hidden">
-      <div className="px-5 py-4 border-b hairline">
-        <div className="text-[14px] font-medium text-ink-900 dark:text-ink-50">Timeline</div>
+    <div className="rounded-2xl border border-text-secondary/15 bg-white overflow-hidden shadow-soft">
+      <div className="px-5 py-4 border-b border-text-secondary/15 bg-accent-light/50">
+        <div className="text-[13px] font-bold text-text-primary">Timeline</div>
       </div>
       <div className="p-5">
-        <div className="relative border-l-2 border-ink-100 dark:border-ink-800 ml-2 space-y-6 pb-2">
+        <div className="relative border-l border-text-secondary/15 ml-2 space-y-6 pb-2">
           {timeline.map((event, i) => (
             <div key={event.id} className="relative pl-5">
-              <div className={`absolute -left-[5px] top-1.5 w-2 h-2 rounded-full ${i === 0 ? 'bg-ink-900 dark:bg-ink-50 ring-4 ring-white dark:ring-ink-900' : 'bg-ink-300 dark:bg-ink-600'}`} />
-              <div className="text-[12px] text-ink-900 dark:text-ink-50 leading-snug">
-                <span className="font-medium">{event.byName}</span> {event.action.replace(/issue_/g, '').replace(/_/g, ' ')}
+              <div className={`absolute -left-[5px] top-1.5 w-2 h-2 rounded-full ${i === 0 ? 'bg-primary ring-4 ring-white' : 'bg-accent-light'}`} />
+              <div className="text-[12px] text-text-primary leading-snug font-medium">
+                <span className="font-bold">{event.byName}</span> {event.action.replace(/issue_/g, '').replace(/_/g, ' ')}
               </div>
               {event.note && (
-                <div className="mt-1 text-[12px] text-ink-600 dark:text-ink-300 italic leading-relaxed">
+                <div className="mt-1 text-[12px] text-text-secondary italic leading-relaxed bg-accent-light/40 p-2 rounded-lg border border-text-secondary/15 inline-block">
                   "{event.note}"
                 </div>
               )}
-              <div className="mt-1 text-[10px] font-mono text-ink-400 dark:text-ink-500">
+              <div className="mt-1 text-[10px] font-mono text-text-secondary">
                 {formatRelativeTime(event.at)}
               </div>
             </div>

@@ -10,6 +10,7 @@ import { RecurrenceRuleModal } from '../../../components/admin/RecurrenceRuleMod
 import type { RecurrenceRule } from '../../../types/recurrence'
 import type { Inspection, InspectionDomain } from '../../../types/inspection'
 import { STATUS_LABEL, STATUS_TONE } from '../../../types/inspection'
+import { PageBanner } from '../../../components/shell/PageBanner'
 
 type ViewMode = 'calendar' | 'rules'
 type RuleFilter = 'all' | 'active' | 'paused' | 'archived'
@@ -170,74 +171,58 @@ export function SchedulePage({ domain = 'quality' }: { domain?: InspectionDomain
 
   return (
     <div className="max-w-[1200px] mx-auto px-6 py-8 pb-32 animate-fade-in">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
-        <div>
-          <div className="flex items-center gap-2 text-[12px] font-medium text-ink-500 mb-3">
-            <span>{domain === 'safety' ? 'Safety Manager' : 'Quality Manager'}</span>
-            <Icon name="chevron_right" className="w-3 h-3" />
-            <span className="text-ink-900 dark:text-ink-50">Schedule</span>
-          </div>
-          <h1 className="font-display text-4xl text-ink-900 dark:text-ink-50 tracking-tight mb-2">
-            Inspection <span className="italic text-ink-500 dark:text-ink-400">schedule</span>.
-          </h1>
-          <p className="text-[14px] text-ink-600 dark:text-ink-300">
-            {inspectionsForWeek.length} inspections upcoming this week · {rules.filter(r => r.status === 'active').length} active rules
-          </p>
-        </div>
-        
-        <div className="flex items-center gap-4">
-          <div className="flex p-1 rounded-md border hairline bg-ink-50 dark:bg-ink-900/50">
+      <PageBanner
+        title="Inspection schedule"
+        subline={`${inspectionsForWeek.length} inspections upcoming this week · ${rules.filter(r => r.status === 'active').length} active rules`}
+        actions={
+          <div className="flex items-center gap-3">
+            <div className="inline-flex items-center gap-1 p-1 bg-white/10 rounded-xl border border-white/10">
+              <button
+                onClick={() => setView('calendar')}
+                className={`px-3 py-1 rounded-lg text-[13px] font-semibold transition ${ view === 'calendar' ? 'bg-white text-text-primary' : 'text-white hover:text-white/80' }`}
+              >
+                Calendar
+              </button>
+              <button
+                onClick={() => setView('rules')}
+                className={`px-3 py-1 rounded-lg text-[13px] font-semibold transition ${ view === 'rules' ? 'bg-white text-text-primary' : 'text-white hover:text-white/80' }`}
+              >
+                Rules
+              </button>
+            </div>
             <button
-              onClick={() => setView('calendar')}
-              className={`px-4 py-1.5 text-[12px] font-medium rounded transition-colors ${
-                view === 'calendar' ? 'bg-white dark:bg-ink-800 text-ink-900 dark:text-ink-50 shadow-sm' : 'text-ink-500 dark:text-ink-400 hover:text-ink-900 dark:hover:text-ink-50'
-              }`}
+              onClick={() => { setEditingRule(null); setModalOpen(true) }}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-warning hover:bg-warning/90 text-text-primary text-[13px] font-bold transition shadow-sm"
             >
-              Calendar
-            </button>
-            <button
-              onClick={() => setView('rules')}
-              className={`px-4 py-1.5 text-[12px] font-medium rounded transition-colors ${
-                view === 'rules' ? 'bg-white dark:bg-ink-800 text-ink-900 dark:text-ink-50 shadow-sm' : 'text-ink-500 dark:text-ink-400 hover:text-ink-900 dark:hover:text-ink-50'
-              }`}
-            >
-              Rules
+              + New rule
             </button>
           </div>
-          
-          <button
-            onClick={() => { setEditingRule(null); setModalOpen(true) }}
-            className="flex items-center gap-2 px-4 py-2 bg-accent-500 text-white rounded-md text-[13px] font-medium hover:bg-accent-600 transition-colors shadow-sm"
-          >
-            <Icon name="plus" className="w-4 h-4" />
-            New rule
-          </button>
-        </div>
-      </div>
+        }
+      />
+      <div className="h-4" />
 
       {view === 'calendar' ? (
         <div className="space-y-8">
           {/* Week Toolbar */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <button onClick={handlePrevWeek} className="p-1.5 hover:bg-ink-50 dark:hover:bg-ink-900 rounded text-ink-500 transition-colors">
+              <button onClick={handlePrevWeek} className="p-1.5 hover:bg-accent-light rounded text-text-secondary transition-colors">
                 <Icon name="arrow_left" className="w-4 h-4" />
               </button>
-              <button onClick={handleNextWeek} className="p-1.5 hover:bg-ink-50 dark:hover:bg-ink-900 rounded text-ink-500 transition-colors">
+              <button onClick={handleNextWeek} className="p-1.5 hover:bg-accent-light rounded text-text-secondary transition-colors">
                 <Icon name="arrow_right" className="w-4 h-4" />
               </button>
-              <h2 className="text-[14px] font-medium text-ink-900 dark:text-ink-50 ml-2">
+              <h2 className="text-[14px] font-medium text-text-primary ml-2">
                 {formatWeekRange(weekStart, weekEnd)}
               </h2>
             </div>
-            <button onClick={handleToday} className="text-[12px] font-medium text-ink-500 hover:text-ink-900 dark:hover:text-ink-50 transition-colors px-3 py-1.5 rounded-md border hairline hover:bg-ink-50 dark:hover:bg-ink-900">
+            <button onClick={handleToday} className="text-[12px] font-medium text-text-secondary hover:text-text-primary transition-colors px-3 py-1.5 rounded-md border hairline hover:bg-accent-light">
               Today
             </button>
           </div>
 
           {/* Week Strip */}
-          <div className="grid grid-cols-7 border hairline rounded-xl overflow-hidden bg-white dark:bg-ink-900/50 shadow-sm">
+          <div className="grid grid-cols-7 border hairline rounded-xl overflow-hidden bg-white shadow-sm">
             {weekDates.map((date) => {
               const iso = toIsoDate(date)
               const isToday = iso === toIsoDate(new Date())
@@ -251,15 +236,15 @@ export function SchedulePage({ domain = 'quality' }: { domain?: InspectionDomain
                 <button
                   key={iso}
                   onClick={() => handleDayClick(iso)}
-                  className={`flex flex-col items-center p-4 border-r last:border-r-0 hairline hover:bg-ink-50 dark:hover:bg-ink-800 transition-colors relative h-32 ${isSelected ? 'bg-ink-50 dark:bg-ink-800' : ''}`}
+                  className={`flex flex-col items-center p-4 border-r last:border-r-0 hairline hover:bg-accent-light transition-colors relative h-32 ${isSelected ? 'bg-accent-light ' : ''}`}
                 >
                   {isToday && (
-                    <div className="absolute top-0 left-0 right-0 h-1 bg-ink-900 dark:bg-ink-50" />
+                    <div className="absolute top-0 left-0 right-0 h-1 bg-accent-light" />
                   )}
-                  <span className={`text-[11px] font-medium uppercase tracking-wider mb-1 ${isToday || isSelected ? 'text-ink-900 dark:text-ink-50' : 'text-ink-500 dark:text-ink-400'}`}>
+                  <span className={`text-[11px] font-medium uppercase tracking-wider mb-1 ${isToday || isSelected ? 'text-text-primary ' : 'text-text-secondary '}`}>
                     {dayName}
                   </span>
-                  <span className={`font-display text-3xl mb-4 ${isToday ? 'text-ink-900 dark:text-ink-50' : 'text-ink-700 dark:text-ink-200'}`}>
+                  <span className={`font-sans text-3xl mb-4 ${isToday ? 'text-text-primary ' : 'text-text-secondary '}`}>
                     {dayNum}
                   </span>
                   
@@ -267,13 +252,13 @@ export function SchedulePage({ domain = 'quality' }: { domain?: InspectionDomain
                   <div className="flex flex-col items-center gap-1">
                     {dayInspections.slice(0, 5).map((insp, idx) => {
                       const tone = STATUS_TONE[insp.status]
-                      const color = tone === 'green' ? 'bg-signal-green' : tone === 'amber' ? 'bg-signal-amber' : tone === 'red' ? 'bg-signal-red' : 'bg-ink-300 dark:bg-ink-600'
+                      const color = tone === 'green' ? 'bg-status-pass' : tone === 'amber' ? 'bg-warning' : tone === 'red' ? 'bg-status-fail' : 'bg-accent-light '
                       return (
                         <div key={idx} className={`w-1.5 h-1.5 rounded-full ${color}`} />
                       )
                     })}
                     {dayInspections.length > 5 && (
-                      <span className="text-[10px] text-ink-400 font-medium">+{dayInspections.length - 5}</span>
+                      <span className="text-[10px] text-text-secondary font-medium">+{dayInspections.length - 5}</span>
                     )}
                   </div>
                 </button>
@@ -293,8 +278,8 @@ export function SchedulePage({ domain = 'quality' }: { domain?: InspectionDomain
               
               return (
                 <div key={iso} id={`day-${iso}`} className="scroll-mt-8">
-                  <h3 className="text-[13px] font-medium text-ink-900 dark:text-ink-50 mb-4 flex items-center gap-3">
-                    <span className="w-2 h-2 rounded-full bg-ink-300 dark:bg-ink-600" />
+                  <h3 className="text-[13px] font-medium text-text-primary mb-4 flex items-center gap-3">
+                    <span className="w-2 h-2 rounded-full bg-accent-light" />
                     {dayStr}
                   </h3>
                   <div className="space-y-2">
@@ -302,27 +287,27 @@ export function SchedulePage({ domain = 'quality' }: { domain?: InspectionDomain
                       <div
                         key={insp.id}
                         onClick={() => nav.push(`${prefix}/inspections/${insp.id}`)}
-                        className="group flex flex-col md:flex-row md:items-center justify-between p-4 rounded-xl border hairline bg-white dark:bg-ink-900/50 hover:border-ink-300 dark:hover:border-ink-600 cursor-pointer transition-all shadow-sm hover:shadow-md"
+                        className="group flex flex-col md:flex-row md:items-center justify-between p-4 rounded-xl border hairline bg-white hover:border-text-secondary/15 cursor-pointer transition-all shadow-sm hover:shadow-md"
                       >
                         <div className="flex flex-col gap-1 mb-3 md:mb-0">
                           <div className="flex items-center gap-2">
-                            <span className="font-mono text-[12px] text-ink-500">{insp.id}</span>
-                            <span className="w-1 h-1 rounded-full bg-ink-200 dark:bg-ink-700" />
-                            <span className="text-[13px] text-ink-500 font-mono">
+                            <span className="font-mono text-[12px] text-text-secondary">{insp.id}</span>
+                            <span className="w-1 h-1 rounded-full bg-accent-light" />
+                            <span className="text-[13px] text-text-secondary font-mono">
                               {insp.scheduledFor ? formatClockTime(insp.scheduledFor) : '—'}
                             </span>
                             {insp.status === 'issues_open' && (
-                              <Icon name="alert" className="w-3.5 h-3.5 text-signal-red" />
+                              <Icon name="alert" className="w-3.5 h-3.5 text-status-fail" />
                             )}
                           </div>
-                          <h4 className="text-[14px] font-medium text-ink-900 dark:text-ink-50 group-hover:text-accent-500 transition-colors">
+                          <h4 className="text-[14px] font-medium text-text-primary group-hover:text-primary transition-colors">
                             {insp.templateName}
                           </h4>
-                          <div className="text-[13px] text-ink-500 flex items-center gap-2">
+                          <div className="text-[13px] text-text-secondary flex items-center gap-2">
                             <span>{insp.siteName}</span>
                             {insp.area && (
                               <>
-                                <span className="w-1 h-1 rounded-full bg-ink-200 dark:bg-ink-700" />
+                                <span className="w-1 h-1 rounded-full bg-accent-light" />
                                 <span>{insp.area}</span>
                               </>
                             )}
@@ -334,10 +319,10 @@ export function SchedulePage({ domain = 'quality' }: { domain?: InspectionDomain
                             {insp.inspectorName ? (
                               <>
                                 <Avatar name={insp.inspectorName} size="sm" />
-                                <span className="text-ink-700 dark:text-ink-300 hidden md:inline">{insp.inspectorName}</span>
+                                <span className="text-text-secondary hidden md:inline">{insp.inspectorName}</span>
                               </>
                             ) : (
-                              <span className="italic text-ink-400">Unassigned</span>
+                              <span className="italic text-text-secondary">Unassigned</span>
                             )}
                           </div>
                           <div className="w-[100px] flex justify-end">
@@ -353,11 +338,11 @@ export function SchedulePage({ domain = 'quality' }: { domain?: InspectionDomain
             
             {inspectionsForWeek.length === 0 && (
               <div className="flex flex-col items-center justify-center py-20 border hairline border-dashed rounded-xl text-center">
-                <div className="w-12 h-12 bg-ink-50 dark:bg-ink-900 rounded-full flex items-center justify-center mb-4 text-ink-400">
+                <div className="w-12 h-12 bg-accent-light rounded-full flex items-center justify-center mb-4 text-text-secondary">
                   <Icon name="calendar" className="w-6 h-6" />
                 </div>
-                <h3 className="text-[14px] font-medium text-ink-900 dark:text-ink-50 mb-1">No inspections scheduled</h3>
-                <p className="text-[13px] text-ink-500">There are no inspections scheduled for this week.</p>
+                <h3 className="text-[14px] font-medium text-text-primary mb-1">No inspections scheduled</h3>
+                <p className="text-[13px] text-text-secondary">There are no inspections scheduled for this week.</p>
               </div>
             )}
           </div>
@@ -366,14 +351,12 @@ export function SchedulePage({ domain = 'quality' }: { domain?: InspectionDomain
         <div className="space-y-6">
           {/* Rules Toolbar */}
           <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
-            <div className="flex p-1 rounded-md border hairline bg-ink-50 dark:bg-ink-900/50 w-full md:w-auto">
+            <div className="flex p-1 rounded-md border hairline bg-accent-light w-full md:w-auto">
               {(['all', 'active', 'paused', 'archived'] as const).map(filter => (
                 <button
                   key={filter}
                   onClick={() => setRuleFilter(filter)}
-                  className={`flex-1 md:px-4 py-1.5 text-[12px] font-medium rounded transition-colors capitalize ${
-                    ruleFilter === filter ? 'bg-white dark:bg-ink-800 text-ink-900 dark:text-ink-50 shadow-sm' : 'text-ink-500 dark:text-ink-400 hover:text-ink-900 dark:hover:text-ink-50'
-                  }`}
+                  className={`flex-1 md:px-4 py-1.5 text-[12px] font-medium rounded transition-colors capitalize ${ ruleFilter === filter ? 'bg-white text-text-primary shadow-sm' : 'text-text-secondary hover:text-text-primary ' }`}
                 >
                   {filter}
                 </button>
@@ -381,13 +364,13 @@ export function SchedulePage({ domain = 'quality' }: { domain?: InspectionDomain
             </div>
             
             <div className="relative w-full md:w-64">
-              <Icon name="search" className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-ink-400" />
+              <Icon name="search" className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary" />
               <input
                 type="text"
                 placeholder="Search rules..."
                 value={ruleQuery}
                 onChange={(e) => setRuleQuery(e.target.value)}
-                className="w-full pl-9 pr-4 py-2 rounded-md border hairline bg-white dark:bg-ink-900 text-[13px] focus-ring"
+                className="w-full pl-9 pr-4 py-2 rounded-md border hairline bg-white text-[13px] focus-ring"
               />
             </div>
           </div>
@@ -398,35 +381,35 @@ export function SchedulePage({ domain = 'quality' }: { domain?: InspectionDomain
               <div
                 key={rule.id}
                 onClick={() => { setEditingRule(rule); setModalOpen(true) }}
-                className="group flex flex-col md:flex-row md:items-center justify-between p-4 rounded-xl border hairline bg-white dark:bg-ink-900/50 hover:border-ink-300 dark:hover:border-ink-600 cursor-pointer transition-all shadow-sm hover:shadow-md"
+                className="group flex flex-col md:flex-row md:items-center justify-between p-4 rounded-xl border hairline bg-white hover:border-text-secondary/15 cursor-pointer transition-all shadow-sm hover:shadow-md"
               >
                 <div className="flex flex-col gap-1 mb-3 md:mb-0">
                   <div className="flex items-center gap-2 mb-1">
-                    <h4 className="text-[14px] font-medium text-ink-900 dark:text-ink-50 group-hover:text-accent-500 transition-colors">
+                    <h4 className="text-[14px] font-medium text-text-primary group-hover:text-primary transition-colors">
                       {rule.name}
                     </h4>
                     {rule.status === 'paused' && (
-                      <span className="px-2 py-0.5 rounded-full text-[10px] font-medium uppercase tracking-wider bg-signal-amber/10 text-signal-amber border border-signal-amber/20">
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-medium uppercase tracking-wider bg-warning/10 text-warning border border-warning/20">
                         Paused
                       </span>
                     )}
                     {rule.status === 'archived' && (
-                      <span className="px-2 py-0.5 rounded-full text-[10px] font-medium uppercase tracking-wider bg-ink-100 dark:bg-ink-800 text-ink-600 dark:text-ink-400 border border-ink-200 dark:border-ink-700">
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-medium uppercase tracking-wider bg-accent-light text-text-secondary border border-text-secondary/15">
                         Archived
                       </span>
                     )}
                   </div>
-                  <div className="text-[13px] text-ink-500">
+                  <div className="text-[13px] text-text-secondary">
                     {rule.templateName} <span className="font-mono ml-1">v{rule.templateVersion}</span>
                   </div>
-                  <div className="text-[13px] text-ink-600 dark:text-ink-300 flex items-center gap-2 mt-1">
-                    <Icon name="calendar" className="w-3.5 h-3.5 text-ink-400" />
+                  <div className="text-[13px] text-text-secondary flex items-center gap-2 mt-1">
+                    <Icon name="calendar" className="w-3.5 h-3.5 text-text-secondary" />
                     <span>{formatRuleSummary(rule)}</span>
-                    <span className="w-1 h-1 rounded-full bg-ink-200 dark:bg-ink-700 mx-1" />
+                    <span className="w-1 h-1 rounded-full bg-accent-light mx-1" />
                     <span>{rule.siteName}</span>
                     {rule.area && (
                       <>
-                        <span className="w-1 h-1 rounded-full bg-ink-200 dark:bg-ink-700 mx-1" />
+                        <span className="w-1 h-1 rounded-full bg-accent-light mx-1" />
                         <span>{rule.area}</span>
                       </>
                     )}
@@ -438,27 +421,27 @@ export function SchedulePage({ domain = 'quality' }: { domain?: InspectionDomain
                     {rule.defaultInspectorName ? (
                       <>
                         <Avatar name={rule.defaultInspectorName} size="sm" />
-                        <span className="text-ink-700 dark:text-ink-300 hidden md:inline">{rule.defaultInspectorName}</span>
+                        <span className="text-text-secondary hidden md:inline">{rule.defaultInspectorName}</span>
                       </>
                     ) : (
-                      <span className="italic text-ink-400">Unassigned</span>
+                      <span className="italic text-text-secondary">Unassigned</span>
                     )}
                   </div>
                   
                   {/* Actions inside row */}
                   <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
                     {rule.status === 'active' && (
-                      <button onClick={(e) => handleStatusToggle(e, rule, 'paused')} className="px-3 py-1.5 rounded border hairline text-[12px] font-medium text-ink-600 hover:bg-ink-50 dark:hover:bg-ink-800 transition-colors">
+                      <button onClick={(e) => handleStatusToggle(e, rule, 'paused')} className="px-3 py-1.5 rounded border hairline text-[12px] font-medium text-text-secondary hover:bg-accent-light transition-colors">
                         Pause
                       </button>
                     )}
                     {rule.status === 'paused' && (
-                      <button onClick={(e) => handleStatusToggle(e, rule, 'active')} className="px-3 py-1.5 rounded border hairline text-[12px] font-medium text-signal-green hover:bg-signal-green/10 transition-colors">
+                      <button onClick={(e) => handleStatusToggle(e, rule, 'active')} className="px-3 py-1.5 rounded border hairline text-[12px] font-medium text-status-pass hover:bg-status-pass/10 transition-colors">
                         Resume
                       </button>
                     )}
                     {rule.status !== 'archived' && (
-                      <button onClick={(e) => handleStatusToggle(e, rule, 'archived')} className="p-1.5 rounded border hairline text-ink-400 hover:text-signal-red hover:bg-signal-red/10 transition-colors" title="Archive rule">
+                      <button onClick={(e) => handleStatusToggle(e, rule, 'archived')} className="p-1.5 rounded border hairline text-text-secondary hover:text-status-fail hover:bg-status-fail/10 transition-colors" title="Archive rule">
                         <Icon name="box" className="w-4 h-4" />
                       </button>
                     )}
@@ -469,11 +452,11 @@ export function SchedulePage({ domain = 'quality' }: { domain?: InspectionDomain
             
             {filteredRules.length === 0 && (
               <div className="flex flex-col items-center justify-center py-20 border hairline border-dashed rounded-xl text-center">
-                <div className="w-12 h-12 bg-ink-50 dark:bg-ink-900 rounded-full flex items-center justify-center mb-4 text-ink-400">
+                <div className="w-12 h-12 bg-accent-light rounded-full flex items-center justify-center mb-4 text-text-secondary">
                   <Icon name="box" className="w-6 h-6" />
                 </div>
-                <h3 className="text-[14px] font-medium text-ink-900 dark:text-ink-50 mb-1">No rules found</h3>
-                <p className="text-[13px] text-ink-500">Try adjusting your filters or search query.</p>
+                <h3 className="text-[14px] font-medium text-text-primary mb-1">No rules found</h3>
+                <p className="text-[13px] text-text-secondary">Try adjusting your filters or search query.</p>
               </div>
             )}
           </div>

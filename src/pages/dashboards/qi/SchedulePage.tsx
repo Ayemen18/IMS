@@ -6,6 +6,7 @@ import { Icon } from '../../../components/primitives/Icon'
 import { StatusPill } from '../../../components/primitives/StatusPill'
 import type { Inspection, InspectionDomain } from '../../../types/inspection'
 import { STATUS_LABEL, STATUS_TONE } from '../../../types/inspection'
+import { PageBanner } from '../../../components/shell/PageBanner'
 
 function getWeekStart(date: Date): Date {
   const d = new Date(date)
@@ -125,46 +126,34 @@ export function SchedulePage({ domain = 'quality' }: { domain?: InspectionDomain
   }, [nextUpcoming])
 
   return (
-    <div className="max-w-[1200px] mx-auto px-6 py-8 pb-32 animate-fade-in">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
-        <div>
-          <div className="flex items-center gap-2 text-[12px] font-medium text-ink-500 mb-3">
-            <span>{domain === 'safety' ? 'Safety Inspector' : 'Quality Inspector'}</span>
-            <Icon name="chevron_right" className="w-3 h-3" />
-            <span className="text-ink-900 dark:text-ink-50">Schedule</span>
-          </div>
-          <h1 className="font-display text-4xl text-ink-900 dark:text-ink-50 tracking-tight mb-2">
-            Your <span className="italic text-ink-500 dark:text-ink-400">week</span>.
-          </h1>
-          <p className="text-[14px] text-ink-600 dark:text-ink-300">
-            {inspectionsForWeek.length} inspections scheduled this week
-            {nextRelativeStr && ` · next one starts ${nextRelativeStr}.`}
-          </p>
-        </div>
-      </div>
+    <div className="space-y-6">
+      {/* Header Banner */}
+      <PageBanner
+        title={`Your schedule`}
+        subline={`${inspectionsForWeek.length} inspections scheduled this week${ nextRelativeStr ? ` · next one starts ${nextRelativeStr}.` : '' }`}
+      />
 
-      <div className="space-y-8">
+      <div className="space-y-6">
         {/* Week Toolbar */}
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <button onClick={handlePrevWeek} className="p-1.5 hover:bg-ink-50 dark:hover:bg-ink-900 rounded text-ink-500 transition-colors">
+          <div className="flex items-center gap-1">
+            <button onClick={handlePrevWeek} className="p-2 hover:bg-accent-light rounded-lg text-text-secondary hover:text-text-primary transition-colors">
               <Icon name="arrow_left" className="w-4 h-4" />
             </button>
-            <button onClick={handleNextWeek} className="p-1.5 hover:bg-ink-50 dark:hover:bg-ink-900 rounded text-ink-500 transition-colors">
+            <button onClick={handleNextWeek} className="p-2 hover:bg-accent-light rounded-lg text-text-secondary hover:text-text-primary transition-colors">
               <Icon name="arrow_right" className="w-4 h-4" />
             </button>
-            <h2 className="text-[14px] font-medium text-ink-900 dark:text-ink-50 ml-2">
+            <h2 className="text-[14px] font-bold text-text-primary ml-2">
               {formatWeekRange(weekStart, weekEnd)}
             </h2>
           </div>
-          <button onClick={handleToday} className="text-[12px] font-medium text-ink-500 hover:text-ink-900 dark:hover:text-ink-50 transition-colors px-3 py-1.5 rounded-md border hairline hover:bg-ink-50 dark:hover:bg-ink-900">
+          <button onClick={handleToday} className="text-[12px] font-bold text-text-secondary hover:text-text-primary transition-colors px-3 py-1.5 rounded-lg border border-text-secondary/15 bg-white hover:bg-accent-light">
             Today
           </button>
         </div>
 
-        {/* Week Strip */}
-        <div className="grid grid-cols-7 border hairline rounded-xl overflow-hidden bg-white dark:bg-ink-900/50 shadow-sm">
+        {/* Week Strip Calendar */}
+        <div className="grid grid-cols-7 border border-text-secondary/15 rounded-2xl overflow-hidden bg-white shadow-soft">
           {weekDates.map((date) => {
             const iso = toIsoDate(date)
             const isToday = iso === toIsoDate(new Date())
@@ -178,29 +167,29 @@ export function SchedulePage({ domain = 'quality' }: { domain?: InspectionDomain
               <button
                 key={iso}
                 onClick={() => handleDayClick(iso)}
-                className={`flex flex-col items-center p-4 border-r last:border-r-0 hairline hover:bg-ink-50 dark:hover:bg-ink-800 transition-colors relative h-32 ${isSelected ? 'bg-ink-50 dark:bg-ink-800' : ''}`}
+                className={`flex flex-col items-center p-4 border-r last:border-r-0 border-text-secondary/15 hover:bg-accent-light transition-colors relative h-32 ${isSelected ? 'bg-accent-light' : ''}`}
               >
                 {isToday && (
-                  <div className="absolute top-0 left-0 right-0 h-1 bg-ink-900 dark:bg-ink-50" />
+                  <div className="absolute top-0 left-0 right-0 h-1 bg-primary" />
                 )}
-                <span className={`text-[11px] font-medium uppercase tracking-wider mb-1 ${isToday || isSelected ? 'text-ink-900 dark:text-ink-50' : 'text-ink-500 dark:text-ink-400'}`}>
+                <span className={`text-[11px] font-bold uppercase tracking-wider mb-2 ${isToday || isSelected ? 'text-text-primary' : 'text-text-secondary'}`}>
                   {dayName}
                 </span>
-                <span className={`font-display text-3xl mb-4 ${isToday ? 'text-ink-900 dark:text-ink-50' : 'text-ink-700 dark:text-ink-200'}`}>
+                <span className={`font-mono text-2xl font-bold mb-3 ${isToday ? 'text-primary' : 'text-text-primary'}`}>
                   {dayNum}
                 </span>
                 
                 {/* Density dots */}
-                <div className="flex flex-col items-center gap-1">
-                  {dayInspections.slice(0, 5).map((insp, idx) => {
+                <div className="flex items-center justify-center gap-1 flex-wrap max-w-full">
+                  {dayInspections.slice(0, 3).map((insp, idx) => {
                     const tone = STATUS_TONE[insp.status]
-                    const color = tone === 'green' ? 'bg-signal-green' : tone === 'amber' ? 'bg-signal-amber' : tone === 'red' ? 'bg-signal-red' : 'bg-ink-300 dark:bg-ink-600'
+                    const color = tone === 'green' ? 'bg-status-pass' : tone === 'amber' ? 'bg-warning' : tone === 'red' ? 'bg-status-fail' : 'bg-accent-light'
                     return (
                       <div key={idx} className={`w-1.5 h-1.5 rounded-full ${color}`} />
                     )
                   })}
-                  {dayInspections.length > 5 && (
-                    <span className="text-[10px] text-ink-400 font-medium">+{dayInspections.length - 5}</span>
+                  {dayInspections.length > 3 && (
+                    <span className="text-[10px] text-text-secondary font-bold">+{dayInspections.length - 3}</span>
                   )}
                 </div>
               </button>
@@ -209,7 +198,7 @@ export function SchedulePage({ domain = 'quality' }: { domain?: InspectionDomain
         </div>
 
         {/* List of inspections for the week */}
-        <div className="space-y-10 pt-4">
+        <div className="space-y-8 pt-2">
           {weekDates.map(date => {
             const iso = toIsoDate(date)
             const items = inspectionsByDay.get(iso) || []
@@ -219,9 +208,9 @@ export function SchedulePage({ domain = 'quality' }: { domain?: InspectionDomain
             const dayStr = isToday ? 'Today' : date.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })
             
             return (
-              <div key={iso} id={`day-${iso}`} className="scroll-mt-8">
-                <h3 className="text-[13px] font-medium text-ink-900 dark:text-ink-50 mb-4 flex items-center gap-3">
-                  <span className="w-2 h-2 rounded-full bg-ink-300 dark:bg-ink-600" />
+              <div key={iso} id={`day-${iso}`} className="scroll-mt-8 space-y-3">
+                <h3 className="text-[13px] font-bold text-text-primary uppercase tracking-wider ml-1 flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-primary" />
                   {dayStr}
                 </h3>
                 <div className="space-y-3">
@@ -229,23 +218,21 @@ export function SchedulePage({ domain = 'quality' }: { domain?: InspectionDomain
                     <button
                       key={insp.id}
                       onClick={() => nav.push(`${prefix}/inspections/${insp.id}`)}
-                      className="w-full text-left group flex flex-col md:flex-row md:items-center justify-between p-5 rounded-xl border hairline bg-white dark:bg-ink-900/50 hover:border-ink-300 dark:hover:border-ink-600 transition-all shadow-[0_2px_12px_rgba(0,0,0,0.02)] hover:shadow-md"
+                      className="w-full text-left group flex flex-col md:flex-row md:items-center justify-between p-5 rounded-2xl border border-text-secondary/15 bg-white hover:bg-accent-light transition shadow-soft hover:shadow-medium"
                     >
-                      <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-6 mb-3 md:mb-0">
-                        <div className="w-20 shrink-0">
-                          <span className="font-mono text-[16px] text-ink-900 dark:text-ink-50 tracking-tight">
-                            {insp.scheduledFor ? formatClockTime(insp.scheduledFor) : '—'}
-                          </span>
+                      <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-8 mb-3 md:mb-0 min-w-0">
+                        <div className="w-16 shrink-0 font-mono text-[14px] text-text-primary font-bold tracking-tight">
+                          {insp.scheduledFor ? formatClockTime(insp.scheduledFor) : '—'}
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <h4 className="text-[16px] font-medium text-ink-900 dark:text-ink-50 truncate group-hover:text-accent-600 dark:group-hover:text-accent-400 transition-colors">
+                        <div className="min-w-0">
+                          <h4 className="text-[15px] font-semibold text-text-primary group-hover:text-primary transition-colors truncate">
                             {insp.templateName}
                           </h4>
-                          <div className="text-[14px] text-ink-500 flex items-center gap-2 mt-1 truncate">
+                          <div className="text-[12px] text-text-secondary flex items-center gap-2 mt-1 truncate">
                             <span>{insp.siteName}</span>
                             {insp.area && (
                               <>
-                                <span className="w-1 h-1 rounded-full bg-ink-200 dark:bg-ink-700" />
+                                <span className="w-1.5 h-1.5 rounded-full bg-accent-light" />
                                 <span>{insp.area}</span>
                               </>
                             )}
@@ -255,9 +242,7 @@ export function SchedulePage({ domain = 'quality' }: { domain?: InspectionDomain
                       
                       <div className="flex items-center gap-4 shrink-0 self-end md:self-auto">
                         <StatusPill tone={STATUS_TONE[insp.status]}>{STATUS_LABEL[insp.status]}</StatusPill>
-                        <div className="w-6 flex justify-end text-ink-300 dark:text-ink-600 group-hover:text-ink-900 dark:group-hover:text-ink-50 transition-colors">
-                          <Icon name="arrow_right" className="w-4 h-4" />
-                        </div>
+                        <Icon name="chevron_right" className="w-4 h-4 text-text-secondary group-hover:text-text-primary group-hover:translate-x-0.5 transition-all" />
                       </div>
                     </button>
                   ))}
@@ -267,12 +252,12 @@ export function SchedulePage({ domain = 'quality' }: { domain?: InspectionDomain
           })}
           
           {inspectionsForWeek.length === 0 && (
-            <div className="flex flex-col items-center justify-center py-20 border hairline border-dashed rounded-xl text-center">
-              <div className="w-16 h-16 rounded-full bg-ink-50 dark:bg-bg-ink-900 flex items-center justify-center mb-6">
-                <Icon name="calendar" className="w-8 h-8 text-ink-300 dark:text-ink-600" />
+            <div className="flex flex-col items-center justify-center border border-dashed border-text-secondary/15 rounded-2xl py-32 text-center bg-white shadow-soft">
+              <div className="w-14 h-14 rounded-full bg-accent-light flex items-center justify-center mb-4 text-text-secondary">
+                <Icon name="calendar" className="w-6 h-6" />
               </div>
-              <h3 className="text-[18px] font-medium text-ink-900 dark:text-ink-50 mb-2">Nothing scheduled this week.</h3>
-              <p className="text-[14px] text-ink-500">Check with your Quality Manager if you think there's work assigned.</p>
+              <h3 className="text-[16px] font-semibold text-text-primary mb-1">Nothing scheduled this week.</h3>
+              <p className="text-[13px] text-text-secondary max-w-[360px] mx-auto">Check with your manager if you think there is work assigned.</p>
             </div>
           )}
         </div>

@@ -6,6 +6,7 @@ import { Icon } from '../../components/primitives/Icon'
 import { StatusPill } from '../../components/primitives/StatusPill'
 import { SitesRouter } from './admin/SitesRouter'
 import { SettingsPage } from './admin/SettingsPage'
+import { PageBanner } from '../../components/shell/PageBanner'
 
 export function AdminDashboard() {
   const location = useLocation()
@@ -43,192 +44,133 @@ export function AdminDashboard() {
 function OverviewSection() {
   const { user } = useSession()
   const greeting = greetByHour()
+  const attentionItems = ATTENTION
 
   return (
-    <div className="stagger">
-      {/* ============ Hero greeting + priority strip ============ */}
-      <div className="grid grid-cols-12 gap-6">
-        <div className="col-span-12 lg:col-span-7">
-          <div className="flex items-center gap-2 text-[12px] text-ink-500 dark:text-ink-400">
-            <span>System Admin</span>
-            <Icon name="chevron_right" className="w-3 h-3" />
-            <span className="text-ink-900 dark:text-ink-50">Overview</span>
-          </div>
-          <h1 className="mt-2 font-display text-[44px] leading-[1.05] tracking-tight text-ink-900 dark:text-ink-50">
-            {greeting}, <span className="italic text-ink-500 dark:text-ink-400">{firstName(user?.name)}</span>.
-          </h1>
-          <p className="mt-1 text-[14px] text-ink-600 dark:text-ink-300">
-            Three configuration changes need your attention this week.
-          </p>
-          <div className="mt-5 flex items-center gap-2">
-            <button className="inline-flex items-center gap-2 px-3 py-2 rounded-md border hairline bg-white dark:bg-ink-900 text-[12px] font-medium text-ink-700 dark:text-ink-200 hover:bg-ink-50 dark:hover:bg-ink-800 transition-colors">
-              <Icon name="calendar" className="w-3.5 h-3.5" />
-              Last 7 days
-              <Icon name="chevron_down" className="w-3.5 h-3.5" />
+    <div className="space-y-6">
+      <PageBanner
+        title={`${greeting}, ${firstName(user?.name)}.`}
+        subline="Three configuration changes need your attention this week."
+        actions={
+          <>
+            <button className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-white/40 bg-white/10 hover:bg-white/20 text-white text-[13px] font-semibold transition">
+              Audit log
             </button>
-            <button className="inline-flex items-center gap-2 px-3 py-2 rounded-md border hairline bg-white dark:bg-ink-900 text-[12px] font-medium text-ink-700 dark:text-ink-200 hover:bg-ink-50 dark:hover:bg-ink-800 transition-colors">
-              <Icon name="download" className="w-3.5 h-3.5" />
-              Export
+            <button className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-warning hover:bg-warning/90 text-text-primary text-[13px] font-bold transition shadow-sm">
+              + Invite user
             </button>
-          </div>
-        </div>
+          </>
+        }
+      />
 
-        {/* Attention card — the differentiation move */}
-        <div className="col-span-12 lg:col-span-5">
-          <div className="h-full rounded-xl border hairline bg-white dark:bg-ink-900 p-5 flex flex-col">
-            <div className="flex items-center justify-between">
-              <div className="text-[11px] font-medium uppercase tracking-[0.14em] text-ink-500 dark:text-ink-400">
-                Needs your attention
-              </div>
-              <StatusPill tone="amber">3 items</StatusPill>
-            </div>
-            <div className="mt-4 space-y-2.5 flex-1">
-              {ATTENTION.map((a, i) => (
-                <div
-                  key={i}
-                  className="group flex items-start gap-3 cursor-pointer p-2 -mx-2 rounded-md hover:bg-ink-50 dark:hover:bg-ink-800/60 transition-colors"
-                >
-                  <div
-                    className={`mt-1 w-1 h-1 rounded-full shrink-0 ${
-                      a.tone === 'red' ? 'bg-signal-red' : 'bg-signal-amber'
-                    }`}
-                  />
-                  <div className="flex-1 min-w-0">
-                    <div className="text-[13px] text-ink-900 dark:text-ink-50">
-                      {a.title}
-                    </div>
-                    <div className="text-[11px] text-ink-500 dark:text-ink-400 mt-0.5">
-                      {a.context}
-                    </div>
+      {/* Attention banner */}
+      <div className="rounded-2xl bg-white shadow-soft border border-text-secondary/15 p-6">
+        <div className="flex items-center justify-between mb-4">
+          <div className="text-[11px] font-bold uppercase tracking-[0.12em] text-text-secondary">
+            Needs your attention
+          </div>
+          <span className="inline-flex items-center gap-1 bg-warning/15 text-warning text-[11px] font-bold px-2 py-0.5 rounded-full ring-1 ring-warning/30">
+            3 items
+          </span>
+        </div>
+        <div className="space-y-3">
+          {attentionItems.map((item, idx) => (
+            <div
+              key={idx}
+              className="flex items-start justify-between p-3 rounded-xl border border-text-secondary/15 hover:bg-accent-light transition cursor-pointer"
+            >
+              <div className="flex items-start gap-3">
+                <span
+                  className={`mt-1.5 w-2 h-2 rounded-full shrink-0 ${ item.tone === 'red' ? 'bg-status-fail' : 'bg-warning' }`}
+                />
+                <div>
+                  <div className="text-[14px] font-semibold text-text-primary">
+                    {item.title}
                   </div>
-                  <Icon
-                    name="chevron_right"
-                    className="w-3.5 h-3.5 text-ink-300 dark:text-ink-600 group-hover:text-ink-900 dark:group-hover:text-ink-50 group-hover:translate-x-0.5 transition-all shrink-0 mt-1"
-                  />
+                  <div className="text-[12px] text-text-secondary mt-0.5">
+                    {item.context}
+                  </div>
                 </div>
-              ))}
+              </div>
+              <Icon name="chevron_right" className="w-4 h-4 text-text-secondary mt-1" />
             </div>
-          </div>
+          ))}
         </div>
       </div>
 
-      {/* ============ KPI strip ============ */}
-      <div className="mt-8">
-        <KpiStrip kpis={ADMIN_KPIS} />
-      </div>
+      {/* KPI strip */}
+      <KpiStrip kpis={ADMIN_KPIS} />
 
-      {/* ============ Two-column content ============ */}
-      <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Recent activity */}
-        <div className="lg:col-span-2 rounded-xl border hairline bg-white dark:bg-ink-900 overflow-hidden">
-          <div className="px-5 py-4 border-b hairline flex items-center justify-between">
+      {/* Two-column layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-6">
+        {/* Recent Activity */}
+        <div className="rounded-2xl bg-white shadow-soft border border-text-secondary/15 overflow-hidden">
+          <div className="px-6 py-5 border-b border-text-secondary/15 flex items-center justify-between">
             <div>
-              <div className="text-[14px] font-medium text-ink-900 dark:text-ink-50">Recent activity</div>
-              <div className="text-[12px] text-ink-500 dark:text-ink-400 mt-0.5">Across users, templates, and configuration</div>
+              <div className="text-[11px] font-bold uppercase tracking-[0.12em] text-text-secondary">
+                Recent activity
+              </div>
+              <div className="mt-1 text-[18px] font-bold text-text-primary">
+                Across users, templates, and configuration
+              </div>
             </div>
-            <button className="inline-flex items-center gap-1.5 text-[12px] text-ink-600 dark:text-ink-300 hover:text-ink-900 dark:hover:text-ink-50 transition-colors">
-              <Icon name="filter" className="w-3.5 h-3.5" />
-              Filter
-            </button>
           </div>
-          <div className="divide-y hairline">
-            {ACTIVITY.map((row, i) => (
+          <div className="divide-y divide-text-secondary/15">
+            {ACTIVITY.map((row) => (
               <div
-                key={i}
-                className="px-5 py-3.5 flex items-center gap-4 hover:bg-ink-50 dark:hover:bg-ink-800/60 transition-colors cursor-pointer group"
+                key={row.id}
+                className="px-6 py-4 flex items-center gap-4 hover:bg-accent-light transition cursor-pointer"
               >
-                <div className="font-mono text-[10px] text-ink-400 dark:text-ink-500 w-16 shrink-0">
+                <div className="font-mono text-[13px] text-text-secondary w-20 shrink-0">
                   {row.id}
                 </div>
-                <div className="flex-1 min-w-0">
-                  <div className="text-[13px] text-ink-900 dark:text-ink-50 truncate">
-                    <span className="font-medium">{row.actor}</span>{' '}
-                    <span className="text-ink-500 dark:text-ink-400">{row.verb}</span>{' '}
-                    <span className="font-mono text-ink-700 dark:text-ink-200">{row.target}</span>
+                <div className="flex-grow min-w-0">
+                  <div className="text-[14px] font-semibold text-text-primary truncate">
+                    {row.actor} <span className="text-[13px] font-normal text-text-secondary">{row.verb}</span>{' '}
+                    <span className="font-mono text-[13px] text-primary">{row.target}</span>
                   </div>
-                  <div className="text-[11px] text-ink-500 dark:text-ink-400 mt-0.5 truncate">
+                  <div className="text-[12px] text-text-secondary mt-0.5 truncate">
                     {row.context}
                   </div>
                 </div>
                 <StatusPill tone={row.tone}>{row.label}</StatusPill>
-                <span className="hidden sm:inline text-[11px] font-mono text-ink-400 dark:text-ink-500 w-12 text-right shrink-0">
+                <div className="font-mono text-[13px] text-text-secondary w-12 text-right shrink-0">
                   {row.when}
-                </span>
+                </div>
               </div>
             ))}
           </div>
-          <div className="px-5 py-3 border-t hairline">
-            <button className="text-[12px] text-ink-600 dark:text-ink-300 hover:text-ink-900 dark:hover:text-ink-50 inline-flex items-center gap-1 transition-colors">
-              View full audit log
-              <Icon name="arrow_right" className="w-3 h-3" />
-            </button>
-          </div>
         </div>
 
-        {/* Right rail */}
+        {/* System Health */}
         <div className="space-y-6">
-          {/* System health */}
-          <div className="rounded-xl border hairline bg-white dark:bg-ink-900 p-5">
-            <div className="flex items-center justify-between">
-              <div className="text-[14px] font-medium text-ink-900 dark:text-ink-50">System health</div>
-              <StatusPill tone="green">All systems go</StatusPill>
+          <SystemHealthPanel metrics={HEALTH} />
+          
+          {/* Quick Actions */}
+          <div className="rounded-2xl bg-white shadow-soft border border-text-secondary/15 overflow-hidden">
+            <div className="px-6 py-5 border-b border-text-secondary/15">
+              <div className="text-[11px] font-bold uppercase tracking-[0.12em] text-text-secondary">
+                Quick actions
+              </div>
+              <div className="mt-1 text-[18px] font-bold text-text-primary">
+                System controls
+              </div>
             </div>
-            <div className="mt-5 space-y-3">
-              {HEALTH.map((m, i) => (
-                <div key={i}>
-                  <div className="flex items-center justify-between text-[12px]">
-                    <span className="text-ink-700 dark:text-ink-200">{m.label}</span>
-                    <span
-                      className={`font-mono ${
-                        m.tone === 'green'
-                          ? 'text-signal-green'
-                          : m.tone === 'amber'
-                          ? 'text-signal-amber'
-                          : 'text-signal-red'
-                      }`}
-                    >
-                      {m.value}
-                    </span>
-                  </div>
-                  <div className="mt-1.5 h-1 bg-ink-100 dark:bg-ink-800 rounded-full overflow-hidden">
-                    <div
-                      className={`h-full rounded-full transition-all ${
-                        m.tone === 'green'
-                          ? 'bg-signal-green'
-                          : m.tone === 'amber'
-                          ? 'bg-signal-amber'
-                          : 'bg-signal-red'
-                      }`}
-                      style={{ width: `${m.percent}%` }}
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Quick actions */}
-          <div className="rounded-xl border hairline bg-white dark:bg-ink-900 overflow-hidden">
-            <div className="px-5 py-4 border-b hairline">
-              <div className="text-[14px] font-medium text-ink-900 dark:text-ink-50">Quick actions</div>
-            </div>
-            <div className="divide-y hairline">
-              {QUICK_ACTIONS.map((a, i) => (
+            <div className="divide-y divide-text-secondary/15">
+              {QUICK_ACTIONS.map((a) => (
                 <button
-                  key={i}
-                  className="w-full px-5 py-3 flex items-center gap-3 hover:bg-ink-50 dark:hover:bg-ink-800/60 transition-colors group text-left"
+                  key={a.label}
+                  className="w-full px-6 py-4 flex items-center justify-between hover:bg-accent-light transition group text-left"
                 >
-                  <div className="w-7 h-7 rounded-md border hairline flex items-center justify-center text-ink-700 dark:text-ink-200 group-hover:bg-ink-900 group-hover:text-ink-50 dark:group-hover:bg-ink-50 dark:group-hover:text-ink-900 transition-colors">
-                    <Icon name={a.icon} className="w-3.5 h-3.5" />
+                  <div>
+                    <div className="text-[14px] font-semibold text-text-primary">
+                      {a.label}
+                    </div>
+                    <div className="text-[12px] text-text-secondary mt-0.5">
+                      {a.hint}
+                    </div>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="text-[13px] text-ink-900 dark:text-ink-50">{a.label}</div>
-                    <div className="text-[11px] text-ink-500 dark:text-ink-400 mt-0.5">{a.hint}</div>
-                  </div>
-                  <Icon
-                    name="arrow_right"
-                    className="w-3.5 h-3.5 text-ink-300 dark:text-ink-600 group-hover:text-ink-900 dark:group-hover:text-ink-50 group-hover:translate-x-0.5 transition-all"
-                  />
+                  <Icon name="arrow_right" className="w-4 h-4 text-text-secondary group-hover:translate-x-1 transition-transform" />
                 </button>
               ))}
             </div>
@@ -244,25 +186,59 @@ function OverviewSection() {
  * ============================================================ */
 function PlaceholderSection({ itemKey }: { itemKey: string }) {
   return (
-    <div className="stagger">
-      <div className="flex items-center gap-2 text-[12px] text-ink-500 dark:text-ink-400">
-        <span>System Admin</span>
-        <Icon name="chevron_right" className="w-3 h-3" />
-        <span className="text-ink-900 dark:text-ink-50 capitalize">{itemKey.replace(/_/g, ' ')}</span>
-      </div>
-      <h1 className="mt-2 font-display text-[44px] leading-[1.05] tracking-tight text-ink-900 dark:text-ink-50">
-        <span className="capitalize">{itemKey.replace(/_/g, ' ')}</span>
-      </h1>
-      <p className="mt-1 text-[14px] text-ink-600 dark:text-ink-300 max-w-[520px]">
-        This module is part of the Admin deep build coming in the next step. Click Overview in the sidebar to return.
-      </p>
-      <div className="mt-10 rounded-xl border hairline border-dashed bg-white/50 dark:bg-ink-900/40 p-12 text-center">
-        <div className="text-[11px] font-medium uppercase tracking-[0.18em] text-ink-400 dark:text-ink-500">
+    <div className="space-y-6">
+      <PageBanner
+        title={itemKey.replace(/_/g, ' ')}
+        subline={`Configuration segment for ${itemKey.replace(/_/g, ' ')}`}
+      />
+      <div className="rounded-2xl bg-white shadow-soft border border-text-secondary/15 p-12 text-center">
+        <div className="text-[11px] font-bold uppercase tracking-[0.12em] text-text-secondary mb-2">
           Coming soon
         </div>
-        <div className="mt-2 font-display text-[28px] leading-tight tracking-tight text-ink-700 dark:text-ink-200">
-          Module wireframe pending.
+        <div className="text-[18px] font-bold text-text-primary">
+          Module is currently being developed.
         </div>
+        <p className="mt-2 text-[13px] text-text-secondary max-w-[360px] mx-auto">
+          Please click on Overview in the sidebar to return to the active system dashboard.
+        </p>
+      </div>
+    </div>
+  )
+}
+
+function SystemHealthPanel({ metrics }: { metrics: any[] }) {
+  return (
+    <div className="rounded-2xl bg-white shadow-soft border border-text-secondary/15 p-6">
+      <div className="flex items-center justify-between mb-5">
+        <div>
+          <div className="text-[11px] font-bold uppercase tracking-[0.12em] text-text-secondary">
+            System health
+          </div>
+          <div className="mt-1 text-[18px] font-bold text-text-primary">
+            All systems go
+          </div>
+        </div>
+        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-status-pass/10 text-status-pass text-[11px] font-bold uppercase tracking-wide ring-1 ring-status-pass/20">
+          <span className="w-1.5 h-1.5 rounded-full bg-status-pass animate-pulse" />
+          Healthy
+        </span>
+      </div>
+      
+      <div className="space-y-4">
+        {metrics.map((m) => (
+          <div key={m.label}>
+            <div className="flex items-baseline justify-between mb-1.5">
+              <div className="text-[13px] text-text-secondary">{m.label}</div>
+              <div className="font-mono text-[13px] font-bold text-text-primary">{m.value}</div>
+            </div>
+            <div className="h-1.5 bg-accent-light rounded-full overflow-hidden">
+              <div 
+                className={`h-full ${m.tone === 'green' ? 'bg-status-pass' : m.tone === 'amber' ? 'bg-warning' : 'bg-primary'}`}
+                style={{ width: `${m.percent}%` }}
+              />
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   )

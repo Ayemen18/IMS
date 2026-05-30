@@ -6,6 +6,7 @@ import {
   getCompletedResponses
 } from '../../../lib/inspections'
 import { Icon } from '../../../components/primitives/Icon'
+import { PageBanner } from '../../../components/shell/PageBanner'
 
 type DomainFilter = 'all' | 'quality' | 'safety'
 
@@ -68,76 +69,72 @@ export function BySitePage() {
   sites.sort((a, b) => a.compRate - b.compRate)
 
   return (
-    <div className="max-w-6xl mx-auto px-6 py-12 space-y-12">
-      <div className="flex items-start justify-between">
-        <div className="space-y-4">
-          <div className="text-[11px] font-mono text-ink-500 dark:text-ink-400 uppercase tracking-widest">
-            Top Management {'>'} By site
-          </div>
-          <div>
-            <h1 className="font-display text-[40px] leading-tight text-ink-900 dark:text-ink-50">
-              Compliance <span className="italic">by site</span>.
-            </h1>
-            <p className="text-[14px] text-ink-500 dark:text-ink-400 mt-2 font-mono">
-              {sites.length} sites · last refreshed {timeStr}
-            </p>
-          </div>
-        </div>
-
-        <div className="flex bg-ink-100 dark:bg-ink-800 p-1 rounded-md">
-          {(['all', 'quality', 'safety'] as const).map(d => (
-            <button
-              key={d}
-              onClick={() => setDomain(d)}
-              className={`px-4 py-1.5 text-[13px] font-medium rounded capitalize transition-colors ${
-                domain === d 
-                  ? 'bg-accent-500/10 dark:bg-accent-500/15 text-accent-700 dark:text-accent-300 border border-accent-500/20' 
-                  : 'text-ink-500 dark:text-ink-400 hover:text-ink-900 dark:hover:text-ink-50'
-              }`}
-            >
-              {d}
-            </button>
-          ))}
-        </div>
+    <div className="space-y-6">
+      {/* Breadcrumb */}
+      <div className="text-[11px] font-bold uppercase tracking-[0.12em] text-text-secondary">
+        Top Management &gt; By site
       </div>
 
-      <div className="bg-white dark:bg-ink-950 border hairline rounded-lg overflow-hidden">
+      <PageBanner
+        title="Compliance by Site"
+        subline={`${sites.length} sites · last refreshed ${timeStr}`}
+        actions={
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] font-bold uppercase tracking-[0.12em] text-white/60 mr-1">
+              Domain Filter:
+            </span>
+            <div className="flex bg-white/10 p-0.5 rounded-xl border border-white/10">
+              {(['all', 'quality', 'safety'] as const).map(d => (
+                <button
+                  key={d}
+                  onClick={() => setDomain(d)}
+                  className={`px-3.5 py-1.5 text-[11px] font-bold rounded-lg capitalize transition-all ${ domain === d ? 'bg-warning text-text-primary shadow-sm' : 'text-white hover:text-warning' }`}
+                >
+                  {d}
+                </button>
+              ))}
+            </div>
+          </div>
+        }
+      />
+
+      <div className="rounded-2xl bg-white border border-text-secondary/15 shadow-soft overflow-hidden">
         {sites.length === 0 ? (
-          <div className="p-12 text-center text-[13px] text-ink-500 dark:text-ink-400">
+          <div className="p-12 text-center text-[13px] text-text-secondary">
             No site data yet.
           </div>
         ) : (
           <table className="w-full text-left">
             <thead>
-              <tr className="border-b hairline bg-ink-50 dark:bg-ink-900/50">
-                <th className="px-6 py-4 text-[12px] font-medium text-ink-500 dark:text-ink-400 uppercase tracking-wider w-1/4">Site</th>
-                <th className="px-6 py-4 text-[12px] font-medium text-ink-500 dark:text-ink-400 uppercase tracking-wider w-32">Compliance</th>
-                <th className="px-6 py-4 text-[12px] font-medium text-ink-500 dark:text-ink-400 uppercase tracking-wider w-32">Completed<br/><span className="text-[10px] normal-case tracking-normal opacity-75">last 30d</span></th>
-                <th className="px-6 py-4 text-[12px] font-medium text-ink-500 dark:text-ink-400 uppercase tracking-wider w-24">Open<br/><span className="text-[10px] normal-case tracking-normal opacity-75">issues</span></th>
-                <th className="px-6 py-4 text-[12px] font-medium text-ink-500 dark:text-ink-400 uppercase tracking-wider w-24">Aging<br/><span className="text-[10px] normal-case tracking-normal opacity-75">{'>'} 7 days</span></th>
-                <th className="px-6 py-4 text-[12px] font-medium text-ink-500 dark:text-ink-400 uppercase tracking-wider">Posture<br/><span className="text-[10px] normal-case tracking-normal opacity-75">Pass / Fail / NA</span></th>
+              <tr className="border-b border-text-secondary/15 bg-accent-light/50">
+                <th className="px-6 py-4 text-[11px] font-bold text-text-secondary uppercase tracking-wider w-1/4">Site</th>
+                <th className="px-6 py-4 text-[11px] font-bold text-text-secondary uppercase tracking-wider w-32">Compliance</th>
+                <th className="px-6 py-4 text-[11px] font-bold text-text-secondary uppercase tracking-wider w-32">Completed<br/><span className="text-[9px] font-normal normal-case tracking-normal text-text-secondary">last 30d</span></th>
+                <th className="px-6 py-4 text-[11px] font-bold text-text-secondary uppercase tracking-wider w-24">Open<br/><span className="text-[9px] font-normal normal-case tracking-normal text-text-secondary">issues</span></th>
+                <th className="px-6 py-4 text-[11px] font-bold text-text-secondary uppercase tracking-wider w-24">Aging<br/><span className="text-[9px] font-normal normal-case tracking-normal text-text-secondary">{'>'} 7 days</span></th>
+                <th className="px-6 py-4 text-[11px] font-bold text-text-secondary uppercase tracking-wider">Posture<br/><span className="text-[9px] font-normal normal-case tracking-normal text-text-secondary">Pass / Fail / NA</span></th>
                 <th className="px-6 py-4 w-12"></th>
               </tr>
             </thead>
-            <tbody className="divide-y hairline">
+            <tbody className="divide-y divide-text-secondary/15">
               {sites.map((site: any) => {
-                const compColor = site.compRate >= 95 ? 'text-signal-green' : site.compRate >= 90 ? 'text-signal-amber' : 'text-signal-red'
-                const openColor = site.openIssues > 0 ? 'text-signal-red font-medium' : 'text-ink-500 dark:text-ink-400'
-                const agingColor = site.agedIssues > 0 ? 'text-signal-red font-medium' : 'text-ink-500 dark:text-ink-400'
+                const compColor = site.compRate >= 95 ? 'text-status-pass' : site.compRate >= 90 ? 'text-warning' : 'text-status-fail'
+                const openColor = site.openIssues > 0 ? 'text-status-fail font-bold' : 'text-text-secondary'
+                const agingColor = site.agedIssues > 0 ? 'text-status-fail font-bold' : 'text-text-secondary'
 
                 return (
-                  <tr key={site.siteId} className="group hover:bg-ink-50 dark:hover:bg-ink-900/20 transition-colors">
+                  <tr key={site.siteId} className="group hover:bg-accent-light/50 transition-colors cursor-pointer">
                     <td className="px-6 py-4">
-                      <div className="text-[14px] font-medium text-ink-900 dark:text-ink-50">{site.siteName}</div>
-                      <div className="text-[11px] font-mono text-ink-500 dark:text-ink-400 mt-0.5">{site.siteId}</div>
+                      <div className="text-[14px] font-bold text-text-primary">{site.siteName}</div>
+                      <div className="text-[11px] font-mono text-text-secondary mt-0.5">{site.siteId}</div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className={`font-display text-[28px] leading-none ${compColor}`}>
-                        {site.compRate}<span className="text-[18px]">%</span>
+                      <div className={`text-[24px] font-bold tracking-tight ${compColor}`}>
+                        {site.compRate}<span className="text-[16px] font-semibold">%</span>
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="font-mono text-[13px] text-ink-900 dark:text-ink-50">{site.completedCount}</div>
+                      <div className="font-mono text-[13px] text-text-primary font-semibold">{site.completedCount}</div>
                     </td>
                     <td className="px-6 py-4">
                       <div className={`font-mono text-[13px] ${openColor}`}>{site.openIssues}</div>
@@ -148,23 +145,23 @@ export function BySitePage() {
                     <td className="px-6 py-4">
                       {site.posture.total > 0 ? (
                         <div className="space-y-1.5 w-full max-w-[200px]">
-                          <div className="flex h-2 w-full rounded-full overflow-hidden bg-ink-100 dark:bg-ink-800">
-                            {site.posture.passPct > 0 && <div style={{ width: `${site.posture.passPct}%` }} className="bg-signal-green h-full" />}
-                            {site.posture.failPct > 0 && <div style={{ width: `${site.posture.failPct}%` }} className="bg-signal-red h-full" />}
-                            {site.posture.naPct > 0 && <div style={{ width: `${site.posture.naPct}%` }} className="bg-ink-300 dark:bg-ink-600 h-full" />}
+                          <div className="flex h-2 w-full rounded-full overflow-hidden bg-accent-light">
+                            {site.posture.passPct > 0 && <div style={{ width: `${site.posture.passPct}%` }} className="bg-status-pass h-full" />}
+                            {site.posture.failPct > 0 && <div style={{ width: `${site.posture.failPct}%` }} className="bg-status-fail h-full" />}
+                            {site.posture.naPct > 0 && <div style={{ width: `${site.posture.naPct}%` }} className="bg-accent-light h-full" />}
                           </div>
-                          <div className="flex justify-between text-[10px] font-mono text-ink-500 dark:text-ink-400">
+                          <div className="flex justify-between text-[10px] font-mono text-text-secondary">
                             {site.posture.passPct > 0 && <span>{Math.round(site.posture.passPct)}%</span>}
-                            {site.posture.failPct > 0 && <span className={site.posture.failPct > 0 ? 'text-signal-red' : ''}>{Math.round(site.posture.failPct)}%</span>}
+                            {site.posture.failPct > 0 && <span className="text-status-fail">{Math.round(site.posture.failPct)}%</span>}
                             {site.posture.naPct > 0 && <span>{Math.round(site.posture.naPct)}%</span>}
                           </div>
                         </div>
                       ) : (
-                        <div className="text-[11px] font-mono text-ink-400 dark:text-ink-600">No data</div>
+                        <div className="text-[11px] font-mono text-text-secondary">No data</div>
                       )}
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <Icon name="chevron_right" className="w-5 h-5 text-ink-300 dark:text-ink-600 group-hover:text-ink-500 dark:group-hover:text-ink-400" />
+                      <Icon name="chevron_right" className="w-5 h-5 text-text-secondary group-hover:text-text-primary transition-colors" />
                     </td>
                   </tr>
                 )

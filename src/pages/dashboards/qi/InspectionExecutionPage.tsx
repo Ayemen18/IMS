@@ -83,8 +83,8 @@ export function InspectionExecutionPage({ domain = 'quality' }: { domain?: Inspe
     return (
       <DashboardShell hideSidebar hideTopbar>
         {() => (
-          <div className="flex h-screen items-center justify-center bg-ink-50 dark:bg-ink-950">
-            <div className="text-ink-500">Inspection not found</div>
+          <div className="flex h-screen items-center justify-center bg-accent-light">
+            <div className="text-text-secondary">Inspection not found</div>
           </div>
         )}
       </DashboardShell>
@@ -95,11 +95,11 @@ export function InspectionExecutionPage({ domain = 'quality' }: { domain?: Inspe
     return (
       <DashboardShell hideSidebar hideTopbar>
         {() => (
-          <div className="flex h-screen items-center justify-center bg-ink-50 dark:bg-ink-950">
+          <div className="flex h-screen items-center justify-center bg-accent-light">
             <div className="text-center">
-              <h1 className="font-display text-3xl mb-2">This inspection is in {inspection.status.replace('_', ' ')} status.</h1>
-              <p className="text-ink-600 mb-6">You can't edit it anymore.</p>
-              <button onClick={() => navigate(prefix)} className="btn-primary">Back to My day</button>
+              <h1 className="text-3xl font-bold text-text-primary mb-2">This inspection is in {inspection.status.replace('_', ' ')} status.</h1>
+              <p className="text-text-secondary mb-6">You can't edit it anymore.</p>
+              <button onClick={() => navigate(prefix)} className="btn-primary">Back to My Day</button>
             </div>
           </div>
         )}
@@ -177,22 +177,22 @@ export function InspectionExecutionPage({ domain = 'quality' }: { domain?: Inspe
     return (
       <DashboardShell hideSidebar hideTopbar>
         {() => (
-          <div className="flex h-screen items-center justify-center bg-ink-50 dark:bg-ink-950">
-            <div className="max-w-[520px] w-full p-10 bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-800 rounded-xl text-center shadow-sm">
-              <h1 className="font-display text-[36px] leading-tight text-ink-900 dark:text-ink-50 mb-4">
+          <div className="flex h-screen items-center justify-center bg-accent-light">
+            <div className="max-w-[520px] w-full p-10 bg-white border border-text-secondary/15 rounded-2xl text-center shadow-soft">
+              <h1 className="text-[32px] font-bold tracking-tight leading-tight text-text-primary mb-4">
                 Ready to start this inspection?
               </h1>
-              <div className="text-ink-600 dark:text-ink-300 mb-6">
-                <div className="font-medium text-ink-900 dark:text-ink-100">{template.name}</div>
-                <div>{inspection.area} · {inspection.siteName}</div>
-                <div className="text-sm mt-1">Scheduled: {new Date(inspection.scheduledFor).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}</div>
+              <div className="text-text-secondary mb-6 space-y-1">
+                <div className="font-bold text-text-primary text-lg">{template.name}</div>
+                <div className="font-medium">{inspection.area} · {inspection.siteName}</div>
+                <div className="text-sm font-medium mt-1">Scheduled: {new Date(inspection.scheduledFor).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}</div>
               </div>
-              <div className="text-sm text-ink-500 mb-8 border-t border-ink-100 dark:border-ink-800 pt-4">
+              <div className="text-sm text-text-secondary font-bold uppercase tracking-wider mb-8 border-t border-text-secondary/15 pt-4">
                 {allItems.length} items across {template.sections.length} sections.
               </div>
               <button 
                 onClick={handleStart}
-                className="w-full bg-signal-green text-white py-4 rounded-lg font-medium text-lg hover:bg-signal-green/90 transition-colors"
+                className="w-full bg-warning text-text-primary py-3.5 rounded-xl font-bold text-[15px] hover:bg-warning/90 transition-colors shadow-sm"
               >
                 Start now
               </button>
@@ -206,18 +206,18 @@ export function InspectionExecutionPage({ domain = 'quality' }: { domain?: Inspe
   return (
     <DashboardShell hideSidebar hideTopbar>
       {() => (
-        <div className="min-h-screen flex flex-col bg-ink-50 dark:bg-ink-950">
-          <header className="sticky top-0 z-20 flex h-16 items-center justify-between px-6 bg-white dark:bg-ink-900 border-b border-ink-200 dark:border-ink-800">
+        <div className="min-h-screen flex flex-col bg-accent-light">
+          <header className="sticky top-0 z-20 flex h-16 items-center justify-between px-6 bg-white border-b border-text-secondary/15">
             <div className="flex items-center gap-4">
-              <button onClick={() => navigate(prefix)} className="p-2 -ml-2 text-ink-500 hover:text-ink-900 dark:hover:text-ink-50">
+              <button onClick={() => navigate(prefix)} className="p-2 -ml-2 text-text-secondary hover:text-text-primary transition-colors">
                 <Icon name="arrow_right" className="w-5 h-5 rotate-180" />
               </button>
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="font-mono text-xs text-ink-500">{inspection.number}</span>
-                  <span className="font-medium text-sm text-ink-900 dark:text-ink-50">{template.name}</span>
+                  <span className="font-mono text-xs text-text-secondary font-bold">{inspection.number}</span>
+                  <span className="font-bold text-sm text-text-primary">{template.name}</span>
                 </div>
-                <div className="text-xs text-ink-500">{inspection.area} · {inspection.siteName}</div>
+                <div className="text-xs text-text-secondary font-medium">{inspection.area} · {inspection.siteName}</div>
               </div>
             </div>
             <div className="flex items-center gap-3">
@@ -226,14 +226,14 @@ export function InspectionExecutionPage({ domain = 'quality' }: { domain?: Inspe
                   saveResponses(inspection.id, localResponses)
                   setSaveStatus('saved')
                 }}
-                className="px-4 py-2 text-sm font-medium border border-ink-200 dark:border-ink-700 rounded-lg hover:bg-ink-100 dark:hover:bg-ink-800"
+                className="px-4 py-2 text-sm font-bold border border-text-secondary/15 rounded-lg hover:bg-accent-light text-text-primary transition-colors bg-white shadow-sm"
               >
                 Save draft
               </button>
               <button
                 disabled={!canSubmit}
                 onClick={() => setShowSubmitModal(true)}
-                className="px-4 py-2 text-sm font-medium bg-ink-900 text-white dark:bg-ink-50 dark:text-ink-900 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-4 py-2 text-sm font-bold bg-primary text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-primary transition-colors shadow-sm"
               >
                 Submit ({allItems.filter(i => isItemComplete(i, getResponse(i.id))).length} of {allItems.filter(i => i.required).length})
               </button>
@@ -241,46 +241,46 @@ export function InspectionExecutionPage({ domain = 'quality' }: { domain?: Inspe
           </header>
 
           {inspection.status === 'rejected' && (
-            <div className="bg-signal-amber/10 border-b border-signal-amber/20 p-4 flex flex-col items-center text-center">
-              <div className="flex items-center gap-2 text-signal-amber font-medium mb-1">
+            <div className="bg-warning/10 border-b border-warning/20 p-4 flex flex-col items-center text-center">
+              <div className="flex items-center gap-2 text-warning font-bold mb-1">
                 <Icon name="alert" className="w-5 h-5" />
                 <span>Returned for rework</span>
               </div>
-              <p className="text-sm text-ink-700 dark:text-ink-300 italic max-w-2xl">
+              <p className="text-sm text-text-primary font-medium italic max-w-2xl">
                 "{inspection.timeline.find(e => e.action === 'rejected')?.note || 'Your manager sent this back to you.'}"
               </p>
-              <button onClick={handleResume} className="mt-3 px-4 py-2 bg-signal-amber text-white font-medium rounded-lg hover:bg-signal-amber/90">
+              <button onClick={handleResume} className="mt-3 px-4 py-2 bg-warning text-text-primary font-bold rounded-lg hover:bg-warning/90 transition-colors shadow-sm">
                 Resume editing
               </button>
             </div>
           )}
 
-          <div className="bg-white dark:bg-ink-900 border-b border-ink-200 dark:border-ink-800 px-6 py-4 sticky top-16 z-10 flex flex-col items-center">
+          <div className="bg-white border-b border-text-secondary/15 px-6 py-4 sticky top-16 z-10 flex flex-col items-center">
             <div className="max-w-[720px] w-full mx-auto flex flex-col items-center">
               <div className="flex gap-2 w-full overflow-x-auto pt-6 pb-2 scrollbar-hide items-end justify-start sm:justify-center">
                 {template.sections.map((section, sIdx) => (
                   <div key={section.id} className="flex gap-1 items-end relative mr-4">
-                    <div className="absolute -top-5 left-0 text-[10px] uppercase tracking-wider font-mono text-ink-400 whitespace-nowrap">
+                    <div className="absolute -top-5 left-0 text-[10px] uppercase tracking-wider font-mono text-text-secondary whitespace-nowrap font-bold">
                       {section.title}
                     </div>
-                    {sIdx > 0 && <div className="w-[2px] h-4 bg-ink-200 dark:bg-ink-700 absolute -left-3" />}
+                    {sIdx > 0 && <div className="w-[2px] h-4 bg-accent-light absolute -left-3" />}
                     {section.items.map(item => {
                       const idx = allItems.findIndex(i => i.id === item.id)
                       const isCurrent = idx === currentItemIndex
                       const resp = getResponse(item.id)
                       
                       let bg = 'bg-transparent'
-                      let border = 'border-ink-200 dark:border-ink-700'
-                      if (resp.answer === 'pass') { bg = 'bg-signal-green'; border = 'border-signal-green' }
-                      else if (resp.answer === 'fail') { bg = 'bg-signal-red'; border = 'border-signal-red' }
-                      else if (resp.answer === 'na') { bg = 'bg-ink-500'; border = 'border-ink-500' }
-                      else if (isItemComplete(item, resp)) { bg = 'bg-ink-800 dark:bg-ink-200'; border = 'border-ink-800 dark:border-ink-200' }
+                      let border = 'border-text-secondary/15'
+                      if (resp.answer === 'pass') { bg = 'bg-status-pass'; border = 'border-status-pass' }
+                      else if (resp.answer === 'fail') { bg = 'bg-status-fail'; border = 'border-status-fail' }
+                      else if (resp.answer === 'na') { bg = 'bg-accent-light'; border = 'border-text-secondary/15' }
+                      else if (isItemComplete(item, resp)) { bg = 'bg-accent-light'; border = 'border-text-secondary/15' }
                       
                       return (
                         <button
                           key={item.id}
                           onClick={() => setCurrentItemIndex(idx)}
-                          className={`w-3 h-3 rounded-sm border ${bg} ${border} transition-all ${isCurrent ? 'ring-2 ring-ink-900 dark:ring-ink-50 ring-offset-2 ring-offset-white dark:ring-offset-ink-900 scale-110 mx-1' : 'hover:scale-110'}`}
+                          className={`w-3 h-3 rounded-sm border ${bg} ${border} transition-all ${isCurrent ? 'ring-2 ring-primary ring-offset-2 ring-offset-white scale-110 mx-1' : 'hover:scale-110'}`}
                           aria-label={`Go to item ${idx + 1}`}
                         />
                       )
@@ -288,11 +288,11 @@ export function InspectionExecutionPage({ domain = 'quality' }: { domain?: Inspe
                   </div>
                 ))}
               </div>
-              <div className="mt-3 font-mono text-[11px] text-ink-500 w-full text-center">
+              <div className="mt-3 font-mono text-[11px] text-text-secondary w-full text-center font-bold">
                 Item {currentItemIndex + 1} of {allItems.length} ·{' '}
-                <span className="text-signal-green">{localResponses.filter(r => r.answer === 'pass').length} passed</span> ·{' '}
-                <span className="text-signal-red">{localResponses.filter(r => r.answer === 'fail').length} failed</span> ·{' '}
-                <span className="text-ink-400">{localResponses.filter(r => r.answer === 'na').length} N/A</span> ·{' '}
+                <span className="text-status-pass">{localResponses.filter(r => r.answer === 'pass').length} passed</span> ·{' '}
+                <span className="text-status-fail">{localResponses.filter(r => r.answer === 'fail').length} failed</span> ·{' '}
+                <span className="text-text-secondary">{localResponses.filter(r => r.answer === 'na').length} N/A</span> ·{' '}
                 {allItems.length - localResponses.filter(r => isItemComplete(allItems.find(i=>i.id===r.itemId)!, r)).length} remaining
               </div>
             </div>
@@ -302,18 +302,18 @@ export function InspectionExecutionPage({ domain = 'quality' }: { domain?: Inspe
             <div className="max-w-[720px] mx-auto px-6 pt-6 pb-32">
               {currentItem && currentSection && currentResponse && (
                 <div className="animate-fade-in">
-                  <div className="mb-4 text-ink-500 flex items-baseline gap-2">
-                    <span className="font-display italic text-[16px]">{currentSection.title}</span>
-                    <span className="font-mono text-[11px]">· {template.sections.findIndex(s => s.id === currentSection.id) + 1} of {template.sections.length}</span>
+                  <div className="mb-4 text-text-secondary flex items-baseline gap-2">
+                    <span className="text-[14px] font-bold text-text-primary">{currentSection.title}</span>
+                    <span className="font-mono text-[11px] font-bold">· {template.sections.findIndex(s => s.id === currentSection.id) + 1} of {template.sections.length}</span>
                   </div>
                   
-                  <div className="font-mono text-sm text-ink-400 mb-2 flex items-center">
+                  <div className="font-mono text-xs text-text-secondary mb-2 flex items-center font-bold">
                     Item {String(currentItemIndex + 1).padStart(2, '0')}
                   </div>
 
-                  <h2 className="font-display text-[32px] leading-snug text-ink-900 dark:text-ink-50 mb-8 text-balance">
+                  <h2 className="text-[28px] font-bold leading-snug text-text-primary mb-8 text-balance">
                     {currentItem.prompt}
-                    {currentItem.required && <span className="text-signal-red font-mono text-[16px] ml-1">*</span>}
+                    {currentItem.required && <span className="text-status-fail font-mono text-[16px] ml-1">*</span>}
                   </h2>
 
                   <div className="mb-8">
@@ -321,30 +321,30 @@ export function InspectionExecutionPage({ domain = 'quality' }: { domain?: Inspe
                       <div className="flex gap-4">
                         <button
                           onClick={() => updateResponse({ ...currentResponse, answer: 'pass' })}
-                          className={`flex-1 py-6 px-8 min-h-[80px] rounded-xl border flex flex-col items-center justify-center gap-3 transition-all outline-none ${currentResponse.answer === 'pass' ? 'bg-signal-green border-signal-green text-white' : 'border-ink-200 dark:border-ink-700 text-ink-600 dark:text-ink-300 hover:bg-signal-green/10 hover:border-signal-green/30 border-l-[6px] hover:border-l-[6px] border-l-signal-green'}`}
+                          className={`flex-1 py-6 px-8 min-h-[80px] rounded-xl border flex flex-col items-center justify-center gap-3 transition-all outline-none ${currentResponse.answer === 'pass' ? 'bg-status-pass border-status-pass text-white' : 'border-text-secondary/15 text-text-secondary bg-white hover:bg-status-pass/10 hover:border-status-pass/30 border-l-[6px] hover:border-l-[6px] border-l-status-pass font-bold'}`}
                         >
-                          <Icon name="check" className={`w-8 h-8 ${currentResponse.answer === 'pass' ? '' : 'text-signal-green'}`} />
-                          <span className="font-medium tracking-wide">PASS</span>
+                          <Icon name="check" className={`w-8 h-8 ${currentResponse.answer === 'pass' ? '' : 'text-status-pass'}`} />
+                          <span className="font-bold tracking-wide">PASS</span>
                         </button>
                         <button
                           onClick={() => updateResponse({ ...currentResponse, answer: 'fail' })}
-                          className={`flex-1 py-6 px-8 min-h-[80px] rounded-xl border flex flex-col items-center justify-center gap-3 transition-all outline-none ${currentResponse.answer === 'fail' ? 'bg-signal-red border-signal-red text-white' : 'border-ink-200 dark:border-ink-700 text-ink-600 dark:text-ink-300 hover:bg-signal-red/10 hover:border-signal-red/30 border-l-[6px] hover:border-l-[6px] border-l-signal-red'}`}
+                          className={`flex-1 py-6 px-8 min-h-[80px] rounded-xl border flex flex-col items-center justify-center gap-3 transition-all outline-none ${currentResponse.answer === 'fail' ? 'bg-status-fail border-status-fail text-white' : 'border-text-secondary/15 text-text-secondary bg-white hover:bg-status-fail/10 hover:border-status-fail/30 border-l-[6px] hover:border-l-[6px] border-l-status-fail font-bold'}`}
                         >
-                          <Icon name="close" className={`w-8 h-8 ${currentResponse.answer === 'fail' ? '' : 'text-signal-red'}`} />
-                          <span className="font-medium tracking-wide">FAIL</span>
+                          <Icon name="close" className={`w-8 h-8 ${currentResponse.answer === 'fail' ? '' : 'text-status-fail'}`} />
+                          <span className="font-bold tracking-wide">FAIL</span>
                         </button>
                         <button
                           onClick={() => updateResponse({ ...currentResponse, answer: 'na' })}
-                          className={`flex-1 py-6 px-8 min-h-[80px] rounded-xl border flex flex-col items-center justify-center gap-3 transition-all outline-none ${currentResponse.answer === 'na' ? 'bg-ink-600 dark:bg-ink-400 border-ink-600 dark:border-ink-400 text-white dark:text-ink-900' : 'border-ink-200 dark:border-ink-700 text-ink-600 dark:text-ink-300 hover:bg-ink-100 dark:hover:bg-ink-800 border-l-[6px] hover:border-l-[6px] border-l-ink-400'}`}
+                          className={`flex-1 py-6 px-8 min-h-[80px] rounded-xl border flex flex-col items-center justify-center gap-3 transition-all outline-none ${currentResponse.answer === 'na' ? 'bg-text-secondary border-text-secondary text-white' : 'border-text-secondary/15 text-text-secondary bg-white hover:bg-text-secondary/10 hover:border-text-secondary/30 border-l-[6px] hover:border-l-[6px] border-l-text-secondary font-bold'}`}
                         >
-                          <span className="font-medium tracking-wide">N/A</span>
+                          <span className="font-bold tracking-wide">N/A</span>
                         </button>
                       </div>
                     )}
 
                     {currentItem.type === 'numeric' && (
                       <div className="flex flex-col items-center">
-                        <div className="text-[10px] uppercase tracking-widest text-ink-500 mb-2 font-mono">Enter reading</div>
+                        <div className="text-[10px] uppercase tracking-widest text-text-secondary mb-2 font-mono font-bold">Enter reading</div>
                         <div className="relative inline-flex items-center">
                           <input
                             type="number"
@@ -357,17 +357,17 @@ export function InspectionExecutionPage({ domain = 'quality' }: { domain?: Inspe
                               }
                               updateResponse({ ...currentResponse, reading: val, answer: autoAnswer })
                             }}
-                            className="text-center font-display text-[40px] w-48 bg-transparent border-b-2 border-ink-200 dark:border-ink-700 focus:border-accent-500 outline-none pb-2"
+                            className="text-center font-bold text-[36px] w-48 bg-transparent border-b-2 border-text-secondary/15 focus:border-primary/20 outline-none pb-2"
                             placeholder="0.0"
                           />
                           {currentItem.numericUnit && (
-                            <span className="absolute -right-12 bottom-4 text-ink-400 font-mono bg-ink-100 dark:bg-ink-800 px-2 py-1 rounded text-sm">
+                            <span className="absolute -right-12 bottom-4 text-text-secondary font-mono bg-accent-light px-2 py-1 rounded text-xs font-bold">
                               {currentItem.numericUnit}
                             </span>
                           )}
                         </div>
                         {currentResponse.reading !== undefined && currentItem.numericMin !== undefined && currentItem.numericMax !== undefined && (
-                          <div className={`mt-4 flex items-center gap-2 text-sm font-mono ${currentResponse.answer === 'pass' ? 'text-signal-green' : 'text-signal-red'}`}>
+                          <div className={`mt-4 flex items-center gap-2 text-sm font-mono font-bold ${currentResponse.answer === 'pass' ? 'text-status-pass' : 'text-status-fail'}`}>
                             {currentResponse.answer === 'pass' ? (
                               <><Icon name="check" className="w-4 h-4" /> Within range</>
                             ) : (
@@ -380,11 +380,11 @@ export function InspectionExecutionPage({ domain = 'quality' }: { domain?: Inspe
 
                     {currentItem.type === 'text' && (
                       <div className="flex flex-col">
-                        <div className="text-[10px] uppercase tracking-widest text-ink-500 mb-2 font-mono">Your answer</div>
+                        <div className="text-[10px] uppercase tracking-widest text-text-secondary mb-2 font-mono font-bold">Your answer</div>
                         <textarea
                           value={currentResponse.textAnswer ?? ''}
                           onChange={(e) => updateResponse({ ...currentResponse, textAnswer: e.target.value })}
-                          className="w-full bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-700 rounded-lg p-4 focus-ring min-h-[120px] resize-none"
+                          className="w-full bg-white border border-text-secondary/15 rounded-lg p-4 focus-ring min-h-[120px] resize-none text-[13px] text-text-primary font-medium"
                           placeholder="Type your answer here..."
                         />
                       </div>
@@ -396,12 +396,12 @@ export function InspectionExecutionPage({ domain = 'quality' }: { domain?: Inspe
                           <button
                             key={opt}
                             onClick={() => updateResponse({ ...currentResponse, textAnswer: opt, answer: 'pass' })}
-                            className={`w-full text-left py-4 px-6 rounded-lg border transition-all relative overflow-hidden ${currentResponse.textAnswer === opt ? 'border-ink-900 dark:border-ink-50 bg-ink-50 dark:bg-ink-800/50 text-ink-900 dark:text-ink-50 font-medium' : 'border-ink-200 dark:border-ink-700 text-ink-700 dark:text-ink-300 hover:bg-ink-50 dark:hover:bg-ink-800'}`}
+                            className={`w-full text-left py-4 px-6 rounded-lg border transition-all relative overflow-hidden ${currentResponse.textAnswer === opt ? 'border-primary/20 bg-accent-light text-text-primary font-bold' : 'border-text-secondary/15 text-text-secondary hover:bg-accent-light bg-white'}`}
                           >
-                            {currentResponse.textAnswer === opt && <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-ink-900 dark:bg-ink-50" />}
+                            {currentResponse.textAnswer === opt && <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-primary" />}
                             <div className="flex items-center gap-3">
-                              <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${currentResponse.textAnswer === opt ? 'border-ink-900 dark:border-ink-50' : 'border-ink-300 dark:border-ink-600'}`}>
-                                {currentResponse.textAnswer === opt && <div className="w-2 h-2 rounded-full bg-ink-900 dark:bg-ink-50" />}
+                              <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${currentResponse.textAnswer === opt ? 'border-primary/20' : 'border-text-secondary/15'}`}>
+                                {currentResponse.textAnswer === opt && <div className="w-2 h-2 rounded-full bg-primary" />}
                               </div>
                               {opt}
                             </div>
@@ -414,29 +414,29 @@ export function InspectionExecutionPage({ domain = 'quality' }: { domain?: Inspe
                   {(currentItem.numericMin !== undefined || currentItem.reference) && (
                     <div className="mb-8 space-y-2">
                       {currentItem.numericMin !== undefined && currentItem.numericMax !== undefined && (
-                        <div className="text-ink-500 font-mono text-xs bg-ink-100 dark:bg-ink-800/50 py-2 px-3 rounded inline-block mr-2">
+                        <div className="text-text-secondary font-mono text-xs bg-accent-light py-2 px-3 rounded inline-block mr-2 font-bold">
                           Range: {currentItem.numericMin} — {currentItem.numericMax} {currentItem.numericUnit}
                         </div>
                       )}
                       {currentItem.reference && (
-                        <div className="text-ink-500 font-mono text-xs flex items-center gap-1.5 bg-ink-100 dark:bg-ink-800/50 py-2 px-3 rounded inline-block">
-                          <Icon name="file" className="w-3.5 h-3.5" /> Reference: {currentItem.reference}
+                        <div className="text-text-secondary font-mono text-xs flex items-center gap-1.5 bg-accent-light py-2 px-3 rounded inline-block font-bold">
+                          <Icon name="file" className="w-3.5 h-3.5 text-text-secondary" /> Reference: {currentItem.reference}
                         </div>
                       )}
                     </div>
                   )}
 
                   <div className="mb-8">
-                    <label className={`block text-sm font-medium mb-2 ${currentItem.observationRequiredOnFail && (currentResponse.answer === 'fail' || currentResponse.answer === 'na') && (!currentResponse.observation || currentResponse.observation.trim() === '') ? 'text-signal-red' : 'text-ink-900 dark:text-ink-100'}`}>
+                    <label className={`block text-sm font-bold mb-2 ${currentItem.observationRequiredOnFail && (currentResponse.answer === 'fail' || currentResponse.answer === 'na') && (!currentResponse.observation || currentResponse.observation.trim() === '') ? 'text-status-fail' : 'text-text-primary'}`}>
                       Observation
                     </label>
                     <textarea
                       value={currentResponse.observation ?? ''}
                       onChange={(e) => updateResponse({ ...currentResponse, observation: e.target.value })}
-                      className={`w-full bg-white dark:bg-ink-900 border rounded-lg p-3 focus-ring resize-none min-h-[80px] ${currentItem.observationRequiredOnFail && (currentResponse.answer === 'fail' || currentResponse.answer === 'na') ? 'border-ink-200 dark:border-ink-700 border-l-2 border-l-signal-red bg-signal-red/5' : 'border-ink-200 dark:border-ink-700'}`}
+                      className={`w-full bg-white border rounded-lg p-3 focus-ring resize-none min-h-[80px] ${currentItem.observationRequiredOnFail && (currentResponse.answer === 'fail' || currentResponse.answer === 'na') ? 'border-text-secondary/15 border-l-2 border-l-status-fail bg-status-fail/5' : 'border-text-secondary/15'}`}
                       placeholder="Add an observation..."
                     />
-                    <div className={`text-xs mt-2 flex items-center gap-1 ${currentItem.observationRequiredOnFail && (currentResponse.answer === 'fail' || currentResponse.answer === 'na') && (!currentResponse.observation || currentResponse.observation.trim() === '') ? 'text-signal-red font-medium' : 'text-ink-500'}`}>
+                    <div className={`text-xs mt-2 flex items-center gap-1 ${currentItem.observationRequiredOnFail && (currentResponse.answer === 'fail' || currentResponse.answer === 'na') && (!currentResponse.observation || currentResponse.observation.trim() === '') ? 'text-status-fail font-bold' : 'text-text-secondary font-medium'}`}>
                       {currentItem.observationRequiredOnFail && (currentResponse.answer === 'fail' || currentResponse.answer === 'na') && (!currentResponse.observation || currentResponse.observation.trim() === '') ? (
                         <><Icon name="alert" className="w-3 h-3" /> Observation required to continue.</>
                       ) : (
@@ -449,13 +449,13 @@ export function InspectionExecutionPage({ domain = 'quality' }: { domain?: Inspe
                     <div className="flex gap-3 mb-4">
                       <button 
                         onClick={() => updateResponse({ ...currentResponse, attachments: [...currentResponse.attachments, `photo_${Date.now()}.jpg`] })}
-                        className="flex items-center gap-2 px-4 py-2 border border-ink-200 dark:border-ink-700 rounded-lg text-sm font-medium hover:bg-ink-50 dark:hover:bg-ink-800 text-ink-700 dark:text-ink-200"
+                        className="flex items-center gap-2 px-4 py-2 border border-text-secondary/15 rounded-lg text-sm font-bold hover:bg-accent-light text-text-secondary bg-white"
                       >
                         <Icon name="eye" className="w-4 h-4" /> Take photo
                       </button>
                       <button 
                         onClick={() => updateResponse({ ...currentResponse, attachments: [...currentResponse.attachments, `file_${Date.now()}.pdf`] })}
-                        className="flex items-center gap-2 px-4 py-2 border border-ink-200 dark:border-ink-700 rounded-lg text-sm font-medium hover:bg-ink-50 dark:hover:bg-ink-800 text-ink-700 dark:text-ink-200"
+                        className="flex items-center gap-2 px-4 py-2 border border-text-secondary/15 rounded-lg text-sm font-bold hover:bg-accent-light text-text-secondary bg-white"
                       >
                         <Icon name="file" className="w-4 h-4" /> Attach file
                       </button>
@@ -463,11 +463,11 @@ export function InspectionExecutionPage({ domain = 'quality' }: { domain?: Inspe
                     {currentResponse.attachments.length > 0 && (
                       <div className="flex flex-wrap gap-2">
                         {currentResponse.attachments.map(att => (
-                          <div key={att} className="flex items-center gap-2 px-3 py-1.5 bg-ink-100 dark:bg-ink-800 rounded font-mono text-xs text-ink-700 dark:text-ink-300">
+                          <div key={att} className="flex items-center gap-2 px-3 py-1.5 bg-accent-light rounded font-mono text-xs text-text-primary font-bold border border-text-secondary/15">
                             <span>{att}</span>
                             <button 
                               onClick={() => updateResponse({ ...currentResponse, attachments: currentResponse.attachments.filter(a => a !== att) })}
-                              className="text-ink-400 hover:text-signal-red"
+                              className="text-text-secondary hover:text-status-fail"
                             >
                               <Icon name="close" className="w-3 h-3" />
                             </button>
@@ -481,28 +481,28 @@ export function InspectionExecutionPage({ domain = 'quality' }: { domain?: Inspe
             </div>
           </main>
 
-          <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-ink-900 border-t border-ink-200 dark:border-ink-800 px-6 py-4 shadow-[0_-4px_24px_rgba(0,0,0,0.02)] z-30">
+          <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-text-secondary/15 px-6 py-4 shadow-[0_-4px_24px_rgba(0,0,0,0.02)] z-30">
             <div className="max-w-[720px] mx-auto w-full flex items-center justify-between">
               <button 
                 disabled={currentItemIndex === 0}
                 onClick={() => setCurrentItemIndex(prev => prev - 1)}
-                className="px-6 py-3 border border-ink-200 dark:border-ink-700 rounded-lg font-medium text-ink-700 dark:text-ink-200 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-ink-50 dark:hover:bg-ink-800 flex items-center gap-2"
+                className="px-6 py-3 border border-text-secondary/15 rounded-lg font-bold text-text-secondary bg-white disabled:opacity-30 disabled:cursor-not-allowed hover:bg-accent-light flex items-center gap-2 transition-all shadow-sm"
               >
                 <Icon name="arrow_right" className="w-4 h-4 rotate-180" />
                 Previous
               </button>
 
-              <div className="text-sm font-mono flex items-center gap-2">
-                {saveStatus === 'saved' && <span className="text-signal-green">Saved</span>}
-                {saveStatus === 'saving' && <span className="text-ink-500 flex items-center gap-1"><span className="animate-pulse-dot inline-block w-1.5 h-1.5 rounded-full bg-ink-400" /> Saving…</span>}
-                {saveStatus === 'unsaved' && <span className="text-signal-amber">Unsaved changes</span>}
+              <div className="text-sm font-mono flex items-center gap-2 font-bold">
+                {saveStatus === 'saved' && <span className="text-status-pass">Saved</span>}
+                {saveStatus === 'saving' && <span className="text-text-secondary flex items-center gap-1"><span className="animate-pulse-dot inline-block w-1.5 h-1.5 rounded-full bg-accent-light" /> Saving…</span>}
+                {saveStatus === 'unsaved' && <span className="text-warning">Unsaved changes</span>}
               </div>
 
               {currentItemIndex === allItems.length - 1 ? (
                 <button 
                   disabled={!isValidToProceed()}
                   onClick={() => setShowSubmitModal(true)}
-                  className="px-8 py-3 bg-signal-green text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-signal-green/90 transition-colors flex items-center gap-2"
+                  className="px-8 py-3 bg-warning hover:bg-warning/90 text-text-primary rounded-lg font-bold disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2 shadow-sm animate-pulse"
                 >
                   Submit <Icon name="check" className="w-4 h-4" />
                 </button>
@@ -510,7 +510,7 @@ export function InspectionExecutionPage({ domain = 'quality' }: { domain?: Inspe
                 <button 
                   disabled={!isValidToProceed()}
                   onClick={() => setCurrentItemIndex(prev => prev + 1)}
-                  className="px-8 py-3 bg-ink-900 text-white dark:bg-ink-50 dark:text-ink-900 rounded-lg font-medium disabled:opacity-30 disabled:cursor-not-allowed hover:opacity-90 transition-colors flex items-center gap-2"
+                  className="px-8 py-3 bg-primary text-white rounded-lg font-bold disabled:opacity-30 disabled:cursor-not-allowed hover:bg-primary transition-colors flex items-center gap-2 shadow-sm"
                 >
                   Next <Icon name="arrow_right" className="w-4 h-4" />
                 </button>
@@ -525,47 +525,47 @@ export function InspectionExecutionPage({ domain = 'quality' }: { domain?: Inspe
             size="md"
           >
             <div className="p-6">
-              <p className="text-ink-600 dark:text-ink-300 mb-6">
+              <p className="text-text-secondary mb-6 font-medium leading-relaxed">
                 Your responses will be sent to {inspection.managerName} for review. You'll be notified when they approve or send it back.
               </p>
               
-              <div className="bg-ink-50 dark:bg-ink-900/50 border border-ink-200 dark:border-ink-800 rounded-lg p-5 space-y-3 font-mono text-sm">
+              <div className="bg-accent-light border border-text-secondary/15 rounded-xl p-5 space-y-3 font-mono text-sm shadow-inner font-bold">
                 <div className="flex justify-between">
-                  <span className="text-ink-500">Total items:</span>
-                  <span className="text-ink-900 dark:text-ink-50">{allItems.length}</span>
+                  <span className="text-text-secondary">Total items:</span>
+                  <span className="text-text-primary">{allItems.length}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-ink-500">Passes:</span>
-                  <span className="text-signal-green font-display text-[20px] leading-none">{localResponses.filter(r => r.answer === 'pass').length}</span>
+                  <span className="text-text-secondary">Passes:</span>
+                  <span className="text-status-pass text-[18px] leading-none">{localResponses.filter(r => r.answer === 'pass').length}</span>
                 </div>
                 {localResponses.filter(r => r.answer === 'fail').length > 0 && (
                   <div className="flex justify-between">
-                    <span className="text-ink-500">Fails:</span>
-                    <span className="text-signal-red font-display text-[20px] leading-none">{localResponses.filter(r => r.answer === 'fail').length}</span>
+                    <span className="text-text-secondary">Fails:</span>
+                    <span className="text-status-fail text-[18px] leading-none">{localResponses.filter(r => r.answer === 'fail').length}</span>
                   </div>
                 )}
                 <div className="flex justify-between">
-                  <span className="text-ink-500">N/As:</span>
-                  <span className="text-ink-500 font-display text-[20px] leading-none">{localResponses.filter(r => r.answer === 'na').length}</span>
+                  <span className="text-text-secondary">N/As:</span>
+                  <span className="text-text-secondary text-[18px] leading-none">{localResponses.filter(r => r.answer === 'na').length}</span>
                 </div>
-                <div className="flex justify-between pt-3 border-t border-ink-200 dark:border-ink-800 mt-2">
-                  <span className="text-ink-500">Items with photos:</span>
-                  <span className="text-ink-900 dark:text-ink-50">{localResponses.filter(r => r.attachments.length > 0).length}</span>
+                <div className="flex justify-between pt-3 border-t border-text-secondary/15 mt-2">
+                  <span className="text-text-secondary">Items with photos:</span>
+                  <span className="text-text-primary">{localResponses.filter(r => r.attachments.length > 0).length}</span>
                 </div>
               </div>
 
               {localResponses.filter(r => r.answer === 'fail').length > 0 && (
-                <div className="mt-4 flex items-start gap-2 text-sm text-ink-600 dark:text-ink-400 bg-signal-amber/10 p-3 rounded-lg border border-signal-amber/20">
-                  <Icon name="alert" className="w-4 h-4 text-signal-amber shrink-0 mt-0.5" />
+                <div className="mt-4 flex items-start gap-2 text-sm text-text-secondary bg-warning/10 p-3 rounded-lg border border-warning/20 shadow-sm">
+                  <Icon name="alert" className="w-4 h-4 text-warning shrink-0 mt-0.5" />
                   <span>{localResponses.filter(r => r.answer === 'fail').length} issues will be created and assigned to your {domain === 'safety' ? 'Safety Manager' : 'Quality Manager'} for review.</span>
                 </div>
               )}
 
               <div className="mt-8 flex justify-end gap-3">
-                <button onClick={() => setShowSubmitModal(false)} className="px-4 py-2 text-sm font-medium hover:bg-ink-100 dark:hover:bg-ink-800 rounded-lg">
+                <button onClick={() => setShowSubmitModal(false)} className="px-4 py-2 text-sm font-bold hover:bg-accent-light rounded-lg text-text-secondary border border-transparent transition-colors">
                   Cancel
                 </button>
-                <button onClick={handleConfirmSubmit} className="px-6 py-2 text-sm font-medium bg-signal-green text-white rounded-lg hover:bg-signal-green/90">
+                <button onClick={handleConfirmSubmit} className="px-6 py-2 text-sm font-bold bg-status-pass hover:bg-status-pass/90 text-white rounded-lg transition-colors shadow-sm">
                   Submit
                 </button>
               </div>

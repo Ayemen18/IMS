@@ -144,7 +144,7 @@ export function RecurrenceRuleModal({ open, onClose, rule, onSave }: RecurrenceR
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 rounded-md border hairline bg-white dark:bg-ink-900 text-[13px] font-medium text-ink-700 dark:text-ink-200 hover:bg-ink-50 dark:hover:bg-ink-800 transition-colors"
+            className="px-4 py-2 rounded-md border hairline bg-white text-[13px] font-medium text-text-secondary hover:bg-accent-light transition-colors"
           >
             Cancel
           </button>
@@ -152,7 +152,7 @@ export function RecurrenceRuleModal({ open, onClose, rule, onSave }: RecurrenceR
             type="button"
             onClick={handleSave}
             disabled={!isValid}
-            className="px-4 py-2 rounded-md bg-accent-500 text-white text-[13px] font-medium hover:bg-accent-600 transition-colors disabled:opacity-50"
+            className="px-4 py-2 rounded-md bg-primary text-white text-[13px] font-medium hover:bg-primary transition-colors disabled:opacity-50"
           >
             {rule ? 'Save changes' : 'Create rule'}
           </button>
@@ -162,92 +162,88 @@ export function RecurrenceRuleModal({ open, onClose, rule, onSave }: RecurrenceR
       <div className="space-y-6">
         {/* Name */}
         <div>
-          <label className="block text-[11px] font-medium uppercase tracking-[0.12em] text-ink-500 dark:text-ink-400 mb-2">Rule name</label>
+          <label className="block text-[11px] font-medium uppercase tracking-[0.12em] text-text-secondary mb-2">Rule name</label>
           <input
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="e.g. Daily CCP verification — Line 3"
-            className="focus-ring w-full px-3 py-2 rounded-md border border-ink-200 dark:border-ink-700 bg-white dark:bg-ink-800 text-[13px] text-ink-900 dark:text-ink-50"
+            className="focus-ring w-full px-3 py-2 rounded-md border border-text-secondary/15 bg-white text-[13px] text-text-primary"
           />
         </div>
 
         {/* Template & Location */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-[11px] font-medium uppercase tracking-[0.12em] text-ink-500 dark:text-ink-400 mb-2">Template</label>
+            <label className="block text-[11px] font-medium uppercase tracking-[0.12em] text-text-secondary mb-2">Template</label>
             <div className="relative">
               <select
                 value={templateId}
                 onChange={(e) => setTemplateId(e.target.value)}
-                className="appearance-none w-full pl-3 pr-9 py-2 rounded-md border border-ink-200 dark:border-ink-700 bg-white dark:bg-ink-800 text-[13px] text-ink-900 dark:text-ink-50 focus-ring"
+                className="appearance-none w-full pl-3 pr-9 py-2 rounded-md border border-text-secondary/15 bg-white text-[13px] text-text-primary focus-ring"
               >
                 <option value="" disabled>Select template</option>
                 {publishedTemplates.map(t => (
                   <option key={t.id} value={t.id}>{t.name} v{t.version}</option>
                 ))}
               </select>
-              <Icon name="chevron_down" className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-ink-400 pointer-events-none" />
+              <Icon name="chevron_down" className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-text-secondary pointer-events-none" />
             </div>
           </div>
           <div>
-            <label className="block text-[11px] font-medium uppercase tracking-[0.12em] text-ink-500 dark:text-ink-400 mb-2">Site</label>
+            <label className="block text-[11px] font-medium uppercase tracking-[0.12em] text-text-secondary mb-2">Site</label>
             <div className="relative">
               <select
                 value={siteId}
                 onChange={(e) => setSiteId(e.target.value)}
-                className="appearance-none w-full pl-3 pr-9 py-2 rounded-md border border-ink-200 dark:border-ink-700 bg-white dark:bg-ink-800 text-[13px] text-ink-900 dark:text-ink-50 focus-ring"
+                className="appearance-none w-full pl-3 pr-9 py-2 rounded-md border border-text-secondary/15 bg-white text-[13px] text-text-primary focus-ring"
               >
                 <option value="" disabled>Select site</option>
                 {SITES.map(s => (
                   <option key={s.id} value={s.id}>{s.name}</option>
                 ))}
               </select>
-              <Icon name="chevron_down" className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-ink-400 pointer-events-none" />
+              <Icon name="chevron_down" className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-text-secondary pointer-events-none" />
             </div>
           </div>
           <div>
-            <label className="block text-[11px] font-medium uppercase tracking-[0.12em] text-ink-500 dark:text-ink-400 mb-2">Area (Optional)</label>
+            <label className="block text-[11px] font-medium uppercase tracking-[0.12em] text-text-secondary mb-2">Area (Optional)</label>
             <input
               type="text"
               value={area}
               onChange={(e) => setArea(e.target.value)}
               placeholder="e.g. Cleanroom B"
-              className="focus-ring w-full px-3 py-2 rounded-md border border-ink-200 dark:border-ink-700 bg-white dark:bg-ink-800 text-[13px] text-ink-900 dark:text-ink-50"
+              className="focus-ring w-full px-3 py-2 rounded-md border border-text-secondary/15 bg-white text-[13px] text-text-primary"
             />
           </div>
           <div>
-            <label className="block text-[11px] font-medium uppercase tracking-[0.12em] text-ink-500 dark:text-ink-400 mb-2">Default Inspector</label>
+            <label className="block text-[11px] font-medium uppercase tracking-[0.12em] text-text-secondary mb-2">Default Inspector</label>
             <div className="relative">
               <select
                 value={inspectorId}
                 onChange={(e) => setInspectorId(e.target.value)}
-                className="appearance-none w-full pl-3 pr-9 py-2 rounded-md border border-ink-200 dark:border-ink-700 bg-white dark:bg-ink-800 text-[13px] text-ink-900 dark:text-ink-50 focus-ring"
+                className="appearance-none w-full pl-3 pr-9 py-2 rounded-md border border-text-secondary/15 bg-white text-[13px] text-text-primary focus-ring"
               >
                 <option value="">Unassigned</option>
                 {inspectors.map(u => (
                   <option key={u.id} value={u.id}>{u.name}</option>
                 ))}
               </select>
-              <Icon name="chevron_down" className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-ink-400 pointer-events-none" />
+              <Icon name="chevron_down" className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-text-secondary pointer-events-none" />
             </div>
           </div>
         </div>
 
         {/* Frequency Segmented Control */}
         <div>
-          <label className="block text-[11px] font-medium uppercase tracking-[0.12em] text-ink-500 dark:text-ink-400 mb-2">Pattern</label>
-          <div className="flex p-1 rounded-md border hairline bg-ink-50 dark:bg-ink-900/50 w-full sm:w-[300px]">
+          <label className="block text-[11px] font-medium uppercase tracking-[0.12em] text-text-secondary mb-2">Pattern</label>
+          <div className="flex p-1 rounded-md border hairline bg-accent-light w-full sm:w-[300px]">
             {(['daily', 'weekly', 'monthly'] as const).map(freq => (
               <button
                 key={freq}
                 type="button"
                 onClick={() => setFrequency(freq)}
-                className={`flex-1 py-1.5 text-[12px] font-medium rounded transition-colors capitalize ${
-                  frequency === freq 
-                    ? 'bg-white dark:bg-ink-800 text-ink-900 dark:text-ink-50 shadow-sm'
-                    : 'text-ink-500 dark:text-ink-400 hover:text-ink-900 dark:hover:text-ink-50'
-                }`}
+                className={`flex-1 py-1.5 text-[12px] font-medium rounded transition-colors capitalize ${ frequency === freq ? 'bg-white text-text-primary shadow-sm' : 'text-text-secondary hover:text-text-primary ' }`}
               >
                 {freq}
               </button>
@@ -256,17 +252,17 @@ export function RecurrenceRuleModal({ open, onClose, rule, onSave }: RecurrenceR
         </div>
 
         {/* Dynamic Frequency Block */}
-        <div className="p-4 rounded-xl border hairline bg-ink-50/50 dark:bg-ink-950/30 space-y-4 animate-fade-in">
+        <div className="p-4 rounded-xl border hairline bg-accent-light/50 space-y-4 animate-fade-in">
           <div className="flex items-center gap-4">
-            <span className="text-[13px] text-ink-900 dark:text-ink-50">Every</span>
+            <span className="text-[13px] text-text-primary">Every</span>
             <input
               type="number"
               min={1}
               value={interval}
               onChange={(e) => setIntervalVal(parseInt(e.target.value) || 1)}
-              className="w-16 focus-ring px-2 py-1.5 rounded-md border border-ink-200 dark:border-ink-700 bg-white dark:bg-ink-800 text-[13px] text-center font-mono"
+              className="w-16 focus-ring px-2 py-1.5 rounded-md border border-text-secondary/15 bg-white text-[13px] text-center font-mono"
             />
-            <span className="text-[13px] text-ink-900 dark:text-ink-50">
+            <span className="text-[13px] text-text-primary">
               {frequency === 'daily' ? (interval === 1 ? 'day' : 'days') :
                frequency === 'weekly' ? (interval === 1 ? 'week' : 'weeks') :
                (interval === 1 ? 'month' : 'months')}
@@ -282,11 +278,7 @@ export function RecurrenceRuleModal({ open, onClose, rule, onSave }: RecurrenceR
                     key={d.value}
                     type="button"
                     onClick={() => toggleWeekday(d.value as Weekday)}
-                    className={`w-8 h-8 rounded text-[12px] font-medium transition-colors ${
-                      selected
-                        ? 'bg-ink-900 dark:bg-ink-50 text-white dark:text-ink-900'
-                        : 'border hairline bg-white dark:bg-ink-900 text-ink-600 dark:text-ink-300 hover:bg-ink-50 dark:hover:bg-ink-800'
-                    }`}
+                    className={`w-8 h-8 rounded text-[12px] font-medium transition-colors ${ selected ? 'bg-accent-light text-white ' : 'border hairline bg-white text-text-secondary hover:bg-accent-light ' }`}
                   >
                     {d.label}
                   </button>
@@ -297,7 +289,7 @@ export function RecurrenceRuleModal({ open, onClose, rule, onSave }: RecurrenceR
 
           {frequency === 'monthly' && (
             <div className="flex items-center gap-4 pt-2 border-t hairline border-dashed">
-              <span className="text-[13px] text-ink-900 dark:text-ink-50">On day</span>
+              <span className="text-[13px] text-text-primary">On day</span>
               <input
                 type="number"
                 min={1}
@@ -305,14 +297,14 @@ export function RecurrenceRuleModal({ open, onClose, rule, onSave }: RecurrenceR
                 value={monthDay === 0 ? '' : monthDay}
                 disabled={monthDay === 0}
                 onChange={(e) => setMonthDay(parseInt(e.target.value) || 1)}
-                className="w-16 focus-ring px-2 py-1.5 rounded-md border border-ink-200 dark:border-ink-700 bg-white dark:bg-ink-800 text-[13px] text-center font-mono disabled:opacity-50"
+                className="w-16 focus-ring px-2 py-1.5 rounded-md border border-text-secondary/15 bg-white text-[13px] text-center font-mono disabled:opacity-50"
               />
-              <label className="flex items-center gap-2 cursor-pointer ml-4 text-[13px] text-ink-700 dark:text-ink-200">
+              <label className="flex items-center gap-2 cursor-pointer ml-4 text-[13px] text-text-secondary">
                 <input
                   type="checkbox"
                   checked={monthDay === 0}
                   onChange={(e) => setMonthDay(e.target.checked ? 0 : 1)}
-                  className="rounded border-ink-300 text-ink-900 focus:ring-ink-900"
+                  className="rounded border-text-secondary/15 text-text-primary focus:ring-text-secondary/15"
                 />
                 Last day of month
               </label>
@@ -320,12 +312,12 @@ export function RecurrenceRuleModal({ open, onClose, rule, onSave }: RecurrenceR
           )}
 
           <div className="flex items-center gap-4 pt-2 border-t hairline border-dashed">
-            <span className="text-[13px] text-ink-900 dark:text-ink-50">At</span>
+            <span className="text-[13px] text-text-primary">At</span>
             <input
               type="time"
               value={timeOfDay}
               onChange={(e) => setTimeOfDay(e.target.value)}
-              className="focus-ring px-2 py-1.5 rounded-md border border-ink-200 dark:border-ink-700 bg-white dark:bg-ink-800 text-[13px] font-mono"
+              className="focus-ring px-2 py-1.5 rounded-md border border-text-secondary/15 bg-white text-[13px] font-mono"
             />
           </div>
         </div>
@@ -333,28 +325,28 @@ export function RecurrenceRuleModal({ open, onClose, rule, onSave }: RecurrenceR
         {/* Dates */}
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-[11px] font-medium uppercase tracking-[0.12em] text-ink-500 dark:text-ink-400 mb-2">Starts on</label>
+            <label className="block text-[11px] font-medium uppercase tracking-[0.12em] text-text-secondary mb-2">Starts on</label>
             <input
               type="date"
               value={startsOn}
               onChange={(e) => setStartsOn(e.target.value)}
-              className="focus-ring w-full px-3 py-2 rounded-md border border-ink-200 dark:border-ink-700 bg-white dark:bg-ink-800 text-[13px] text-ink-900 dark:text-ink-50 font-mono"
+              className="focus-ring w-full px-3 py-2 rounded-md border border-text-secondary/15 bg-white text-[13px] text-text-primary font-mono"
             />
           </div>
           <div>
-            <label className="block text-[11px] font-medium uppercase tracking-[0.12em] text-ink-500 dark:text-ink-400 mb-2">Ends on (Optional)</label>
+            <label className="block text-[11px] font-medium uppercase tracking-[0.12em] text-text-secondary mb-2">Ends on (Optional)</label>
             <input
               type="date"
               value={endsOn}
               onChange={(e) => setEndsOn(e.target.value)}
-              className="focus-ring w-full px-3 py-2 rounded-md border border-ink-200 dark:border-ink-700 bg-white dark:bg-ink-800 text-[13px] text-ink-900 dark:text-ink-50 font-mono"
+              className="focus-ring w-full px-3 py-2 rounded-md border border-text-secondary/15 bg-white text-[13px] text-text-primary font-mono"
             />
           </div>
         </div>
 
         {/* Live Preview */}
-        <div className="mt-4 p-3 rounded bg-ink-900 text-ink-50 dark:bg-ink-50 dark:text-ink-900 text-center">
-          <p className="font-display text-[16px] italic leading-snug">
+        <div className="mt-4 p-3 rounded bg-accent-light text-text-secondary text-center">
+          <p className="font-sans font-bold text-[16px] italic leading-snug">
             This rule fires {formatRuleSummary(previewDraft)}, starting {startsOn}{endsOn ? ` until ${endsOn}` : ''}.
           </p>
         </div>

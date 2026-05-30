@@ -7,6 +7,7 @@ import { Avatar } from '../../../components/primitives/Avatar'
 import { IssueStatePill } from '../../../components/primitives/IssueStatePill'
 import { Modal } from '../../../components/primitives/Modal'
 import type { InspectionIssue, Inspection, InspectionDomain } from '../../../types/inspection'
+import { PageBanner } from '../../../components/shell/PageBanner'
 
 type SortKey = 'newest' | 'oldest' | 'aging' | 'assignee'
 type StatusGroup = 'all' | 'open' | 'awaiting' | 'closed'
@@ -148,121 +149,120 @@ export function IssuesListPage({ domain = 'quality' }: { domain?: InspectionDoma
   }
 
   return (
-    <div className="stagger max-w-[1400px] mx-auto px-6 py-8">
+    <div className="space-y-6">
       {/* ============ Header ============ */}
-      <div className="flex items-end justify-between flex-wrap gap-4">
-        <div>
-          <div className="flex items-center gap-2 text-[12px] text-ink-500 dark:text-ink-400">
-            <span>{domain === 'safety' ? 'Safety Manager' : 'Quality Manager'}</span>
-            <Icon name="chevron_right" className="w-3 h-3" />
-            <span className="text-ink-900 dark:text-ink-50">Issues</span>
-          </div>
-          <h1 className="mt-2 font-display text-[44px] leading-[1.05] tracking-tight text-ink-900 dark:text-ink-50">
-            Corrective <span className="italic text-ink-500 dark:text-ink-400">actions</span>.
-          </h1>
-          <p className="mt-1 text-[14px] text-ink-600 dark:text-ink-300">
-            {groupCounts.all} open across all states · {groupCounts.awaiting} awaiting verification
-            {kpis.agingCount > 0 && <span className="text-signal-red ml-1">· {kpis.agingCount} aging &gt; 7 days</span>}
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          <button className="inline-flex items-center gap-2 px-3 py-2 rounded-md border hairline bg-white dark:bg-ink-900 text-[12px] font-medium text-ink-700 dark:text-ink-200 hover:bg-ink-50 dark:hover:bg-ink-800 transition-colors">
-            <Icon name="download" className="w-3.5 h-3.5" />
-            Export
-          </button>
-          <button className="inline-flex items-center gap-2 px-3 py-2 rounded-md border hairline bg-white dark:bg-ink-900 text-[12px] font-medium text-ink-700 dark:text-ink-200 hover:bg-ink-50 dark:hover:bg-ink-800 transition-colors">
-            View audit log
-          </button>
-        </div>
-      </div>
+      <PageBanner
+        title="Corrective actions"
+        subline={`${groupCounts.all} open across all states · ${groupCounts.awaiting} awaiting verification`}
+        actions={
+          <>
+            <button className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-white/40 bg-white/10 hover:bg-white/20 text-white text-[13px] font-semibold transition">
+              <Icon name="download" className="w-3.5 h-3.5" />
+              Export
+            </button>
+          </>
+        }
+      />
 
       {/* ============ KPI Strip ============ */}
-      <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-px bg-ink-200 dark:bg-ink-800 border hairline rounded-xl overflow-hidden">
-        <KpiCell label="Open issues" value={kpis.openCount} highlight={kpis.openCount > 0 ? 'amber' : undefined} />
-        <KpiCell label="Awaiting verification" value={kpis.awaitingCount} highlight={kpis.awaitingCount > 0 ? 'green' : undefined} />
-        <div className="bg-white dark:bg-ink-950 p-5 flex flex-col justify-center min-h-[96px]">
-          <div className="text-[11px] font-medium uppercase tracking-[0.12em] text-ink-500 dark:text-ink-400">Aging &gt; 7 days</div>
-          <div className="mt-2 flex items-center gap-2">
-            <span className={`font-mono text-[24px] ${kpis.agingCount > 0 ? 'text-signal-red' : 'text-ink-900 dark:text-ink-50'}`}>{kpis.agingCount}</span>
-            {kpis.agingCount > 0 && <div className="w-1.5 h-1.5 rounded-full bg-signal-red animate-pulse-dot" />}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="relative rounded-2xl bg-white shadow-soft border border-text-secondary/10 p-5 overflow-hidden">
+          <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary" aria-hidden="true" />
+          <div className="pl-2">
+            <div className="text-[11px] font-bold uppercase tracking-[0.12em] text-text-secondary mb-2">Open issues</div>
+            <div className="font-mono text-[36px] font-bold text-text-primary leading-none">{kpis.openCount}</div>
           </div>
         </div>
-        <KpiCell label="Closed this week" value={kpis.closedThisWeek} />
+        <div className="relative rounded-2xl bg-white shadow-soft border border-text-secondary/10 p-5 overflow-hidden">
+          <div className="absolute left-0 top-0 bottom-0 w-1 bg-warning" aria-hidden="true" />
+          <div className="pl-2">
+            <div className="text-[11px] font-bold uppercase tracking-[0.12em] text-text-secondary mb-2">Awaiting verification</div>
+            <div className="font-mono text-[36px] font-bold text-text-primary leading-none">{kpis.awaitingCount}</div>
+          </div>
+        </div>
+        <div className="relative rounded-2xl bg-white shadow-soft border border-text-secondary/10 p-5 overflow-hidden">
+          <div className="absolute left-0 top-0 bottom-0 w-1 bg-status-fail" aria-hidden="true" />
+          <div className="pl-2">
+            <div className="text-[11px] font-bold uppercase tracking-[0.12em] text-text-secondary mb-2">Aging &gt; 7 days</div>
+            <div className="font-mono text-[36px] font-bold text-text-primary leading-none">{kpis.agingCount}</div>
+          </div>
+        </div>
+        <div className="relative rounded-2xl bg-white shadow-soft border border-text-secondary/10 p-5 overflow-hidden">
+          <div className="absolute left-0 top-0 bottom-0 w-1 bg-status-pass" aria-hidden="true" />
+          <div className="pl-2">
+            <div className="text-[11px] font-bold uppercase tracking-[0.12em] text-text-secondary mb-2">Closed this week</div>
+            <div className="font-mono text-[36px] font-bold text-text-primary leading-none">{kpis.closedThisWeek}</div>
+          </div>
+        </div>
       </div>
 
       {/* ============ Filter bar ============ */}
-      <div className="mt-8 flex items-center gap-4 flex-wrap">
-        <div className="flex items-center gap-1 p-1 rounded-md border hairline bg-white dark:bg-ink-900">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="inline-flex items-center gap-1 p-1 bg-accent-light rounded-xl">
           {(['all', 'open', 'awaiting', 'closed'] as const).map((key) => {
-            const labels = { all: 'All', open: 'Open', awaiting: 'Awaiting me', closed: 'Closed' }
+            const labels = { all: 'All', open: 'Open', awaiting: 'Awaiting verification', closed: 'Closed' }
             return (
               <button
                 key={key}
                 onClick={() => setStatusGroup(key)}
-                className={`px-3 py-1.5 rounded text-[12px] font-medium transition-colors flex items-center gap-2 ${
-                  statusGroup === key
-                    ? 'bg-accent-500/10 dark:bg-accent-500/15 text-accent-700 dark:text-accent-300 border border-accent-500/20'
-                    : 'text-ink-500 dark:text-ink-400 hover:text-ink-900 dark:hover:text-ink-50'
-                }`}
+                className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-lg text-[13px] font-semibold transition ${ statusGroup === key ? 'bg-white text-text-primary shadow-soft' : 'text-text-secondary hover:text-text-primary' }`}
               >
                 {labels[key]}
-                <span className="text-[10px] font-mono text-ink-400 dark:text-ink-500">{groupCounts[key]}</span>
+                {groupCounts[key] > 0 && (
+                  <span className={`text-[11px] font-bold px-1.5 py-0.5 rounded ${ statusGroup === key ? 'bg-primary/10 text-primary' : 'bg-accent-light text-text-secondary' }`}>
+                    {groupCounts[key]}
+                  </span>
+                )}
               </button>
             )
           })}
         </div>
 
-        <div className="flex-1 min-w-[200px] max-w-[360px] flex items-center gap-2 px-3 py-2 rounded-md border hairline bg-white dark:bg-ink-900 focus-within:border-accent-500">
-          <Icon name="search" className="w-3.5 h-3.5 text-ink-400 dark:text-ink-500 shrink-0" />
-          <input
-            type="text"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search issues…"
-            className="flex-1 bg-transparent text-[13px] text-ink-900 dark:text-ink-50 placeholder:text-ink-400 dark:placeholder:text-ink-500 outline-none"
-          />
-          {query && (
-            <button onClick={() => setQuery('')} className="text-ink-400 dark:text-ink-500 hover:text-ink-900 dark:hover:text-ink-50 transition-colors">
-              <Icon name="close" className="w-3 h-3" />
-            </button>
-          )}
-        </div>
+        <div className="flex items-center gap-2 flex-wrap">
+          <div className="relative min-w-[200px]">
+            <Icon name="search" className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-secondary" />
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search issues…"
+              className="w-full bg-white border border-text-secondary/15 rounded-lg pl-10 pr-8 py-2 text-[14px] text-text-primary placeholder:text-text-secondary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/15 transition"
+            />
+            {query && (
+              <button onClick={() => setQuery('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-text-secondary hover:text-text-primary transition-colors">
+                <Icon name="close" className="w-3 h-3" />
+              </button>
+            )}
+          </div>
 
-        <FilterSelect value={siteFilter} onChange={setSiteFilter} options={[{ value: 'all', label: 'All sites' }, ...sites.map((s) => ({ value: s.id, label: s.name }))]} />
-        <FilterSelect value={assigneeFilter} onChange={setAssigneeFilter} options={[{ value: 'all', label: 'All assignees' }, { value: 'unassigned', label: 'Unassigned' }, ...assignees.map((i) => ({ value: i.id, label: i.name }))]} />
-        <FilterSelect value={sortKey} onChange={(v) => setSortKey(v as SortKey)} options={[{ value: 'newest', label: 'Newest first' }, { value: 'oldest', label: 'Oldest first' }, { value: 'aging', label: 'Aging (oldest in-flight)' }, { value: 'assignee', label: 'Assignee' }]} />
+          <FilterSelect value={siteFilter} onChange={setSiteFilter} options={[{ value: 'all', label: 'All sites' }, ...sites.map((s) => ({ value: s.id, label: s.name }))]} />
+          <FilterSelect value={assigneeFilter} onChange={setAssigneeFilter} options={[{ value: 'all', label: 'All assignees' }, { value: 'unassigned', label: 'Unassigned' }, ...assignees.map((i) => ({ value: i.id, label: i.name }))]} />
+          <FilterSelect value={sortKey} onChange={(v) => setSortKey(v as SortKey)} options={[{ value: 'newest', label: 'Newest first' }, { value: 'oldest', label: 'Oldest first' }, { value: 'aging', label: 'Aging (oldest in-flight)' }, { value: 'assignee', label: 'Assignee' }]} />
+        </div>
       </div>
 
       {/* ============ Table ============ */}
-      <div className="mt-6 rounded-xl border hairline bg-white dark:bg-ink-900 overflow-hidden">
-        <div className="grid grid-cols-[100px_2.2fr_1fr_0.8fr_0.9fr_0.9fr] gap-4 px-5 py-2.5 border-b hairline bg-ink-50/50 dark:bg-ink-950/50 items-center">
-          <div className="text-[10px] font-medium uppercase tracking-[0.12em] text-ink-500 dark:text-ink-400">Issue</div>
-          <div className="text-[10px] font-medium uppercase tracking-[0.12em] text-ink-500 dark:text-ink-400">Prompt + context</div>
-          <div className="text-[10px] font-medium uppercase tracking-[0.12em] text-ink-500 dark:text-ink-400">Assignee</div>
-          <div className="text-[10px] font-medium uppercase tracking-[0.12em] text-ink-500 dark:text-ink-400">Age</div>
-          <div className="text-[10px] font-medium uppercase tracking-[0.12em] text-ink-500 dark:text-ink-400">Last update</div>
-          <div className="text-[10px] font-medium uppercase tracking-[0.12em] text-ink-500 dark:text-ink-400 text-right">State</div>
+      <div className="rounded-2xl bg-white shadow-soft border border-text-secondary/15 overflow-hidden">
+        <div className="grid grid-cols-[100px_2.2fr_1fr_0.8fr_0.9fr_0.9fr] gap-4 px-6 py-4 bg-accent-light border-b border-text-secondary/15 items-center">
+          <div className="text-[11px] font-bold uppercase tracking-[0.12em] text-text-secondary">Issue</div>
+          <div className="text-[11px] font-bold uppercase tracking-[0.12em] text-text-secondary">Prompt + context</div>
+          <div className="text-[11px] font-bold uppercase tracking-[0.12em] text-text-secondary">Assignee</div>
+          <div className="text-[11px] font-bold uppercase tracking-[0.12em] text-text-secondary">Age</div>
+          <div className="text-[11px] font-bold uppercase tracking-[0.12em] text-text-secondary">Last update</div>
+          <div className="text-[11px] font-bold uppercase tracking-[0.12em] text-text-secondary text-right">State</div>
         </div>
 
         {flattened.length === 0 ? (
-          <div className="px-5 py-16 text-center">
-            <div className="inline-flex items-center justify-center w-12 h-12 rounded-full border hairline border-dashed">
-              <Icon name="check" className="w-5 h-5 text-signal-green" />
-            </div>
-            <div className="mt-4 text-[15px] font-medium text-ink-900 dark:text-ink-50">No issues raised.</div>
-            <p className="mt-1 text-[13px] text-ink-500 dark:text-ink-400 max-w-[360px] mx-auto">
-              Issues appear here when an inspector flags a failed item.
-            </p>
-          </div>
+          <EmptyState />
         ) : filtered.length === 0 ? (
-          <div className="px-5 py-16 text-center">
-            <div className="mt-4 text-[15px] font-medium text-ink-900 dark:text-ink-50">No results match these filters</div>
-            <button onClick={() => { setQuery(''); setStatusGroup('all'); setSiteFilter('all'); setAssigneeFilter('all') }} className="mt-2 text-[13px] text-accent-500 hover:text-accent-600 transition-colors">
+          <div className="p-8 text-center">
+            <div className="text-[14px] font-semibold text-text-primary">No results match these filters</div>
+            <button onClick={() => { setQuery(''); setStatusGroup('all'); setSiteFilter('all'); setAssigneeFilter('all') }} className="mt-2 text-[13px] text-primary hover:text-primary transition-colors">
               Clear filters
             </button>
           </div>
         ) : (
-          <div className="divide-y hairline">
+          <div className="divide-y divide-text-secondary/15">
             {filtered.map(({ issue, inspection }) => {
               const ageMs = Date.now() - new Date(issue.createdAt).getTime()
               const isAging = ageMs > SEVEN_DAYS_MS && issue.state !== 'closed'
@@ -271,15 +271,15 @@ export function IssuesListPage({ domain = 'quality' }: { domain?: InspectionDoma
                 <button
                   key={issue.id}
                   onClick={() => nav.push(`${prefix}/issues/${issue.id}`)}
-                  className="w-full grid grid-cols-[100px_2.2fr_1fr_0.8fr_0.9fr_0.9fr] gap-4 items-center px-5 py-3.5 text-left hover:bg-ink-50 dark:hover:bg-ink-800/60 transition-colors group"
+                  className="w-full grid grid-cols-[100px_2.2fr_1fr_0.8fr_0.9fr_0.9fr] gap-4 items-center px-6 py-4 text-left hover:bg-accent-light transition group"
                 >
                   {/* Issue ID */}
-                  <div className="font-mono text-[11px] text-ink-600 dark:text-ink-300">{issue.id}</div>
+                  <div className="font-mono text-[13px] text-text-secondary">{issue.id}</div>
                   
                   {/* Prompt + context */}
                   <div className="min-w-0 pr-4">
-                    <div className="text-[13px] font-medium text-ink-900 dark:text-ink-50 truncate">{issue.itemPrompt}</div>
-                    <div className="text-[11px] text-ink-500 dark:text-ink-400 mt-0.5 truncate">
+                    <div className="text-[14px] font-semibold text-text-primary truncate group-hover:text-primary transition-colors">{issue.itemPrompt}</div>
+                    <div className="text-[12px] text-text-secondary mt-0.5 truncate">
                       {inspection.number} · {inspection.templateName} · {inspection.area || inspection.siteName}
                     </div>
                   </div>
@@ -289,20 +289,20 @@ export function IssuesListPage({ domain = 'quality' }: { domain?: InspectionDoma
                     {issue.assigneeName ? (
                       <>
                         <Avatar name={issue.assigneeName} size="w-6 h-6 text-[9px]" />
-                        <span className="text-[12px] text-ink-700 dark:text-ink-200 truncate">{issue.assigneeName}</span>
+                        <span className="text-[13px] text-text-secondary truncate">{issue.assigneeName}</span>
                       </>
                     ) : (
-                      <span className="text-[12px] text-ink-500 dark:text-ink-400 italic">Unassigned</span>
+                      <span className="text-[13px] text-text-secondary italic">Unassigned</span>
                     )}
                   </div>
 
                   {/* Age */}
-                  <div className={`text-[12px] font-mono ${isAging ? 'text-signal-red font-medium' : 'text-ink-600 dark:text-ink-300'}`}>
+                  <div className={`text-[13px] font-mono ${isAging ? 'text-status-fail font-semibold' : 'text-text-secondary'}`}>
                     {formatRelativeTime(issue.createdAt).replace(' ago', '')}
                   </div>
 
                   {/* Last update */}
-                  <div className="text-[12px] font-mono text-ink-600 dark:text-ink-300">
+                  <div className="text-[13px] font-mono text-text-secondary">
                     {formatRelativeTime(issue.updatedAt)}
                   </div>
 
@@ -312,13 +312,13 @@ export function IssuesListPage({ domain = 'quality' }: { domain?: InspectionDoma
                       <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                         <button
                           onClick={(e) => { e.stopPropagation(); setVerifyModalTarget({ inspectionId: inspection.id, issueId: issue.id }) }}
-                          className="px-2 py-1 rounded bg-signal-green text-white text-[11px] font-mono font-medium hover:bg-signal-green/90 transition-colors"
+                          className="px-2 py-1 rounded bg-status-pass text-white text-[11px] font-mono font-medium hover:bg-status-pass/90 transition-colors"
                         >
                           Verify
                         </button>
                         <button
                           onClick={(e) => { e.stopPropagation(); setReopenModalTarget({ inspectionId: inspection.id, issueId: issue.id }) }}
-                          className="px-2 py-1 rounded border border-signal-red text-signal-red text-[11px] font-mono font-medium hover:bg-signal-red/5 transition-colors"
+                          className="px-2 py-1 rounded border border-status-fail text-status-fail text-[11px] font-mono font-medium hover:bg-status-fail/5 transition-colors"
                         >
                           Reopen
                         </button>
@@ -333,9 +333,8 @@ export function IssuesListPage({ domain = 'quality' }: { domain?: InspectionDoma
         )}
 
         {filtered.length > 0 && (
-          <div className="px-5 py-3 border-t hairline flex items-center justify-between text-[12px] text-ink-500 dark:text-ink-400">
-            <span>Showing <span className="font-mono text-ink-900 dark:text-ink-50">{filtered.length}</span> of {flattened.length}</span>
-            <button className="hover:text-ink-900 dark:hover:text-ink-50 transition-colors">View audit log</button>
+          <div className="px-6 py-4 border-t border-text-secondary/15 flex items-center justify-between text-[12px] text-text-secondary bg-accent-light/50">
+            <span>Showing <span className="font-mono font-semibold text-text-primary">{filtered.length}</span> of {flattened.length}</span>
           </div>
         )}
       </div>
@@ -349,18 +348,18 @@ export function IssuesListPage({ domain = 'quality' }: { domain?: InspectionDoma
         size="md"
         footer={
           <>
-            <button onClick={() => { setVerifyModalTarget(null); setModalNote('') }} className="px-4 py-2 rounded-md border hairline text-[13px] font-medium text-ink-700">Cancel</button>
-            <button onClick={handleVerify} className="px-4 py-2 rounded-md bg-signal-green text-white text-[13px] font-medium hover:bg-signal-green/90">Verify & Close</button>
+            <button onClick={() => { setVerifyModalTarget(null); setModalNote('') }} className="px-4 py-2 rounded-lg border border-text-secondary/15 text-[13px] font-semibold text-text-secondary hover:bg-accent-light transition">Cancel</button>
+            <button onClick={handleVerify} className="px-4 py-2 rounded-lg bg-status-pass text-white text-[13px] font-semibold hover:bg-status-pass/90 transition">Verify & Close</button>
           </>
         }
       >
-        <label className="block text-[11px] font-medium uppercase tracking-[0.12em] text-ink-500 mb-2">Review note (optional)</label>
+        <label className="block text-[12px] font-bold uppercase tracking-wide text-text-secondary mb-2">Review note (optional)</label>
         <textarea
           value={modalNote}
           onChange={(e) => setModalNote(e.target.value)}
           placeholder="e.g. Looks good, photo evidence confirms the fix."
           rows={3}
-          className="focus-ring w-full px-3 py-2 rounded-md border hairline bg-white dark:bg-ink-800 text-[13px] resize-none"
+          className="input-base w-full focus-ring resize-none"
         />
       </Modal>
 
@@ -373,30 +372,36 @@ export function IssuesListPage({ domain = 'quality' }: { domain?: InspectionDoma
         size="md"
         footer={
           <>
-            <button onClick={() => { setReopenModalTarget(null); setModalNote('') }} className="px-4 py-2 rounded-md border hairline text-[13px] font-medium text-ink-700">Cancel</button>
-            <button onClick={handleReopen} disabled={!modalNote.trim()} className="px-4 py-2 rounded-md bg-signal-red text-white text-[13px] font-medium hover:bg-signal-red/90 disabled:opacity-50">Reopen issue</button>
+            <button onClick={() => { setReopenModalTarget(null); setModalNote('') }} className="px-4 py-2 rounded-lg border border-text-secondary/15 text-[13px] font-semibold text-text-secondary hover:bg-accent-light transition">Cancel</button>
+            <button onClick={handleReopen} disabled={!modalNote.trim()} className="px-4 py-2 rounded-lg bg-status-fail text-white text-[13px] font-semibold hover:bg-status-fail/90 disabled:opacity-50 transition">Reopen issue</button>
           </>
         }
       >
-        <label className="block text-[11px] font-medium uppercase tracking-[0.12em] text-ink-500 mb-2">Reason (required)</label>
+        <label className="block text-[12px] font-bold uppercase tracking-wide text-text-secondary mb-2">Reason (required)</label>
         <textarea
           value={modalNote}
           onChange={(e) => setModalNote(e.target.value)}
           placeholder="Why is this being reopened?"
           rows={3}
-          className="focus-ring w-full px-3 py-2 rounded-md border hairline bg-white dark:bg-ink-800 text-[13px] resize-none"
+          className="input-base w-full focus-ring resize-none"
         />
       </Modal>
     </div>
   )
 }
 
-function KpiCell({ label, value, highlight }: { label: string; value: number; highlight?: 'amber' | 'green' }) {
-  const highlightClass = highlight === 'amber' ? 'text-signal-amber' : highlight === 'green' ? 'text-signal-green' : 'text-ink-900 dark:text-ink-50'
+function EmptyState() {
   return (
-    <div className="bg-white dark:bg-ink-950 p-5 flex flex-col justify-center min-h-[96px]">
-      <div className="text-[11px] font-medium uppercase tracking-[0.12em] text-ink-500 dark:text-ink-400">{label}</div>
-      <div className={`mt-2 font-mono text-[24px] ${value > 0 ? highlightClass : 'text-ink-900 dark:text-ink-50'}`}>{value}</div>
+    <div className="text-center py-12">
+      <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-accent-light mb-4">
+        <Icon name="check" className="w-6 h-6 text-text-secondary" />
+      </div>
+      <div className="text-[15px] font-semibold text-text-primary mb-1">
+        No corrective actions active
+      </div>
+      <div className="text-[13px] text-text-secondary max-w-[360px] mx-auto">
+        When an inspector flags a failed checklist item, a corrective action will automatically populate here.
+      </div>
     </div>
   )
 }
@@ -407,13 +412,13 @@ function FilterSelect({ value, onChange, options }: { value: string; onChange: (
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="appearance-none pl-3 pr-9 py-2 rounded-md border hairline bg-white dark:bg-ink-900 text-[12px] font-medium text-ink-700 dark:text-ink-200 hover:bg-ink-50 dark:hover:bg-ink-800 transition-colors cursor-pointer focus-ring"
+        className="appearance-none pl-4 pr-10 py-2 rounded-lg border border-text-secondary/15 bg-white text-[13px] font-semibold text-text-primary hover:bg-accent-light transition-colors cursor-pointer outline-none focus:border-primary focus:ring-2 focus:ring-primary/15"
       >
         {options.map((o) => (
           <option key={o.value} value={o.value}>{o.label}</option>
         ))}
       </select>
-      <Icon name="chevron_down" className="w-3 h-3 absolute right-3 top-1/2 -translate-y-1/2 text-ink-400 dark:text-ink-500 pointer-events-none" />
+      <Icon name="chevron_down" className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-text-secondary pointer-events-none" />
     </div>
   )
 }

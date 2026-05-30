@@ -8,7 +8,7 @@ export const ROLES: Role[] = [
     email: 'admin@qmics.io',
     demoName: 'Maya Chen',
     description: 'Configure the platform, manage users, define master data',
-    accent: 'bg-ink-900 dark:bg-ink-50',
+    accent: 'bg-primary',
     glyph: 'shield',
   },
   {
@@ -18,7 +18,7 @@ export const ROLES: Role[] = [
     email: 'quality.manager@qmics.io',
     demoName: 'Rahul Iyer',
     description: 'Schedule inspections, review reports, approve quality records',
-    accent: 'bg-accent-500',
+    accent: 'bg-primary',
     glyph: 'badge',
   },
   {
@@ -28,7 +28,7 @@ export const ROLES: Role[] = [
     email: 'safety.manager@qmics.io',
     demoName: 'Anika Sharma',
     description: 'Oversee safety programs, verify corrective actions',
-    accent: 'bg-signal-amber',
+    accent: 'bg-warning',
     glyph: 'badge',
   },
   {
@@ -38,7 +38,7 @@ export const ROLES: Role[] = [
     email: 'quality.inspector@qmics.io',
     demoName: 'Priya Shah',
     description: 'Execute GMP and quality checks, capture evidence on the floor',
-    accent: 'bg-accent-400',
+    accent: 'bg-secondary',
     glyph: 'check',
   },
   {
@@ -48,7 +48,7 @@ export const ROLES: Role[] = [
     email: 'safety.inspector@qmics.io',
     demoName: 'Kabir Menon',
     description: 'Perform safety walkthroughs and HACCP verification',
-    accent: 'bg-signal-amber',
+    accent: 'bg-warning',
     glyph: 'check',
   },
   {
@@ -58,7 +58,7 @@ export const ROLES: Role[] = [
     email: 'employee@qmics.io',
     demoName: 'Diya Patel',
     description: 'Resolve assigned issues, upload evidence of corrective action',
-    accent: 'bg-signal-green',
+    accent: 'bg-status-pass',
     glyph: 'user',
   },
   {
@@ -68,7 +68,7 @@ export const ROLES: Role[] = [
     email: 'leadership@qmics.io',
     demoName: 'Vikram Bose',
     description: 'Monitor compliance, trends, and operational KPIs across sites',
-    accent: 'bg-ink-700 dark:bg-ink-200',
+    accent: 'bg-secondary',
     glyph: 'chart',
   },
 ]

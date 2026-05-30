@@ -69,29 +69,29 @@ export function Modal({
       {/* Backdrop */}
       <div
         onClick={() => dismissOnBackdrop && onClose()}
-        className="absolute inset-0 bg-ink-900/40 dark:bg-ink-950/70 backdrop-blur-sm"
+        className="absolute inset-0 bg-accent-light/40 backdrop-blur-sm"
       />
 
       {/* Card */}
       <div
         ref={cardRef}
         tabIndex={-1}
-        className={`relative w-full ${SIZE_MAP[size]} bg-white dark:bg-ink-900 border hairline rounded-xl shadow-2xl overflow-hidden focus:outline-none animate-fade-up`}
+        className={`relative w-full ${SIZE_MAP[size]} bg-white border border-text-secondary/15 rounded-2xl shadow-2xl overflow-hidden focus:outline-none animate-fade-up`}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="px-6 pt-5 pb-4 border-b hairline flex items-start justify-between gap-4">
+        <div className="px-6 pt-5 pb-4 border-b border-text-secondary/15 flex items-start justify-between gap-4">
           <div className="min-w-0">
             <h2
               id="modal-title"
-              className="font-display text-[22px] leading-tight tracking-tight text-ink-900 dark:text-ink-50"
+              className="font-sans text-[22px] font-bold leading-tight tracking-tight text-text-primary"
             >
               {title}
             </h2>
             {description && (
               <p
                 id="modal-description"
-                className="mt-1 text-[13px] leading-relaxed text-ink-500 dark:text-ink-400"
+                className="mt-1 text-[13px] leading-relaxed text-text-secondary"
               >
                 {description}
               </p>
@@ -99,7 +99,7 @@ export function Modal({
           </div>
           <button
             onClick={onClose}
-            className="shrink-0 w-7 h-7 rounded-md border hairline flex items-center justify-center text-ink-500 dark:text-ink-400 hover:bg-ink-50 dark:hover:bg-ink-800 hover:text-ink-900 dark:hover:text-ink-50 transition-colors"
+            className="shrink-0 w-7 h-7 rounded-md border border-text-secondary/15 flex items-center justify-center text-text-secondary hover:bg-accent-light hover:text-text-primary transition-colors"
             aria-label="Close"
           >
             <Icon name="close" className="w-3.5 h-3.5" />
@@ -111,7 +111,7 @@ export function Modal({
 
         {/* Footer */}
         {footer && (
-          <div className="px-6 py-4 border-t hairline bg-ink-50/50 dark:bg-ink-950/40 flex items-center justify-end gap-2">
+          <div className="px-6 py-4 border-t border-text-secondary/15 bg-accent-light/50 flex items-center justify-end gap-2">
             {footer}
           </div>
         )}

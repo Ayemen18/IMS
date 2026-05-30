@@ -87,16 +87,14 @@ export function SectionBlock({
     <div
       ref={setNodeRef}
       style={style}
-      className={`rounded-xl border bg-white dark:bg-ink-900 overflow-hidden transition-shadow ${
-        isDragging ? 'shadow-2xl ring-1 ring-ink-200 dark:ring-ink-700 border-ink-300 dark:border-ink-600' : 'border-black/[0.06] dark:border-white/[0.08]'
-      }`}
+      className={`rounded-xl border bg-white overflow-hidden transition-shadow ${ isDragging ? 'shadow-2xl ring-1 ring-text-secondary/15 border-text-secondary/15 ' : 'border-black/[0.06] ' }`}
     >
       {/* Section header */}
       <div className="border-b hairline">
-        <div className="grid grid-cols-[24px_24px_1fr_auto] gap-3 items-center px-5 py-3 bg-ink-50/50 dark:bg-ink-950/30">
+        <div className="grid grid-cols-[24px_24px_1fr_auto] gap-3 items-center px-5 py-3 bg-accent-light/50">
           <button
             type="button"
-            className="w-6 h-6 rounded flex items-center justify-center text-ink-400 dark:text-ink-500 hover:text-ink-700 dark:hover:text-ink-200 hover:bg-ink-100 dark:hover:bg-ink-800 cursor-grab active:cursor-grabbing transition-colors"
+            className="w-6 h-6 rounded flex items-center justify-center text-text-secondary hover:text-text-secondary hover:bg-accent-light cursor-grab active:cursor-grabbing transition-colors"
             aria-label="Drag section to reorder"
             {...attributes}
             {...listeners}
@@ -110,7 +108,7 @@ export function SectionBlock({
               <circle cx="8" cy="12" r="1" fill="currentColor" />
             </svg>
           </button>
-          <div className="font-mono text-[11px] text-ink-400 dark:text-ink-500 text-right">
+          <div className="font-mono text-[11px] text-text-secondary text-right">
             {String(index + 1).padStart(2, '0')}
           </div>
           <div className="min-w-0">
@@ -119,35 +117,35 @@ export function SectionBlock({
               value={section.title}
               onChange={(e) => onUpdateSection({ title: e.target.value })}
               placeholder="Section title"
-              className="w-full bg-transparent text-[15px] font-medium text-ink-900 dark:text-ink-50 placeholder:text-ink-400 dark:placeholder:text-ink-500 outline-none focus:outline-none border-b border-transparent focus:border-ink-300 dark:focus:border-ink-600 transition-colors pb-0.5"
+              className="w-full bg-transparent text-[15px] font-medium text-text-primary placeholder:text-text-secondary outline-none focus:outline-none border-b border-transparent focus:border-text-secondary/15 transition-colors pb-0.5"
             />
             <input
               type="text"
               value={section.description ?? ''}
               onChange={(e) => onUpdateSection({ description: e.target.value || undefined })}
               placeholder="Optional description"
-              className="w-full mt-0.5 bg-transparent text-[12px] text-ink-500 dark:text-ink-400 placeholder:text-ink-400 dark:placeholder:text-ink-500 outline-none focus:outline-none border-b border-transparent focus:border-ink-200 dark:focus:border-ink-700 transition-colors pb-0.5"
+              className="w-full mt-0.5 bg-transparent text-[12px] text-text-secondary placeholder:text-text-secondary outline-none focus:outline-none border-b border-transparent focus:border-text-secondary/15 transition-colors pb-0.5"
             />
           </div>
           <div className="flex items-center gap-1">
-            <span className="text-[11px] font-mono text-ink-500 dark:text-ink-400 mr-1">
+            <span className="text-[11px] font-mono text-text-secondary mr-1">
               {section.items.length} {section.items.length === 1 ? 'item' : 'items'}
             </span>
             <div ref={menuRef} className="relative">
               <button
                 type="button"
                 onClick={() => setMenuOpen((o) => !o)}
-                className="w-7 h-7 rounded flex items-center justify-center text-ink-400 dark:text-ink-500 hover:bg-ink-100 dark:hover:bg-ink-800 hover:text-ink-900 dark:hover:text-ink-50 transition-colors"
+                className="w-7 h-7 rounded flex items-center justify-center text-text-secondary hover:bg-accent-light hover:text-text-primary transition-colors"
                 aria-label="Section actions"
               >
                 <Icon name="chevron_down" className="w-3.5 h-3.5" />
               </button>
               {menuOpen && (
-                <div className="absolute right-0 top-full mt-1 z-30 w-[180px] rounded-lg border hairline bg-white dark:bg-ink-900 shadow-xl overflow-hidden animate-fade-in">
+                <div className="absolute right-0 top-full mt-1 z-30 w-[180px] rounded-lg border hairline bg-white shadow-xl overflow-hidden animate-fade-in">
                   <button
                     type="button"
                     onClick={() => { onDuplicateSection(); setMenuOpen(false) }}
-                    className="w-full text-left px-3 py-2 flex items-center gap-2 text-[12px] text-ink-700 dark:text-ink-200 hover:bg-ink-50 dark:hover:bg-ink-800/60 transition-colors"
+                    className="w-full text-left px-3 py-2 flex items-center gap-2 text-[12px] text-text-secondary hover:bg-accent-light transition-colors"
                   >
                     <Icon name="layers" className="w-3.5 h-3.5" />
                     Duplicate section
@@ -156,7 +154,7 @@ export function SectionBlock({
                   <button
                     type="button"
                     onClick={() => { onRemoveSection(); setMenuOpen(false) }}
-                    className="w-full text-left px-3 py-2 flex items-center gap-2 text-[12px] text-signal-red hover:bg-signal-red/5 transition-colors"
+                    className="w-full text-left px-3 py-2 flex items-center gap-2 text-[12px] text-status-fail hover:bg-status-fail/5 transition-colors"
                   >
                     <Icon name="close" className="w-3.5 h-3.5" />
                     Delete section
@@ -191,7 +189,7 @@ export function SectionBlock({
       <button
         type="button"
         onClick={() => onAddItem()}
-        className="w-full px-5 py-3 border-t hairline text-[12px] text-ink-500 dark:text-ink-400 hover:bg-ink-50 dark:hover:bg-ink-800/60 hover:text-ink-900 dark:hover:text-ink-50 transition-colors flex items-center gap-2"
+        className="w-full px-5 py-3 border-t hairline text-[12px] text-text-secondary hover:bg-accent-light hover:text-text-primary transition-colors flex items-center gap-2"
       >
         <Icon name="plus" className="w-3.5 h-3.5" />
         Add item to this section

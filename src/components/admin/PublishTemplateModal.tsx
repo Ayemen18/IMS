@@ -55,7 +55,7 @@ export function PublishTemplateModal({
             type="button"
             onClick={onClose}
             disabled={submitting}
-            className="px-4 py-2 rounded-md border hairline bg-white dark:bg-ink-900 text-[13px] font-medium text-ink-700 dark:text-ink-200 hover:bg-ink-50 dark:hover:bg-ink-800 transition-colors disabled:opacity-50"
+            className="px-4 py-2 rounded-md border hairline bg-white text-[13px] font-medium text-text-secondary hover:bg-accent-light transition-colors disabled:opacity-50"
           >
             Cancel
           </button>
@@ -63,7 +63,7 @@ export function PublishTemplateModal({
             type="button"
             onClick={() => onConfirm({ bump, note: note.trim() })}
             disabled={submitting}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-signal-green text-white text-[13px] font-medium hover:bg-signal-green/90 transition-colors disabled:opacity-60"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-status-pass text-white text-[13px] font-medium hover:bg-status-pass/90 transition-colors disabled:opacity-60"
           >
             {submitting ? 'Publishing…' : `Publish v${targetVersion}`}
             {!submitting && <Icon name="arrow_right" className="w-3.5 h-3.5" />}
@@ -75,7 +75,7 @@ export function PublishTemplateModal({
         {/* Version bump choice — only if not first publish */}
         {!isFirstPublish && (
           <div>
-            <label className="block text-[11px] font-medium uppercase tracking-[0.12em] text-ink-500 dark:text-ink-400 mb-2">
+            <label className="block text-[11px] font-medium uppercase tracking-[0.12em] text-text-secondary mb-2">
               Version bump
             </label>
             <div className="grid grid-cols-2 gap-2">
@@ -99,9 +99,9 @@ export function PublishTemplateModal({
 
         {/* Changelog note */}
         <div>
-          <label htmlFor="publish-note" className="block text-[11px] font-medium uppercase tracking-[0.12em] text-ink-500 dark:text-ink-400 mb-2">
+          <label htmlFor="publish-note" className="block text-[11px] font-medium uppercase tracking-[0.12em] text-text-secondary mb-2">
             Changelog note{' '}
-            <span className="normal-case font-normal tracking-normal text-ink-400 dark:text-ink-500">
+            <span className="normal-case font-normal tracking-normal text-text-secondary">
               — recommended
             </span>
           </label>
@@ -111,32 +111,32 @@ export function PublishTemplateModal({
             onChange={(e) => setNote(e.target.value)}
             placeholder="What changed in this version? e.g. 'Added Fe test piece check, tightened CCP-2 upper bound from 78°C to 76°C.'"
             rows={3}
-            className="focus-ring w-full px-3 py-2.5 rounded-md border border-ink-200 dark:border-ink-700 bg-white dark:bg-ink-800 text-[13px] text-ink-900 dark:text-ink-50 placeholder:text-ink-400 dark:placeholder:text-ink-500 transition-colors resize-none"
+            className="focus-ring w-full px-3 py-2.5 rounded-md border border-text-secondary/15 bg-white text-[13px] text-text-primary placeholder:text-text-secondary transition-colors resize-none"
           />
-          <p className="mt-1.5 text-[11px] text-ink-500 dark:text-ink-400">
+          <p className="mt-1.5 text-[11px] text-text-secondary">
             This note appears in the version history and on the published template's detail page.
           </p>
         </div>
 
         {/* Summary card */}
-        <div className="rounded-md border hairline bg-ink-50/50 dark:bg-ink-950/30 p-4 space-y-2.5">
+        <div className="rounded-md border hairline bg-accent-light/50 p-4 space-y-2.5">
           <div className="flex items-center justify-between text-[12px]">
-            <span className="text-ink-500 dark:text-ink-400">Template</span>
-            <span className="text-ink-900 dark:text-ink-50 truncate max-w-[280px] text-right">{template.name}</span>
+            <span className="text-text-secondary">Template</span>
+            <span className="text-text-primary truncate max-w-[280px] text-right">{template.name}</span>
           </div>
           <div className="flex items-center justify-between text-[12px]">
-            <span className="text-ink-500 dark:text-ink-400">Current version</span>
-            <span className="font-mono text-ink-900 dark:text-ink-50">
+            <span className="text-text-secondary">Current version</span>
+            <span className="font-mono text-text-primary">
               {isFirstPublish ? '—' : `v${currentPublished.version}`}
             </span>
           </div>
           <div className="flex items-center justify-between text-[12px]">
-            <span className="text-ink-500 dark:text-ink-400">Publishing as</span>
-            <span className="font-mono text-signal-green">v{targetVersion}</span>
+            <span className="text-text-secondary">Publishing as</span>
+            <span className="font-mono text-status-pass">v{targetVersion}</span>
           </div>
           <div className="flex items-center justify-between text-[12px]">
-            <span className="text-ink-500 dark:text-ink-400">Sections / items</span>
-            <span className="font-mono text-ink-900 dark:text-ink-50">
+            <span className="text-text-secondary">Sections / items</span>
+            <span className="font-mono text-text-primary">
               {template.sections.length} / {template.itemCount}
             </span>
           </div>
@@ -159,17 +159,13 @@ function BumpOption({
     <button
       type="button"
       onClick={onSelect}
-      className={`text-left p-3 rounded-md border transition-all ${
-        selected
-          ? 'border-ink-900 dark:border-ink-50 bg-ink-50 dark:bg-ink-800'
-          : 'border-black/[0.06] dark:border-white/[0.08] hover:border-ink-300 dark:hover:border-ink-600'
-      }`}
+      className={`text-left p-3 rounded-md border transition-all ${ selected ? 'border-text-secondary/15 bg-accent-light ' : 'border-black/[0.06] hover:border-text-secondary/15 ' }`}
     >
       <div className="flex items-center justify-between">
-        <div className="text-[13px] font-medium text-ink-900 dark:text-ink-50">{title}</div>
-        <div className="font-mono text-[11px] text-signal-green">v{target}</div>
+        <div className="text-[13px] font-medium text-text-primary">{title}</div>
+        <div className="font-mono text-[11px] text-status-pass">v{target}</div>
       </div>
-      <div className="text-[11px] text-ink-500 dark:text-ink-400 mt-1">{hint}</div>
+      <div className="text-[11px] text-text-secondary mt-1">{hint}</div>
     </button>
   )
 }

@@ -8,12 +8,12 @@ const STORAGE_KEY = 'ims-parameters-v1'
  * ============================================================ */
 
 export const PARAMETER_CATEGORIES = [
-  { key: 'Temperature', label: 'Temperature', accent: 'bg-signal-red' },
-  { key: 'Sanitation',  label: 'Sanitation',  accent: 'bg-signal-green' },
-  { key: 'Allergen',    label: 'Allergen',    accent: 'bg-signal-amber' },
-  { key: 'Mechanical',  label: 'Mechanical',  accent: 'bg-accent-700' },
-  { key: 'GMP',         label: 'GMP',         accent: 'bg-accent-500' },
-  { key: 'Other',       label: 'Other',       accent: 'bg-ink-700 dark:bg-ink-200' },
+  { key: 'Temperature', label: 'Temperature', accent: 'bg-status-fail' },
+  { key: 'Sanitation',  label: 'Sanitation',  accent: 'bg-status-pass' },
+  { key: 'Allergen',    label: 'Allergen',    accent: 'bg-warning' },
+  { key: 'Mechanical',  label: 'Mechanical',  accent: 'bg-primary' },
+  { key: 'GMP',         label: 'GMP',         accent: 'bg-primary' },
+  { key: 'Other',       label: 'Other',       accent: 'bg-accent-light ' },
 ] as const
 
 /* ============================================================

@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
+import { createContext, useContext, type ReactNode } from 'react'
 
 type Theme = 'light' | 'dark'
 
@@ -15,26 +15,10 @@ const ThemeContext = createContext<ThemeContextValue>({
 })
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>(() => {
-    if (typeof window === 'undefined') return 'light'
-    const stored = window.localStorage.getItem('ims-theme') as Theme | null
-    if (stored === 'light' || stored === 'dark') return stored
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-  })
-
-  useEffect(() => {
-    const root = document.documentElement
-    if (theme === 'dark') root.classList.add('dark')
-    else root.classList.remove('dark')
-    try {
-      window.localStorage.setItem('ims-theme', theme)
-    } catch {
-      // ignore storage failures
-    }
-  }, [theme])
-
-  const toggle = () => setThemeState((t) => (t === 'dark' ? 'light' : 'dark'))
-  const setTheme = (t: Theme) => setThemeState(t)
+  // Always force light mode and do not touch localStorage or document classes
+  const theme: Theme = 'light'
+  const toggle = () => {}
+  const setTheme = () => {}
 
   return (
     <ThemeContext.Provider value={{ theme, toggle, setTheme }}>

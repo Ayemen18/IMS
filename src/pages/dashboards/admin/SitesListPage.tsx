@@ -6,6 +6,7 @@ import { Icon } from '../../../components/primitives/Icon'
 import { StatusPill } from '../../../components/primitives/StatusPill'
 import type { Site, SiteStatus } from '../../../types/site'
 import { CreateSiteModal } from '../../../components/admin/CreateSiteModal'
+import { PageBanner } from '../../../components/shell/PageBanner'
 
 type SortKey = 'name' | 'location' | 'departments' | 'activity' | 'status'
 type SortDir = 'asc' | 'desc'
@@ -96,67 +97,51 @@ export function SitesListPage() {
   }
 
   return (
-    <>
-      <div className="stagger">
-        {/* ============ Header ============ */}
-        <div className="flex items-end justify-between flex-wrap gap-4">
-          <div>
-            <div className="flex items-center gap-2 text-[12px] text-ink-500 dark:text-ink-400">
-              <span>System Admin</span>
-              <Icon name="chevron_right" className="w-3 h-3" />
-              <span className="text-ink-900 dark:text-ink-50">Sites &amp; departments</span>
-            </div>
-            <h1 className="mt-2 font-display text-[44px] leading-[1.05] tracking-tight text-ink-900 dark:text-ink-50">
-              Sites &amp; <span className="italic text-ink-500 dark:text-ink-400">departments</span>.
-            </h1>
-            <p className="mt-1 text-[14px] text-ink-600 dark:text-ink-300">
-              {counts.all} sites · {counts.departments} departments · {counts.active} active.
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
+    <div className="space-y-6">
+      {/* ============ Header ============ */}
+      <PageBanner
+        title={`Sites & departments`}
+        subline={`${counts.all} sites · ${counts.departments} departments · ${counts.active} active`}
+        actions={
+          <button
+            onClick={() => setCreateOpen(true)}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-warning hover:bg-warning/90 text-text-primary text-[13px] font-bold transition shadow-sm"
+          >
+            + New site
+          </button>
+        }
+      />
+
+      {/* ============ Filter bar ============ */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="inline-flex items-center gap-1 p-1 bg-accent-light rounded-xl">
+          {STATUS_TABS.map((tab) => (
             <button
-              onClick={() => setCreateOpen(true)}
-              className="inline-flex items-center gap-2 px-3 py-2 rounded-md bg-accent-500 text-white text-[12px] font-medium hover:bg-accent-600 transition-colors"
+              key={tab.key}
+              onClick={() => setStatusTab(tab.key)}
+              className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-lg text-[13px] font-semibold transition ${ statusTab === tab.key ? 'bg-white text-text-primary shadow-soft' : 'text-text-secondary hover:text-text-primary' }`}
             >
-              <Icon name="plus" className="w-3.5 h-3.5" />
-              New site
+              {tab.label}
+              <span className={`text-[11px] font-bold px-1.5 py-0.5 rounded ${ statusTab === tab.key ? 'bg-primary/10 text-primary' : 'bg-accent-light text-text-secondary' }`}>
+                {counts[tab.key]}
+              </span>
             </button>
-          </div>
+          ))}
         </div>
 
-        {/* ============ Filter bar ============ */}
-        <div className="mt-8 flex items-center gap-4 flex-wrap">
-          <div className="flex items-center gap-1 p-1 rounded-md border hairline bg-white dark:bg-ink-900">
-            {STATUS_TABS.map((tab) => (
-              <button
-                key={tab.key}
-                onClick={() => setStatusTab(tab.key)}
-                className={`px-3 py-1.5 rounded text-[12px] font-medium transition-colors flex items-center gap-2 ${
-                  statusTab === tab.key
-                    ? 'bg-accent-500/10 dark:bg-accent-500/15 text-accent-700 dark:text-accent-300 border border-accent-500/20'
-                    : 'text-ink-500 dark:text-ink-400 hover:text-ink-900 dark:hover:text-ink-50'
-                }`}
-              >
-                {tab.label}
-                <span className="text-[10px] font-mono text-ink-400 dark:text-ink-500">
-                  {counts[tab.key]}
-                </span>
-              </button>
-            ))}
-          </div>
-
-          <div className="flex-1 min-w-[200px] max-w-[360px] flex items-center gap-2 px-3 py-2 rounded-md border hairline bg-white dark:bg-ink-900 focus-within:border-accent-500">
-            <Icon name="search" className="w-3.5 h-3.5 text-ink-400 dark:text-ink-500 shrink-0" />
+        <div className="flex items-center gap-2 flex-wrap">
+          <div className="relative min-w-[200px]">
+            <Icon name="search" className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-secondary" />
             <input
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search sites by name, code, city..."
-              className="flex-1 bg-transparent text-[13px] text-ink-900 dark:text-ink-50 placeholder:text-ink-400 dark:placeholder:text-ink-500 outline-none"
+              placeholder="Search sites..."
+              className="w-full bg-white border border-text-secondary/15 rounded-lg pl-10 pr-8 py-2 text-[14px] text-text-primary placeholder:text-text-secondary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/15 transition"
             />
             {query && (
-              <button onClick={() => setQuery('')} className="text-ink-400 dark:text-ink-500 hover:text-ink-900 dark:hover:text-ink-50 transition-colors" aria-label="Clear search">
-                <Icon name="close" className="w-3.5 h-3.5" />
+              <button onClick={() => setQuery('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-text-secondary hover:text-text-primary transition-colors" aria-label="Clear search">
+                <Icon name="close" className="w-3 h-3" />
               </button>
             )}
           </div>
@@ -165,61 +150,57 @@ export function SitesListPage() {
             <select
               value={domainFilter}
               onChange={(e) => setDomainFilter(e.target.value as any)}
-              className="appearance-none pl-3 pr-9 py-2 rounded-md border hairline bg-white dark:bg-ink-900 text-[12px] font-medium text-ink-700 dark:text-ink-200 hover:bg-ink-50 dark:hover:bg-ink-800 transition-colors cursor-pointer focus-ring"
+              className="appearance-none pl-4 pr-10 py-2 rounded-lg border border-text-secondary/15 bg-white text-[13px] font-semibold text-text-primary hover:bg-accent-light transition-colors cursor-pointer outline-none focus:border-primary focus:ring-2 focus:ring-primary/15"
             >
               <option value="all">Domain: All</option>
               <option value="quality">Domain: Quality</option>
               <option value="safety">Domain: Safety</option>
               <option value="both">Domain: Both</option>
             </select>
-            <Icon name="chevron_down" className="w-3 h-3 absolute right-3 top-1/2 -translate-y-1/2 text-ink-400 dark:text-ink-500 pointer-events-none" />
+            <Icon name="chevron_down" className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-text-secondary pointer-events-none" />
           </div>
         </div>
+      </div>
 
-        {/* ============ Table ============ */}
-        <div className="mt-6 rounded-xl border hairline bg-white dark:bg-ink-900 overflow-hidden">
-          {/* Header */}
-          <div className="grid grid-cols-[1.5fr_1.2fr_0.8fr_1fr_1.5fr_0.8fr] gap-4 px-5 py-2.5 border-b hairline bg-ink-50/50 dark:bg-ink-950/50 items-center">
-            <SortHeader label="Site" sortKey="name" active={sortKey} dir={sortDir} onClick={toggleSort} />
-            <SortHeader label="Location" sortKey="location" active={sortKey} dir={sortDir} onClick={toggleSort} />
-            <SortHeader label="Departments" sortKey="departments" active={sortKey} dir={sortDir} onClick={toggleSort} />
-            <SortHeader label="Recent activity" sortKey="activity" active={sortKey} dir={sortDir} onClick={toggleSort} />
-            <div className="text-[10px] font-medium uppercase tracking-[0.12em] text-ink-500 dark:text-ink-400">Certifications</div>
-            <SortHeader label="Status" sortKey="status" active={sortKey} dir={sortDir} onClick={toggleSort} className="justify-end" />
-          </div>
-
-          {filtered.length === 0 ? (
-            <EmptyState
-              query={query}
-              statusTab={statusTab}
-              domainFilter={domainFilter}
-              onCreate={() => setCreateOpen(true)}
-            />
-          ) : (
-            <div className="divide-y hairline">
-              {filtered.map((s) => (
-                <SiteRow
-                  key={s.id}
-                  site={s}
-                  departmentsCount={departments.filter(d => d.siteId === s.id).length}
-                  recentActivity={recentActivityMap.get(s.name) || 0}
-                  onClick={() => nav.push(`/admin/organization/${s.id}`)}
-                />
-              ))}
-            </div>
-          )}
-
-          {filtered.length > 0 && (
-            <div className="px-5 py-3 border-t hairline flex items-center justify-between text-[12px] text-ink-500 dark:text-ink-400">
-              <span>
-                Showing <span className="font-mono text-ink-900 dark:text-ink-50">{filtered.length}</span> of {sites.length}
-              </span>
-              <button className="hover:text-ink-900 dark:hover:text-ink-50 transition-colors">
-                View audit log
-              </button>
-            </div>
-          )}
+      {/* ============ Table ============ */}
+      <div className="rounded-2xl bg-white shadow-soft border border-text-secondary/15 overflow-hidden">
+        <div className="grid grid-cols-[1.5fr_1.2fr_0.8fr_1fr_1.5fr_0.8fr] gap-4 px-6 py-4 bg-accent-light border-b border-text-secondary/15 items-center">
+          <SortHeader label="Site" sortKey="name" active={sortKey} dir={sortDir} onClick={toggleSort} />
+          <SortHeader label="Location" sortKey="location" active={sortKey} dir={sortDir} onClick={toggleSort} />
+          <SortHeader label="Departments" sortKey="departments" active={sortKey} dir={sortDir} onClick={toggleSort} />
+          <SortHeader label="Recent activity" sortKey="activity" active={sortKey} dir={sortDir} onClick={toggleSort} />
+          <div className="text-[11px] font-bold uppercase tracking-[0.12em] text-text-secondary">Certifications</div>
+          <SortHeader label="Status" sortKey="status" active={sortKey} dir={sortDir} onClick={toggleSort} className="justify-end" />
         </div>
+
+        {filtered.length === 0 ? (
+          <EmptyState
+            query={query}
+            statusTab={statusTab}
+            domainFilter={domainFilter}
+            onCreate={() => setCreateOpen(true)}
+          />
+        ) : (
+          <div className="divide-y divide-text-secondary/15">
+            {filtered.map((s) => (
+              <SiteRow
+                key={s.id}
+                site={s}
+                departmentsCount={departments.filter(d => d.siteId === s.id).length}
+                recentActivity={recentActivityMap.get(s.name) || 0}
+                onClick={() => nav.push(`/admin/organization/${s.id}`)}
+              />
+            ))}
+          </div>
+        )}
+
+        {filtered.length > 0 && (
+          <div className="px-6 py-4 border-t border-text-secondary/15 flex items-center justify-between text-[12px] text-text-secondary bg-accent-light/50">
+            <span>
+              Showing <span className="font-mono font-semibold text-text-primary">{filtered.length}</span> of {sites.length}
+            </span>
+          </div>
+        )}
       </div>
 
       <CreateSiteModal
@@ -227,7 +208,7 @@ export function SitesListPage() {
         onClose={() => setCreateOpen(false)}
         onCreated={(site) => nav.push(`/admin/organization/${site.id}`)}
       />
-    </>
+    </div>
   )
 }
 
@@ -254,13 +235,11 @@ function SortHeader({
   return (
     <button
       onClick={() => onClick(sortKey)}
-      className={`text-left text-[10px] font-medium uppercase tracking-[0.12em] inline-flex items-center gap-1 transition-colors ${
-        isActive ? 'text-ink-900 dark:text-ink-50' : 'text-ink-500 dark:text-ink-400 hover:text-ink-900 dark:hover:text-ink-50'
-      } ${className}`}
+      className={`text-left text-[11px] font-bold uppercase tracking-[0.12em] inline-flex items-center gap-1 transition-colors ${ isActive ? 'text-text-primary' : 'text-text-secondary hover:text-text-primary' } ${className}`}
     >
       {label}
       {isActive && (
-        <Icon name="chevron_down" className={`w-3 h-3 transition-transform ${dir === 'asc' ? 'rotate-180' : ''}`} />
+        <Icon name="chevron_down" className={`w-3.5 h-3.5 transition-transform ${dir === 'asc' ? 'rotate-180' : ''}`} />
       )}
     </button>
   )
@@ -285,7 +264,7 @@ function SiteRow({
   return (
     <div
       onClick={onClick}
-      className="grid grid-cols-[1.5fr_1.2fr_0.8fr_1fr_1.5fr_0.8fr] gap-4 items-center px-5 py-3.5 hover:bg-ink-50 dark:hover:bg-ink-800/60 transition-colors group cursor-pointer"
+      className="grid grid-cols-[1.5fr_1.2fr_0.8fr_1fr_1.5fr_0.8fr] gap-4 items-center px-6 py-4 hover:bg-accent-light transition group cursor-pointer"
       role="button"
       tabIndex={0}
       onKeyDown={(e) => {
@@ -298,51 +277,51 @@ function SiteRow({
       {/* Site */}
       <div className="flex items-center gap-3 min-w-0">
         <div className="min-w-0">
-          <div className="text-[11px] font-mono text-ink-500 dark:text-ink-400 truncate">{site.code}</div>
-          <div className="text-[13px] font-medium text-ink-900 dark:text-ink-50 truncate">{site.name}</div>
+          <div className="text-[11px] font-mono text-text-secondary truncate font-bold">{site.code}</div>
+          <div className="text-[14px] font-semibold text-text-primary truncate">{site.name}</div>
         </div>
       </div>
 
       {/* Location */}
-      <div className="min-w-0 text-[13px] text-ink-700 dark:text-ink-200 truncate">
+      <div className="min-w-0 text-[13px] text-text-secondary truncate font-semibold">
         {site.city}, {site.country}
       </div>
 
       {/* Departments */}
-      <div className="flex items-baseline gap-1.5 min-w-0">
-        <span className="font-mono text-[13px] text-ink-900 dark:text-ink-50">{departmentsCount}</span>
-        <span className="text-[11px] text-ink-500 dark:text-ink-400">departments</span>
+      <div className="flex items-baseline gap-1 min-w-0">
+        <span className="font-mono text-[13px] text-text-primary font-bold">{departmentsCount}</span>
+        <span className="text-[11px] text-text-secondary">depts</span>
       </div>
 
       {/* Recent activity */}
-      <div className="flex items-baseline gap-1.5 min-w-0">
-        <span className="font-mono text-[13px] text-ink-900 dark:text-ink-50">{recentActivity}</span>
-        <span className="text-[11px] text-ink-500 dark:text-ink-400">inspections / 30d</span>
+      <div className="flex items-baseline gap-1 min-w-0">
+        <span className="font-mono text-[13px] text-text-primary font-bold">{recentActivity}</span>
+        <span className="text-[11px] text-text-secondary">insp / 30d</span>
       </div>
 
       {/* Certifications */}
       <div className="flex items-center gap-1.5 min-w-0 flex-wrap">
         {site.certifications.slice(0, 3).map((cert, i) => (
-          <span key={i} className="px-2 py-0.5 rounded bg-ink-100 dark:bg-ink-800 text-[11px] font-medium text-ink-700 dark:text-ink-200">
+          <span key={i} className="px-2 py-0.5 rounded bg-accent-light text-[11px] font-mono text-text-primary font-bold uppercase tracking-wider">
             {cert}
           </span>
         ))}
         {site.certifications.length > 3 && (
-          <span className="text-[11px] text-ink-500 dark:text-ink-400">+{site.certifications.length - 3} more</span>
+          <span className="text-[11px] text-text-secondary font-bold">+{site.certifications.length - 3} more</span>
         )}
         {site.certifications.length === 0 && (
-          <span className="text-[11px] text-ink-400 dark:text-ink-600">—</span>
+          <span className="text-[11px] text-text-secondary font-semibold">—</span>
         )}
       </div>
 
       {/* Status + chevron */}
-      <div className="flex items-center justify-end gap-2">
+      <div className="flex items-center justify-end gap-2 pr-2">
         <div className="capitalize">
           <StatusPill tone={statusTone}>{site.status}</StatusPill>
         </div>
         <Icon
           name="chevron_right"
-          className="w-4 h-4 text-ink-300 dark:text-ink-600 group-hover:text-ink-900 dark:group-hover:text-ink-50 group-hover:translate-x-0.5 transition-all"
+          className="w-4 h-4 text-text-secondary group-hover:text-text-primary group-hover:translate-x-0.5 transition-all"
         />
       </div>
     </div>
@@ -362,14 +341,14 @@ function EmptyState({
 }) {
   const hasFilters = query || statusTab !== 'all' || domainFilter !== 'all'
   return (
-    <div className="px-5 py-16 text-center">
-      <div className="inline-flex items-center justify-center w-12 h-12 rounded-full border hairline border-dashed">
-        <Icon name={hasFilters ? 'search' : 'home'} className="w-5 h-5 text-ink-400 dark:text-ink-500" />
+    <div className="px-6 py-20 text-center">
+      <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-accent-light mb-4">
+        <Icon name={hasFilters ? 'search' : 'home'} className="w-6 h-6 text-text-secondary" />
       </div>
-      <div className="mt-4 text-[15px] font-medium text-ink-900 dark:text-ink-50">
+      <div className="text-[15px] font-semibold text-text-primary mb-1">
         {hasFilters ? 'No sites match these filters' : 'No sites yet'}
       </div>
-      <p className="mt-1 text-[13px] text-ink-500 dark:text-ink-400 max-w-[360px] mx-auto">
+      <p className="text-[13px] text-text-secondary max-w-[360px] mx-auto mb-6">
         {hasFilters
           ? 'Try clearing the search or switching to a different status or domain.'
           : 'Create your first site to get started.'}
@@ -377,9 +356,9 @@ function EmptyState({
       {!hasFilters && (
         <button
           onClick={onCreate}
-          className="mt-6 inline-flex items-center gap-2 px-4 py-2 rounded-md bg-accent-500 text-white text-[13px] font-medium hover:bg-accent-600 transition-colors"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary hover:bg-primary text-white text-[13px] font-bold transition shadow-sm"
         >
-          <Icon name="plus" className="w-3.5 h-3.5" />
+          <Icon name="plus" className="w-4 h-4" />
           Create a site
         </button>
       )}

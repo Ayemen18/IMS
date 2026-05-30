@@ -60,14 +60,14 @@ export function TemplateHistoryPage() {
         <Breadcrumb onBack={() => nav.push('/admin/templates')} />
         <div className="mt-10 rounded-xl border hairline border-dashed p-16 text-center">
           <div className="inline-flex items-center justify-center w-12 h-12 rounded-full border hairline">
-            <Icon name="alert" className="w-5 h-5 text-ink-400 dark:text-ink-500" />
+            <Icon name="alert" className="w-5 h-5 text-text-secondary" />
           </div>
-          <h2 className="mt-4 font-display text-[28px] tracking-tight text-ink-900 dark:text-ink-50">
+          <h2 className="mt-4 font-sans font-bold text-[28px] tracking-tight text-text-primary">
             Template not found
           </h2>
           <button
             onClick={() => nav.push('/admin/templates')}
-            className="mt-6 inline-flex items-center gap-2 px-4 py-2 rounded-md bg-accent-500 text-white text-[13px] font-medium hover:bg-accent-600 transition-colors"
+            className="mt-6 inline-flex items-center gap-2 px-4 py-2 rounded-md bg-primary text-white text-[13px] font-medium hover:bg-primary transition-colors"
           >
             <Icon name="arrow_right" className="w-3.5 h-3.5 rotate-180" />
             Back to templates
@@ -98,14 +98,14 @@ export function TemplateHistoryPage() {
               <span className={`w-1.5 h-1.5 rounded-sm ${type.accent}`} />
               {type.label}
             </span>
-            <span className="font-mono text-[11px] text-ink-500 dark:text-ink-400">
+            <span className="font-mono text-[11px] text-text-secondary">
               {lineage.length} version{lineage.length === 1 ? '' : 's'}
             </span>
           </div>
-          <h1 className="mt-3 font-display text-[40px] leading-[1.05] tracking-tight text-ink-900 dark:text-ink-50">
-            History · <span className="italic text-ink-500 dark:text-ink-400">{template.name}</span>
+          <h1 className="mt-3 font-sans font-bold text-[40px] leading-[1.05] tracking-tight text-text-primary">
+            History · <span className="italic text-text-secondary">{template.name}</span>
           </h1>
-          <p className="mt-3 text-[14px] leading-relaxed text-ink-600 dark:text-ink-300">
+          <p className="mt-3 text-[14px] leading-relaxed text-text-secondary">
             Every revision in this template's lineage and every change recorded against them.
             Each version's content remains immutable after it's been superseded or archived.
           </p>
@@ -113,7 +113,7 @@ export function TemplateHistoryPage() {
         <div className="flex items-center gap-2 shrink-0">
           <button
             onClick={() => nav.push(`/admin/templates/${template.id}`)}
-            className="inline-flex items-center gap-2 px-3 py-2 rounded-md border hairline bg-white dark:bg-ink-900 text-[12px] font-medium text-ink-700 dark:text-ink-200 hover:bg-ink-50 dark:hover:bg-ink-800 transition-colors"
+            className="inline-flex items-center gap-2 px-3 py-2 rounded-md border hairline bg-white text-[12px] font-medium text-text-secondary hover:bg-accent-light transition-colors"
           >
             <Icon name="arrow_right" className="w-3.5 h-3.5 rotate-180" />
             Back to template
@@ -122,7 +122,7 @@ export function TemplateHistoryPage() {
       </div>
 
       {/* ============ Stat row ============ */}
-      <div className="mt-8 grid grid-cols-2 lg:grid-cols-4 gap-px bg-ink-200/60 dark:bg-ink-800 border hairline rounded-xl overflow-hidden">
+      <div className="mt-8 grid grid-cols-2 lg:grid-cols-4 gap-px bg-accent-light/60 border hairline rounded-xl overflow-hidden">
         <Stat label="Versions"   value={String(lineage.length)} />
         <Stat label="Published"  value={String(publishedCount)} />
         <Stat label="Drafts"     value={String(draftCount)} />
@@ -132,17 +132,17 @@ export function TemplateHistoryPage() {
       {/* ============ Versions list ============ */}
       <div className="mt-10">
         <div className="flex items-baseline justify-between mb-5">
-          <h2 className="font-display text-[24px] tracking-tight text-ink-900 dark:text-ink-50">
+          <h2 className="font-sans font-bold text-[24px] tracking-tight text-text-primary">
             Versions
           </h2>
-          <span className="text-[11px] font-mono text-ink-500 dark:text-ink-400">
+          <span className="text-[11px] font-mono text-text-secondary">
             newest first
           </span>
         </div>
 
         <ol className="relative space-y-3">
           {/* The continuous left rail */}
-          <div className="absolute left-[19px] top-3 bottom-3 w-px bg-ink-200 dark:bg-ink-800 pointer-events-none" />
+          <div className="absolute left-[19px] top-3 bottom-3 w-px bg-accent-light pointer-events-none" />
 
           {lineage.map((version, idx) => {
             const isViewing = version.id === template.id
@@ -169,15 +169,15 @@ export function TemplateHistoryPage() {
       {/* ============ Activity timeline ============ */}
       <div className="mt-12">
         <div className="flex items-baseline justify-between mb-5">
-          <h2 className="font-display text-[24px] tracking-tight text-ink-900 dark:text-ink-50">
+          <h2 className="font-sans font-bold text-[24px] tracking-tight text-text-primary">
             Activity
           </h2>
-          <span className="text-[11px] font-mono text-ink-500 dark:text-ink-400">
+          <span className="text-[11px] font-mono text-text-secondary">
             {activityTimeline.length} event{activityTimeline.length === 1 ? '' : 's'}
           </span>
         </div>
 
-        <div className="rounded-xl border hairline bg-white dark:bg-ink-900 overflow-hidden">
+        <div className="rounded-xl border hairline bg-white overflow-hidden">
           <ul className="divide-y hairline">
             {activityTimeline.map((event) => (
               <ActivityRow
@@ -221,42 +221,33 @@ function VersionCard({
     <li className="relative pl-12">
       {/* Status dot anchored on the left rail */}
       <div className="absolute left-[12px] top-5 z-10">
-        <div className={`w-[15px] h-[15px] rounded-full ring-4 ring-white dark:ring-ink-950 ${
-          version.status === 'published'  ? 'bg-signal-green' :
-          version.status === 'draft'      ? 'bg-signal-amber' :
-          version.status === 'superseded' ? 'bg-ink-400 dark:bg-ink-500' :
-          /* archived */                    'bg-ink-300 dark:bg-ink-600'
-        }`} />
+        <div className={`w-[15px] h-[15px] rounded-full ring-4 ring-white ${ version.status === 'published' ? 'bg-status-pass' : version.status === 'draft' ? 'bg-warning' : version.status === 'superseded' ? 'bg-accent-light ' : /* archived */ 'bg-accent-light ' }`} />
       </div>
 
       <div
-        className={`rounded-xl border bg-white dark:bg-ink-900 transition-all ${
-          isViewing
-            ? 'border-ink-400 dark:border-ink-500 shadow-sm'
-            : 'border-black/[0.06] dark:border-white/[0.08] hover:border-ink-300 dark:hover:border-ink-600'
-        }`}
+        className={`rounded-xl border bg-white transition-all ${ isViewing ? 'border-text-secondary/15 shadow-sm' : 'border-black/[0.06] hover:border-text-secondary/15 ' }`}
       >
         {/* Header row */}
         <div className="px-5 py-3.5 flex items-center justify-between gap-4 border-b hairline">
           <div className="flex items-center gap-3 min-w-0">
-            <span className="font-display text-[22px] leading-none tracking-tight text-ink-900 dark:text-ink-50">
+            <span className="font-sans font-bold text-[22px] leading-none tracking-tight text-text-primary">
               v{version.version}
             </span>
             <StatusPill tone={tone}>{label}</StatusPill>
             {isViewing && (
-              <span className="text-[10px] font-mono uppercase tracking-wider text-ink-500 dark:text-ink-400 px-1.5 py-0.5 rounded bg-ink-100 dark:bg-ink-800">
+              <span className="text-[10px] font-mono uppercase tracking-wider text-text-secondary px-1.5 py-0.5 rounded bg-accent-light">
                 viewing
               </span>
             )}
           </div>
           <div className="flex items-center gap-2 shrink-0">
-            <span className="text-[11px] font-mono text-ink-500 dark:text-ink-400">
+            <span className="text-[11px] font-mono text-text-secondary">
               {formatDate(version.createdAt)}
             </span>
             {!isViewing && (
               <button
                 onClick={onView}
-                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[12px] font-medium text-ink-700 dark:text-ink-200 hover:bg-ink-100 dark:hover:bg-ink-800 transition-colors"
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[12px] font-medium text-text-secondary hover:bg-accent-light transition-colors"
               >
                 View
                 <Icon name="arrow_right" className="w-3 h-3" />
@@ -269,19 +260,19 @@ function VersionCard({
         <div className="px-5 py-4 space-y-3">
           {/* Diff summary */}
           {diffSummary && (
-            <div className="text-[12px] text-ink-700 dark:text-ink-200">
-              <span className="font-mono text-ink-400 dark:text-ink-500 mr-1.5">Δ</span>
+            <div className="text-[12px] text-text-secondary">
+              <span className="font-mono text-text-secondary mr-1.5">Δ</span>
               {diffSummary}
             </div>
           )}
 
           {/* Publish note */}
           {publishEntry?.note && (
-            <div className="rounded-md bg-ink-50/70 dark:bg-ink-950/40 border hairline px-3 py-2.5">
-              <div className="text-[10px] font-medium uppercase tracking-[0.12em] text-ink-500 dark:text-ink-400 mb-1">
+            <div className="rounded-md bg-accent-light/70 border hairline px-3 py-2.5">
+              <div className="text-[10px] font-medium uppercase tracking-[0.12em] text-text-secondary mb-1">
                 Publish note
               </div>
-              <p className="text-[12px] text-ink-700 dark:text-ink-200 leading-relaxed">
+              <p className="text-[12px] text-text-secondary leading-relaxed">
                 {publishEntry.note}
               </p>
             </div>
@@ -291,18 +282,18 @@ function VersionCard({
           <div className="flex items-center justify-between gap-3 pt-1">
             <div className="flex items-center gap-2.5 min-w-0">
               <Avatar name={version.ownerName} size="w-6 h-6 text-[10px]" />
-              <span className="text-[12px] text-ink-700 dark:text-ink-200 truncate">
+              <span className="text-[12px] text-text-secondary truncate">
                 {version.ownerName}
               </span>
             </div>
-            <div className="flex items-center gap-3 text-[11px] font-mono text-ink-500 dark:text-ink-400 shrink-0">
+            <div className="flex items-center gap-3 text-[11px] font-mono text-text-secondary shrink-0">
               <span title="Sections">
-                <span className="text-ink-400 dark:text-ink-500">sections</span> {version.sections.length}
+                <span className="text-text-secondary">sections</span> {version.sections.length}
               </span>
               <span title="Items">
-                <span className="text-ink-400 dark:text-ink-500">items</span> {version.itemCount}
+                <span className="text-text-secondary">items</span> {version.itemCount}
               </span>
-              <span className="font-mono text-ink-400 dark:text-ink-500 truncate max-w-[140px]">
+              <span className="font-mono text-text-secondary truncate max-w-[140px]">
                 {version.id}
               </span>
             </div>
@@ -329,7 +320,7 @@ function ActivityRow({
   const actionVisual = ACTION_VISUAL[event.action]
 
   return (
-    <li className="px-5 py-3.5 flex items-start gap-4 hover:bg-ink-50 dark:hover:bg-ink-800/40 transition-colors">
+    <li className="px-5 py-3.5 flex items-start gap-4 hover:bg-accent-light transition-colors">
       {/* Action icon */}
       <div className={`mt-0.5 w-7 h-7 rounded-md border hairline flex items-center justify-center shrink-0 ${actionVisual.bg}`}>
         <Icon name={actionVisual.icon} className={`w-3.5 h-3.5 ${actionVisual.fg}`} />
@@ -337,23 +328,23 @@ function ActivityRow({
 
       {/* Content */}
       <div className="flex-1 min-w-0">
-        <div className="text-[13px] text-ink-900 dark:text-ink-50">
+        <div className="text-[13px] text-text-primary">
           <span className="font-medium">{event.byName}</span>{' '}
-          <span className="text-ink-500 dark:text-ink-400">{verbFor(event.action)}</span>{' '}
+          <span className="text-text-secondary">{verbFor(event.action)}</span>{' '}
           <button
             onClick={onViewVersion}
-            className="font-mono text-ink-700 dark:text-ink-200 hover:text-ink-900 dark:hover:text-ink-50 underline underline-offset-2 transition-colors"
+            className="font-mono text-text-secondary hover:text-text-primary underline underline-offset-2 transition-colors"
           >
             v{event.templateVersion}
           </button>
           {isCurrentVersion && (
-            <span className="ml-1.5 text-[10px] font-mono uppercase tracking-wider text-ink-500 dark:text-ink-400 px-1 py-0.5 rounded bg-ink-100 dark:bg-ink-800">
+            <span className="ml-1.5 text-[10px] font-mono uppercase tracking-wider text-text-secondary px-1 py-0.5 rounded bg-accent-light">
               current
             </span>
           )}
         </div>
         {event.note && (
-          <p className="mt-0.5 text-[12px] text-ink-600 dark:text-ink-300 leading-relaxed">
+          <p className="mt-0.5 text-[12px] text-text-secondary leading-relaxed">
             {event.note}
           </p>
         )}
@@ -361,10 +352,10 @@ function ActivityRow({
 
       {/* Right metadata */}
       <div className="text-right shrink-0 space-y-0.5">
-        <div className="text-[11px] font-mono text-ink-600 dark:text-ink-300">
+        <div className="text-[11px] font-mono text-text-secondary">
           {formatRelativeTime(event.at)}
         </div>
-        <div className="text-[10px] font-mono text-ink-400 dark:text-ink-500">
+        <div className="text-[10px] font-mono text-text-secondary">
           {formatDate(event.at)}
         </div>
       </div>
@@ -380,13 +371,13 @@ const ACTION_VISUAL: Record<
   TemplateVersionChange['action'],
   { icon: 'plus' | 'check' | 'settings' | 'box' | 'layers' | 'close'; fg: string; bg: string }
 > = {
-  created:    { icon: 'plus',     fg: 'text-signal-green',           bg: 'bg-signal-green/10' },
-  edited:     { icon: 'settings', fg: 'text-ink-700 dark:text-ink-200', bg: 'bg-ink-50 dark:bg-ink-800/60' },
-  published:  { icon: 'check',    fg: 'text-signal-green',           bg: 'bg-signal-green/10' },
-  archived:   { icon: 'box',      fg: 'text-signal-red',             bg: 'bg-signal-red/10' },
-  restored:   { icon: 'check',    fg: 'text-signal-green',           bg: 'bg-signal-green/10' },
-  superseded: { icon: 'layers',   fg: 'text-ink-500 dark:text-ink-400', bg: 'bg-ink-100 dark:bg-ink-800' },
-  duplicated: { icon: 'layers',   fg: 'text-accent-500',             bg: 'bg-accent-500/10' },
+  created:    { icon: 'plus',     fg: 'text-status-pass',           bg: 'bg-status-pass/10' },
+  edited:     { icon: 'settings', fg: 'text-text-secondary ', bg: 'bg-accent-light ' },
+  published:  { icon: 'check',    fg: 'text-status-pass',           bg: 'bg-status-pass/10' },
+  archived:   { icon: 'box',      fg: 'text-status-fail',             bg: 'bg-status-fail/10' },
+  restored:   { icon: 'check',    fg: 'text-status-pass',           bg: 'bg-status-pass/10' },
+  superseded: { icon: 'layers',   fg: 'text-text-secondary ', bg: 'bg-accent-light ' },
+  duplicated: { icon: 'layers',   fg: 'text-primary',             bg: 'bg-primary/10' },
 }
 
 function verbFor(action: TemplateVersionChange['action']): string {
@@ -414,12 +405,12 @@ function Breadcrumb({
 }) {
   const nav = useNav()
   return (
-    <div className="flex items-center gap-2 text-[12px] text-ink-500 dark:text-ink-400">
+    <div className="flex items-center gap-2 text-[12px] text-text-secondary">
       <span>System Admin</span>
       <Icon name="chevron_right" className="w-3 h-3" />
       <button
         onClick={() => nav.push('/admin/templates')}
-        className="hover:text-ink-900 dark:hover:text-ink-50 transition-colors"
+        className="hover:text-text-primary transition-colors"
       >
         Templates
       </button>
@@ -428,12 +419,12 @@ function Breadcrumb({
           <Icon name="chevron_right" className="w-3 h-3" />
           <button
             onClick={onBack}
-            className="hover:text-ink-900 dark:hover:text-ink-50 transition-colors truncate max-w-[360px]"
+            className="hover:text-text-primary transition-colors truncate max-w-[360px]"
           >
             {templateName}
           </button>
           <Icon name="chevron_right" className="w-3 h-3" />
-          <span className="text-ink-900 dark:text-ink-50">History</span>
+          <span className="text-text-primary">History</span>
         </>
       )}
     </div>
@@ -442,11 +433,11 @@ function Breadcrumb({
 
 function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="bg-white dark:bg-ink-900 p-5">
-      <div className="text-[11px] uppercase tracking-[0.12em] text-ink-500 dark:text-ink-400">
+    <div className="bg-white p-5">
+      <div className="text-[11px] uppercase tracking-[0.12em] text-text-secondary">
         {label}
       </div>
-      <div className="mt-3 font-display text-[28px] leading-none tracking-tight text-ink-900 dark:text-ink-50">
+      <div className="mt-3 font-sans font-bold text-[28px] leading-none tracking-tight text-text-primary">
         {value}
       </div>
     </div>

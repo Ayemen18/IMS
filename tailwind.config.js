@@ -5,57 +5,29 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['"Inter Tight"', 'system-ui', 'sans-serif'],
+        sans:    ['"Inter Tight"', 'system-ui', 'sans-serif'],
+        mono:    ['"JetBrains Mono"', 'monospace'],
+        // Keep display token defined for backward compat but unused
         display: ['"Instrument Serif"', 'serif'],
-        mono: ['"JetBrains Mono"', 'monospace'],
       },
       colors: {
-        ink: {
-          50:  '#F7F7F6',
-          100: '#EDEDEB',
-          200: '#D9D9D5',
-          300: '#B8B8B2',
-          400: '#8C8C86',
-          500: '#5F5F5A',
-          600: '#3F3F3B',
-          700: '#262624',
-          800: '#161614',
-          900: '#0B0B0A',
-          950: '#070706',
-        },
-        accent: {
-          50:  '#EFF3FB',
-          100: '#D8E2F4',
-          200: '#B0C4E9',
-          300: '#84A2D9',
-          400: '#5A82CA',
-          500: '#2851B8',
-          600: '#1F40A0',
-          700: '#1B3782',
-          800: '#172E6C',
-          900: '#11224F',
-          950: '#0B173B',
-        },
-        brand: {
-          yellow: {
-            50:  '#FFFAEC',
-            100: '#FFF1C5',
-            300: '#FFD75A',
-            500: '#F5B800',
-            600: '#D69D00',
-            700: '#B68500',
-          },
-          navy: {
-            700: '#152B47',
-            800: '#0E2236',
-            900: '#091828',
-          },
-        },
-        signal: {
-          green: '#198F4F',
-          amber: '#B47100',
-          red:   '#C0321F',
-        },
+        // Theme tokens
+        primary:        'var(--color-primary)',
+        secondary:      'var(--color-secondary)',
+        warning:        'var(--color-warning)',
+        'accent-light': 'var(--color-accent-light)',
+        white:          'var(--color-white)',
+        'text-primary': 'var(--color-text-primary)',
+        'text-secondary': 'var(--color-text-secondary)',
+        
+        // Muted status (exceptions for pass/fail semantics)
+        'status-pass': '#2F8A5C',
+        'status-fail': '#B5483A',
+      },
+      boxShadow: {
+        soft:  '0 2px 8px -2px rgba(14, 84, 103, 0.08)',
+        lift:  '0 8px 24px -8px rgba(14, 84, 103, 0.12)',
+        card:  '0 1px 3px 0 rgba(14, 84, 103, 0.06), 0 1px 2px 0 rgba(14, 84, 103, 0.04)',
       },
       animation: {
         'fade-up':   'fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both',

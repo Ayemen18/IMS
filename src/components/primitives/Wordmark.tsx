@@ -21,7 +21,7 @@ export function Wordmark({ variant = 'default', className = '' }: WordmarkProps)
       />
       <span
         style={{ display: 'none' }}
-        className="font-display text-[18px] font-medium text-ink-900 dark:text-ink-50 whitespace-nowrap"
+        className="font-sans text-[18px] font-bold text-text-primary whitespace-nowrap"
       >
         InspectSphere
       </span>

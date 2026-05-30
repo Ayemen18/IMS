@@ -17,7 +17,7 @@ function initials(name: string): string {
 }
 
 export function Avatar({ name, size = 'w-8 h-8 text-[11px]', accent }: AvatarProps) {
-  const bg = accent ?? 'bg-ink-200 dark:bg-ink-700 text-ink-700 dark:text-ink-200'
+  const bg = accent ?? 'bg-accent-light text-text-secondary'
   return (
     <div
       className={`shrink-0 rounded-full ${bg} flex items-center justify-center font-medium ${size}`}

@@ -11,6 +11,7 @@ import { InviteUserModal } from '../../components/admin/InviteUserModal'
 import { BulkActionBar, type BulkAction } from '../../components/admin/BulkActionBar'
 import type { RoleKey } from '../../types/role'
 import type { User, UserStatus } from '../../types/user'
+import { PageBanner } from '../../components/shell/PageBanner'
 
 type SortKey = 'name' | 'role' | 'site' | 'lastActive' | 'joined'
 type SortDir = 'asc' | 'desc'
@@ -153,7 +154,6 @@ export function UsersListPage() {
   }
 
   const bulkResendInvite = () => {
-    // No backend yet — just clear selection and we'd toast in production
     clearSelection()
   }
 
@@ -188,71 +188,57 @@ export function UsersListPage() {
   }
 
   return (
-    <>
-      <div className="stagger">
-        {/* ============ Header ============ */}
-        <div className="flex items-end justify-between flex-wrap gap-4">
-          <div>
-            <div className="flex items-center gap-2 text-[12px] text-ink-500 dark:text-ink-400">
-              <span>System Admin</span>
-              <Icon name="chevron_right" className="w-3 h-3" />
-              <span className="text-ink-900 dark:text-ink-50">Users &amp; roles</span>
-            </div>
-            <h1 className="mt-2 font-display text-[44px] leading-[1.05] tracking-tight text-ink-900 dark:text-ink-50">
-              Users &amp; <span className="italic text-ink-500 dark:text-ink-400">roles</span>.
-            </h1>
-            <p className="mt-1 text-[14px] text-ink-600 dark:text-ink-300">
-              {counts.all} total · {counts.active} active · {counts.invited} pending invites
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
-            <button className="inline-flex items-center gap-2 px-3 py-2 rounded-md border hairline bg-white dark:bg-ink-900 text-[12px] font-medium text-ink-700 dark:text-ink-200 hover:bg-ink-50 dark:hover:bg-ink-800 transition-colors">
+    <div className="space-y-6">
+      {/* ============ Header ============ */}
+      <PageBanner
+        title={`Users & roles`}
+        subline={`${counts.all} total · ${counts.active} active · ${counts.invited} pending invites`}
+        actions={
+          <>
+            <button className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-white/40 bg-white/10 hover:bg-white/20 text-white text-[13px] font-semibold transition">
               <Icon name="download" className="w-3.5 h-3.5" />
               Export
             </button>
             <button
               onClick={() => setInviteOpen(true)}
-              className="inline-flex items-center gap-2 px-3 py-2 rounded-md bg-accent-500 text-white text-[12px] font-medium hover:bg-accent-600 transition-colors"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-warning hover:bg-warning/90 text-text-primary text-[13px] font-bold transition shadow-sm"
             >
-              <Icon name="plus" className="w-3.5 h-3.5" />
-              Invite user
+              + Invite user
             </button>
-          </div>
+          </>
+        }
+      />
+
+      {/* ============ Filter bar ============ */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="inline-flex items-center gap-1 p-1 bg-accent-light rounded-xl">
+          {STATUS_TABS.map((tab) => (
+            <button
+              key={tab.key}
+              onClick={() => setStatusTab(tab.key)}
+              className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-lg text-[13px] font-semibold transition ${ statusTab === tab.key ? 'bg-white text-text-primary shadow-soft' : 'text-text-secondary hover:text-text-primary' }`}
+            >
+              {tab.label}
+              <span className={`text-[11px] font-bold px-1.5 py-0.5 rounded ${ statusTab === tab.key ? 'bg-primary/10 text-primary' : 'bg-accent-light text-text-secondary' }`}>
+                {counts[tab.key]}
+              </span>
+            </button>
+          ))}
         </div>
 
-        {/* ============ Filter bar ============ */}
-        <div className="mt-8 flex items-center gap-4 flex-wrap">
-          <div className="flex items-center gap-1 p-1 rounded-md border hairline bg-white dark:bg-ink-900">
-            {STATUS_TABS.map((tab) => (
-              <button
-                key={tab.key}
-                onClick={() => setStatusTab(tab.key)}
-                className={`px-3 py-1.5 rounded text-[12px] font-medium transition-colors flex items-center gap-2 ${
-                  statusTab === tab.key
-                    ? 'bg-accent-500/10 dark:bg-accent-500/15 text-accent-700 dark:text-accent-300 border border-accent-500/20'
-                    : 'text-ink-500 dark:text-ink-400 hover:text-ink-900 dark:hover:text-ink-50'
-                }`}
-              >
-                {tab.label}
-                <span className="text-[10px] font-mono text-ink-400 dark:text-ink-500">
-                  {counts[tab.key]}
-                </span>
-              </button>
-            ))}
-          </div>
-
-          <div className="flex-1 min-w-[200px] max-w-[360px] flex items-center gap-2 px-3 py-2 rounded-md border hairline bg-white dark:bg-ink-900 focus-within:border-accent-500">
-            <Icon name="search" className="w-3.5 h-3.5 text-ink-400 dark:text-ink-500 shrink-0" />
+        <div className="flex items-center gap-2 flex-wrap">
+          <div className="relative min-w-[200px]">
+            <Icon name="search" className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-secondary" />
             <input
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search by name, email, title…"
-              className="flex-1 bg-transparent text-[13px] text-ink-900 dark:text-ink-50 placeholder:text-ink-400 dark:placeholder:text-ink-500 outline-none"
+              placeholder="Search users..."
+              className="w-full bg-white border border-text-secondary/15 rounded-lg pl-10 pr-8 py-2 text-[14px] text-text-primary placeholder:text-text-secondary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/15 transition"
             />
             {query && (
-              <button onClick={() => setQuery('')} className="text-ink-400 dark:text-ink-500 hover:text-ink-900 dark:hover:text-ink-50 transition-colors" aria-label="Clear search">
-                <Icon name="close" className="w-3.5 h-3.5" />
+              <button onClick={() => setQuery('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-text-secondary hover:text-text-primary transition-colors" aria-label="Clear search">
+                <Icon name="close" className="w-3 h-3" />
               </button>
             )}
           </div>
@@ -261,7 +247,7 @@ export function UsersListPage() {
             <select
               value={roleFilter}
               onChange={(e) => setRoleFilter(e.target.value as 'all' | RoleKey)}
-              className="appearance-none pl-3 pr-9 py-2 rounded-md border hairline bg-white dark:bg-ink-900 text-[12px] font-medium text-ink-700 dark:text-ink-200 hover:bg-ink-50 dark:hover:bg-ink-800 transition-colors cursor-pointer focus-ring"
+              className="appearance-none pl-4 pr-10 py-2 rounded-lg border border-text-secondary/15 bg-white text-[13px] font-semibold text-text-primary hover:bg-accent-light transition-colors cursor-pointer outline-none focus:border-primary focus:ring-2 focus:ring-primary/15"
             >
               <option value="all">All roles</option>
               {ROLES.map((r) => (
@@ -270,79 +256,74 @@ export function UsersListPage() {
                 </option>
               ))}
             </select>
-            <Icon name="chevron_down" className="w-3 h-3 absolute right-3 top-1/2 -translate-y-1/2 text-ink-400 dark:text-ink-500 pointer-events-none" />
+            <Icon name="chevron_down" className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-text-secondary pointer-events-none" />
           </div>
-        </div>
-
-        {/* ============ Table ============ */}
-        <div className="mt-6 rounded-xl border hairline bg-white dark:bg-ink-900 overflow-hidden">
-          {/* Header */}
-          <div className="grid grid-cols-[36px_1.6fr_1fr_1fr_0.9fr_0.7fr] gap-4 px-5 py-2.5 border-b hairline bg-ink-50/50 dark:bg-ink-950/50 items-center">
-            <SelectAllCheckbox
-              checked={allFilteredSelected}
-              indeterminate={someFilteredSelected}
-              onChange={toggleAllFiltered}
-              disabled={filteredIds.length === 0}
-            />
-            <SortHeader label="User"        sortKey="name"        active={sortKey} dir={sortDir} onClick={toggleSort} />
-            <SortHeader label="Role"        sortKey="role"        active={sortKey} dir={sortDir} onClick={toggleSort} />
-            <SortHeader label="Site"        sortKey="site"        active={sortKey} dir={sortDir} onClick={toggleSort} />
-            <SortHeader label="Last active" sortKey="lastActive"  active={sortKey} dir={sortDir} onClick={toggleSort} />
-            <div className="text-[10px] font-medium uppercase tracking-[0.12em] text-ink-500 dark:text-ink-400 text-right">Status</div>
-          </div>
-
-          {filtered.length === 0 ? (
-            <EmptyState
-              query={query}
-              statusTab={statusTab}
-              roleFilter={roleFilter}
-              onInvite={() => setInviteOpen(true)}
-            />
-          ) : (
-            <div className="divide-y hairline">
-              {filtered.map((u) => (
-                <UserRow
-                  key={u.id}
-                  user={u}
-                  selected={selectedIds.has(u.id)}
-                  onToggleSelect={() => toggleOne(u.id)}
-                  onClick={() => nav.push(`/admin/users/${u.id}`)}
-                />
-              ))}
-            </div>
-          )}
-
-          {filtered.length > 0 && (
-            <div className="px-5 py-3 border-t hairline flex items-center justify-between text-[12px] text-ink-500 dark:text-ink-400">
-              <span>
-                Showing <span className="font-mono text-ink-900 dark:text-ink-50">{filtered.length}</span> of {users.length}
-              </span>
-              <button className="hover:text-ink-900 dark:hover:text-ink-50 transition-colors">
-                View audit log
-              </button>
-            </div>
-          )}
         </div>
       </div>
 
-      {/* ============ Floating bulk action bar ============ */}
+      {/* ============ Table ============ */}
+      <div className="rounded-2xl bg-white shadow-soft border border-text-secondary/15 overflow-hidden">
+        <div className="grid grid-cols-[36px_1.6fr_1fr_1fr_0.9fr_0.7fr] gap-4 px-6 py-4 bg-accent-light border-b border-text-secondary/15 items-center">
+          <SelectAllCheckbox
+            checked={allFilteredSelected}
+            indeterminate={someFilteredSelected}
+            onChange={toggleAllFiltered}
+            disabled={filteredIds.length === 0}
+          />
+          <SortHeader label="User"        sortKey="name"        active={sortKey} dir={sortDir} onClick={toggleSort} />
+          <SortHeader label="Role"        sortKey="role"        active={sortKey} dir={sortDir} onClick={toggleSort} />
+          <SortHeader label="Site"        sortKey="site"        active={sortKey} dir={sortDir} onClick={toggleSort} />
+          <SortHeader label="Last active" sortKey="lastActive"  active={sortKey} dir={sortDir} onClick={toggleSort} />
+          <div className="text-[11px] font-bold uppercase tracking-[0.12em] text-text-secondary text-right pr-2">Status</div>
+        </div>
+
+        {filtered.length === 0 ? (
+          <EmptyState
+            query={query}
+            statusTab={statusTab}
+            roleFilter={roleFilter}
+            onInvite={() => setInviteOpen(true)}
+          />
+        ) : (
+          <div className="divide-y divide-text-secondary/15">
+            {filtered.map((u) => (
+              <UserRow
+                key={u.id}
+                user={u}
+                selected={selectedIds.has(u.id)}
+                onToggleSelect={() => toggleOne(u.id)}
+                onClick={() => nav.push(`/admin/users/${u.id}`)}
+              />
+            ))}
+          </div>
+        )}
+
+        {filtered.length > 0 && (
+          <div className="px-6 py-4 border-t border-text-secondary/15 flex items-center justify-between text-[12px] text-text-secondary bg-accent-light/50">
+            <span>
+              Showing <span className="font-mono font-semibold text-text-primary">{filtered.length}</span> of {users.length}
+            </span>
+          </div>
+        )}
+      </div>
+
+      {/* Bulk action bar */}
       <BulkActionBar
         selectedCount={selectedIds.size}
         onClear={clearSelection}
         actions={bulkActions}
       />
 
-      {/* ============ Invite modal ============ */}
+      {/* Invite modal */}
       <InviteUserModal
         open={inviteOpen}
         onClose={() => setInviteOpen(false)}
         onInvited={(user) => {
-          // Land on the new user's detail page to confirm the invite went through
           nav.push(`/admin/users/${user.id}`)
         }}
       />
 
-      {/* ============ Confirmation modal ============ */}
+      {/* Confirmation modal */}
       <Modal
         open={!!confirm}
         onClose={() => setConfirm(null)}
@@ -354,35 +335,27 @@ export function UsersListPage() {
             <button
               type="button"
               onClick={() => setConfirm(null)}
-              className="px-4 py-2 rounded-md border hairline bg-white dark:bg-ink-900 text-[13px] font-medium text-ink-700 dark:text-ink-200 hover:bg-ink-50 dark:hover:bg-ink-800 transition-colors"
+              className="px-4 py-2 rounded-lg border border-text-secondary/15 bg-white text-[13px] font-semibold text-text-secondary hover:bg-accent-light transition-colors"
             >
               Cancel
             </button>
             <button
               type="button"
               onClick={() => confirm?.onConfirm()}
-              className={`inline-flex items-center gap-2 px-4 py-2 rounded-md text-[13px] font-medium transition-colors ${
-                confirm?.destructive
-                  ? 'bg-signal-red text-white hover:bg-signal-red/90'
-                  : 'bg-accent-500 text-white hover:bg-accent-600'
-              }`}
+              className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg text-[13px] font-semibold transition-colors ${ confirm?.destructive ? 'bg-status-fail text-white hover:bg-status-fail/90' : 'bg-primary text-white hover:bg-primary' }`}
             >
               {confirm?.confirmLabel ?? 'Confirm'}
             </button>
           </>
         }
       >
-        <p className="text-[13px] text-ink-600 dark:text-ink-300">
-          {/* Body intentionally empty — description in header carries the message */}
+        <p className="text-[13px] text-text-secondary">
+          {/* Description carries the message */}
         </p>
       </Modal>
-    </>
+    </div>
   )
 }
-
-/* ============================================================
- * Sub-components — local to this file
- * ============================================================ */
 
 function SelectAllCheckbox({
   checked,
@@ -395,7 +368,6 @@ function SelectAllCheckbox({
   onChange: () => void
   disabled: boolean
 }) {
-  // Native checkboxes can't render "indeterminate" via attribute alone — we use a ref
   const setRef = (el: HTMLInputElement | null) => {
     if (el) el.indeterminate = indeterminate
   }
@@ -407,7 +379,7 @@ function SelectAllCheckbox({
         checked={checked}
         onChange={onChange}
         disabled={disabled}
-        className="w-3.5 h-3.5 rounded border-ink-300 dark:border-ink-600 accent-ink-900 dark:accent-ink-50 disabled:opacity-50 cursor-pointer"
+        className="w-4 h-4 rounded border-text-secondary/15 text-text-primary focus:ring-primary/15 cursor-pointer"
         aria-label="Select all visible users"
       />
     </div>
@@ -431,13 +403,11 @@ function SortHeader({
   return (
     <button
       onClick={() => onClick(sortKey)}
-      className={`text-left text-[10px] font-medium uppercase tracking-[0.12em] inline-flex items-center gap-1 transition-colors ${
-        isActive ? 'text-ink-900 dark:text-ink-50' : 'text-ink-500 dark:text-ink-400 hover:text-ink-900 dark:hover:text-ink-50'
-      }`}
+      className={`text-left text-[11px] font-bold uppercase tracking-[0.12em] inline-flex items-center gap-1 transition-colors ${ isActive ? 'text-text-primary' : 'text-text-secondary hover:text-text-primary' }`}
     >
       {label}
       {isActive && (
-        <Icon name="chevron_down" className={`w-3 h-3 transition-transform ${dir === 'asc' ? 'rotate-180' : ''}`} />
+        <Icon name="chevron_down" className={`w-3.5 h-3.5 transition-transform ${dir === 'asc' ? 'rotate-180' : ''}`} />
       )}
     </button>
   )
@@ -467,9 +437,7 @@ function UserRow({
   return (
     <div
       onClick={onClick}
-      className={`grid grid-cols-[36px_1.6fr_1fr_1fr_0.9fr_0.7fr] gap-4 items-center px-5 py-3.5 hover:bg-ink-50 dark:hover:bg-ink-800/60 transition-colors group cursor-pointer ${
-        selected ? 'bg-ink-50 dark:bg-ink-800/40' : ''
-      }`}
+      className={`grid grid-cols-[36px_1.6fr_1fr_1fr_0.9fr_0.7fr] gap-4 items-center px-6 py-4 hover:bg-accent-light transition-colors group cursor-pointer ${ selected ? 'bg-accent-light' : '' }`}
       role="button"
       tabIndex={0}
       onKeyDown={(e) => {
@@ -479,7 +447,6 @@ function UserRow({
         }
       }}
     >
-      {/* Checkbox — stop propagation so it doesn't navigate */}
       <div
         className="flex items-center justify-center"
         onClick={(e) => {
@@ -491,49 +458,44 @@ function UserRow({
           type="checkbox"
           checked={selected}
           onChange={() => {}}
-          className="w-3.5 h-3.5 rounded border-ink-300 dark:border-ink-600 accent-ink-900 dark:accent-ink-50 cursor-pointer"
+          className="w-4 h-4 rounded border-text-secondary/15 text-text-primary focus:ring-primary/15 cursor-pointer"
           aria-label={`Select ${user.name}`}
         />
       </div>
 
-      {/* User */}
       <div className="flex items-center gap-3 min-w-0">
         <Avatar name={user.name} />
         <div className="min-w-0">
-          <div className="text-[13px] font-medium text-ink-900 dark:text-ink-50 truncate">{user.name}</div>
-          <div className="text-[11px] font-mono text-ink-500 dark:text-ink-400 truncate">{user.email}</div>
+          <div className="text-[14px] font-semibold text-text-primary truncate">{user.name}</div>
+          <div className="text-[12px] font-mono text-text-secondary truncate">{user.email}</div>
         </div>
       </div>
 
-      {/* Role */}
       <div className="flex items-center gap-2 min-w-0">
-        {role && <span className={`w-2 h-2 rounded-sm ${role.accent} shrink-0`} />}
-        <span className="text-[13px] text-ink-700 dark:text-ink-200 truncate">
+        {role && <span className={`w-2 h-2 rounded-full ${role.accent} shrink-0`} />}
+        <span className="text-[13px] text-text-secondary truncate font-medium">
           {role?.label ?? user.role}
         </span>
       </div>
 
-      {/* Site */}
       <div className="min-w-0">
-        <div className="text-[13px] text-ink-700 dark:text-ink-200 truncate">
+        <div className="text-[13px] text-text-secondary truncate font-semibold">
           {user.sites[0]?.name ?? '—'}
         </div>
         {user.sites.length > 1 && (
-          <div className="text-[11px] text-ink-500 dark:text-ink-400">+{user.sites.length - 1} more</div>
+          <div className="text-[11px] text-text-secondary">+{user.sites.length - 1} more</div>
         )}
       </div>
 
-      {/* Last active */}
-      <div className="text-[12px] font-mono text-ink-600 dark:text-ink-300">
+      <div className="text-[13px] font-mono text-text-secondary">
         {formatRelativeTime(user.lastActiveAt)}
       </div>
 
-      {/* Status + chevron */}
-      <div className="flex items-center justify-end gap-2">
+      <div className="flex items-center justify-end gap-2 pr-2">
         <StatusPill tone={statusTone}>{statusLabel}</StatusPill>
         <Icon
           name="chevron_right"
-          className="w-4 h-4 text-ink-300 dark:text-ink-600 group-hover:text-ink-900 dark:group-hover:text-ink-50 group-hover:translate-x-0.5 transition-all"
+          className="w-4 h-4 text-text-secondary group-hover:text-text-primary group-hover:translate-x-0.5 transition-all"
         />
       </div>
     </div>
@@ -553,14 +515,14 @@ function EmptyState({
 }) {
   const hasFilters = query || statusTab !== 'all' || roleFilter !== 'all'
   return (
-    <div className="px-5 py-16 text-center">
-      <div className="inline-flex items-center justify-center w-12 h-12 rounded-full border hairline border-dashed">
-        <Icon name={hasFilters ? 'search' : 'users'} className="w-5 h-5 text-ink-400 dark:text-ink-500" />
+    <div className="px-6 py-20 text-center">
+      <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-accent-light mb-4">
+        <Icon name={hasFilters ? 'search' : 'users'} className="w-6 h-6 text-text-secondary" />
       </div>
-      <div className="mt-4 text-[15px] font-medium text-ink-900 dark:text-ink-50">
+      <div className="text-[15px] font-semibold text-text-primary mb-1">
         {hasFilters ? 'No users match these filters' : 'No users yet'}
       </div>
-      <p className="mt-1 text-[13px] text-ink-500 dark:text-ink-400 max-w-[360px] mx-auto">
+      <p className="text-[13px] text-text-secondary max-w-[360px] mx-auto mb-6">
         {hasFilters
           ? 'Try clearing the search or switching to a different status tab.'
           : 'Invite your first teammate to get started.'}
@@ -568,9 +530,9 @@ function EmptyState({
       {!hasFilters && (
         <button
           onClick={onInvite}
-          className="mt-6 inline-flex items-center gap-2 px-4 py-2 rounded-md bg-accent-500 text-white text-[13px] font-medium hover:bg-accent-600 transition-colors"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary hover:bg-primary text-white text-[13px] font-bold transition shadow-sm"
         >
-          <Icon name="plus" className="w-3.5 h-3.5" />
+          <Icon name="plus" className="w-4 h-4" />
           Invite a user
         </button>
       )}

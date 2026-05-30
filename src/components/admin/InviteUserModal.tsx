@@ -130,7 +130,7 @@ export function InviteUserModal({ open, onClose, onInvited }: InviteUserModalPro
             type="button"
             onClick={handleClose}
             disabled={submitting}
-            className="px-4 py-2 rounded-md border hairline bg-white dark:bg-ink-900 text-[13px] font-medium text-ink-700 dark:text-ink-200 hover:bg-ink-50 dark:hover:bg-ink-800 transition-colors disabled:opacity-50"
+            className="px-4 py-2 rounded-md border hairline bg-white text-[13px] font-medium text-text-secondary hover:bg-accent-light transition-colors disabled:opacity-50"
           >
             Cancel
           </button>
@@ -138,7 +138,7 @@ export function InviteUserModal({ open, onClose, onInvited }: InviteUserModalPro
             type="submit"
             form="invite-user-form"
             disabled={submitting}
-            className="btn-primary inline-flex items-center gap-2 px-4 py-2 rounded-md bg-accent-500 text-white text-[13px] font-medium hover:bg-accent-600 transition-colors disabled:opacity-60"
+            className="btn-primary inline-flex items-center gap-2 px-4 py-2 rounded-md bg-primary text-white text-[13px] font-medium hover:bg-primary transition-colors disabled:opacity-60"
           >
             {submitting ? 'Sending…' : 'Send invitation'}
             {!submitting && <Icon name="arrow_right" className="w-3.5 h-3.5" />}
@@ -150,7 +150,7 @@ export function InviteUserModal({ open, onClose, onInvited }: InviteUserModalPro
         {/* Name + Email */}
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label htmlFor="invite-name" className="block text-[11px] font-medium uppercase tracking-[0.12em] text-ink-500 dark:text-ink-400 mb-2">
+            <label htmlFor="invite-name" className="block text-[11px] font-medium uppercase tracking-[0.12em] text-text-secondary mb-2">
               Full name
             </label>
             <input
@@ -160,11 +160,11 @@ export function InviteUserModal({ open, onClose, onInvited }: InviteUserModalPro
               onChange={(e) => setName(e.target.value)}
               placeholder="Priya Shah"
               autoComplete="off"
-              className="focus-ring w-full px-3 py-2.5 rounded-md border border-ink-200 dark:border-ink-700 bg-white dark:bg-ink-800 text-[13px] text-ink-900 dark:text-ink-50 placeholder:text-ink-400 dark:placeholder:text-ink-500 transition-colors"
+              className="focus-ring w-full px-3 py-2.5 rounded-md border border-text-secondary/15 bg-white text-[13px] text-text-primary placeholder:text-text-secondary transition-colors"
             />
           </div>
           <div>
-            <label htmlFor="invite-email" className="block text-[11px] font-medium uppercase tracking-[0.12em] text-ink-500 dark:text-ink-400 mb-2">
+            <label htmlFor="invite-email" className="block text-[11px] font-medium uppercase tracking-[0.12em] text-text-secondary mb-2">
               Work email
             </label>
             <input
@@ -174,14 +174,14 @@ export function InviteUserModal({ open, onClose, onInvited }: InviteUserModalPro
               onChange={(e) => setEmail(e.target.value)}
               placeholder="priya@company.com"
               autoComplete="off"
-              className="focus-ring w-full px-3 py-2.5 rounded-md border border-ink-200 dark:border-ink-700 bg-white dark:bg-ink-800 text-[13px] text-ink-900 dark:text-ink-50 placeholder:text-ink-400 dark:placeholder:text-ink-500 transition-colors"
+              className="focus-ring w-full px-3 py-2.5 rounded-md border border-text-secondary/15 bg-white text-[13px] text-text-primary placeholder:text-text-secondary transition-colors"
             />
           </div>
         </div>
 
         {/* Role picker — grid of tiles, not a dropdown, so the choice feels deliberate */}
         <div>
-          <label className="block text-[11px] font-medium uppercase tracking-[0.12em] text-ink-500 dark:text-ink-400 mb-2">
+          <label className="block text-[11px] font-medium uppercase tracking-[0.12em] text-text-secondary mb-2">
             Role
           </label>
           <div className="grid grid-cols-2 gap-2">
@@ -193,18 +193,14 @@ export function InviteUserModal({ open, onClose, onInvited }: InviteUserModalPro
                   key={roleKey}
                   type="button"
                   onClick={() => setRole(roleKey)}
-                  className={`flex items-center gap-3 px-3 py-2.5 rounded-md border text-left transition-all ${
-                    isSelected
-                      ? 'border-ink-900 dark:border-ink-50 bg-ink-50 dark:bg-ink-800'
-                      : 'border-black/[0.06] dark:border-white/[0.08] hover:border-ink-300 dark:hover:border-ink-600'
-                  }`}
+                  className={`flex items-center gap-3 px-3 py-2.5 rounded-md border text-left transition-all ${ isSelected ? 'border-text-secondary/15 bg-accent-light ' : 'border-black/[0.06] hover:border-text-secondary/15 ' }`}
                 >
                   <span className={`w-2 h-2 rounded-sm ${roleObj.accent} shrink-0`} />
-                  <span className="text-[12px] font-medium text-ink-900 dark:text-ink-50 truncate">
+                  <span className="text-[12px] font-medium text-text-primary truncate">
                     {roleObj.label}
                   </span>
                   {isSelected && (
-                    <Icon name="check" className="w-3.5 h-3.5 text-ink-900 dark:text-ink-50 ml-auto shrink-0" />
+                    <Icon name="check" className="w-3.5 h-3.5 text-text-primary ml-auto shrink-0" />
                   )}
                 </button>
               )
@@ -215,10 +211,10 @@ export function InviteUserModal({ open, onClose, onInvited }: InviteUserModalPro
         {/* Sites */}
         <div>
           <div className="flex items-center justify-between mb-2">
-            <label className="block text-[11px] font-medium uppercase tracking-[0.12em] text-ink-500 dark:text-ink-400">
+            <label className="block text-[11px] font-medium uppercase tracking-[0.12em] text-text-secondary">
               Sites
             </label>
-            <span className="text-[11px] font-mono text-ink-400 dark:text-ink-500">
+            <span className="text-[11px] font-mono text-text-secondary">
               {selectedSiteIds.length} selected
             </span>
           </div>
@@ -228,17 +224,17 @@ export function InviteUserModal({ open, onClose, onInvited }: InviteUserModalPro
               return (
                 <label
                   key={site.id}
-                  className="flex items-center gap-3 px-3 py-2 rounded-md border hairline bg-white dark:bg-ink-800 cursor-pointer hover:bg-ink-50 dark:hover:bg-ink-800/60 transition-colors"
+                  className="flex items-center gap-3 px-3 py-2 rounded-md border hairline bg-white cursor-pointer hover:bg-accent-light transition-colors"
                 >
                   <input
                     type="checkbox"
                     checked={checked}
                     onChange={() => toggleSite(site.id)}
-                    className="w-3.5 h-3.5 rounded border-ink-300 dark:border-ink-600 accent-ink-900 dark:accent-ink-50"
+                    className="w-3.5 h-3.5 rounded border-text-secondary/15 accent-ink-900"
                   />
                   <div className="flex-1 min-w-0">
-                    <div className="text-[13px] text-ink-900 dark:text-ink-50 truncate">{site.name}</div>
-                    <div className="text-[10px] font-mono text-ink-500 dark:text-ink-400 truncate">{site.id}</div>
+                    <div className="text-[13px] text-text-primary truncate">{site.name}</div>
+                    <div className="text-[10px] font-mono text-text-secondary truncate">{site.id}</div>
                   </div>
                 </label>
               )
@@ -248,8 +244,8 @@ export function InviteUserModal({ open, onClose, onInvited }: InviteUserModalPro
 
         {/* Optional welcome message */}
         <div>
-          <label htmlFor="invite-message" className="block text-[11px] font-medium uppercase tracking-[0.12em] text-ink-500 dark:text-ink-400 mb-2">
-            Message <span className="text-ink-400 dark:text-ink-500 normal-case font-normal tracking-normal">— optional</span>
+          <label htmlFor="invite-message" className="block text-[11px] font-medium uppercase tracking-[0.12em] text-text-secondary mb-2">
+            Message <span className="text-text-secondary normal-case font-normal tracking-normal">— optional</span>
           </label>
           <textarea
             id="invite-message"
@@ -257,12 +253,12 @@ export function InviteUserModal({ open, onClose, onInvited }: InviteUserModalPro
             onChange={(e) => setMessage(e.target.value)}
             placeholder="Hi Priya — looking forward to having you on the Pune line. — Maya"
             rows={2}
-            className="focus-ring w-full px-3 py-2.5 rounded-md border border-ink-200 dark:border-ink-700 bg-white dark:bg-ink-800 text-[13px] text-ink-900 dark:text-ink-50 placeholder:text-ink-400 dark:placeholder:text-ink-500 transition-colors resize-none"
+            className="focus-ring w-full px-3 py-2.5 rounded-md border border-text-secondary/15 bg-white text-[13px] text-text-primary placeholder:text-text-secondary transition-colors resize-none"
           />
         </div>
 
         {error && (
-          <div className="flex items-center gap-2 text-[12px] text-signal-red animate-fade-in">
+          <div className="flex items-center gap-2 text-[12px] text-status-fail animate-fade-in">
             <Icon name="alert" className="w-3.5 h-3.5 shrink-0" />
             {error}
           </div>

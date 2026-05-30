@@ -6,6 +6,7 @@ import { Icon } from '../../../components/primitives/Icon'
 import { StatusPill } from '../../../components/primitives/StatusPill'
 import type { InspectionDomain } from '../../../types/inspection'
 import { STATUS_LABEL, STATUS_TONE } from '../../../types/inspection'
+import { PageBanner } from '../../../components/shell/PageBanner'
 
 type DateFilter = 'all' | '7d' | '30d' | 'year'
 
@@ -28,7 +29,7 @@ export function HistoryPage({ domain = 'quality' }: { domain?: InspectionDomain 
   const baseHistory = useMemo(() => {
     const my = filterToInspectorInspections(inspections.filter(i => i.domain === domain), user)
     return my.filter((i) => ['approved', 'issues_open', 'issues_closed', 'published'].includes(i.status))
-  }, [inspections, user])
+  }, [inspections, user, domain])
 
   const lastCompleted = useMemo(() => {
     if (baseHistory.length === 0) return null
@@ -98,86 +99,72 @@ export function HistoryPage({ domain = 'quality' }: { domain?: InspectionDomain 
   }, [filteredHistory])
 
   return (
-    <div className="max-w-[1000px] mx-auto px-6 py-8 pb-32 animate-fade-in">
-      <div className="mb-10">
-        <div className="flex items-center gap-2 text-[12px] font-medium text-ink-500 mb-3">
-          <span>{domain === 'safety' ? 'Safety Inspector' : 'Quality Inspector'}</span>
-          <Icon name="chevron_right" className="w-3 h-3" />
-          <span className="text-ink-900 dark:text-ink-50">History</span>
-        </div>
-        <h1 className="font-display text-4xl text-ink-900 dark:text-ink-50 tracking-tight mb-2">
-          Your <span className="italic text-ink-500 dark:text-ink-400">history</span>.
-        </h1>
-        <p className="text-[14px] text-ink-600 dark:text-ink-300">
-          {baseHistory.length} completed inspections
-          {lastCompleted && ` · last one ${formatRelativeTime(lastCompleted).replace('in ', '').replace(' ago', '')} ago.`}
-        </p>
-      </div>
+    <div className="space-y-6">
+      <PageBanner
+        title={`Your history`}
+        subline={`${baseHistory.length} completed inspections${ lastCompleted ? ` · last one ${formatRelativeTime(lastCompleted).replace('in ', '').replace(' ago', '')} ago.` : '' }`}
+      />
 
       {baseHistory.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-24 text-center">
-          <div className="w-16 h-16 rounded-full border hairline border-dashed flex items-center justify-center mb-6">
-            <Icon name="layers" className="w-8 h-8 text-ink-300 dark:text-ink-600" />
+        <div className="flex flex-col items-center justify-center border border-dashed border-text-secondary/15 rounded-2xl py-32 text-center bg-white shadow-soft">
+          <div className="w-14 h-14 rounded-full bg-accent-light flex items-center justify-center mb-4">
+            <Icon name="layers" className="w-6 h-6 text-text-secondary" />
           </div>
-          <h2 className="text-[18px] font-medium text-ink-900 dark:text-ink-50 mb-2">
+          <h2 className="text-[16px] font-semibold text-text-primary mb-1">
             No completed inspections yet.
           </h2>
-          <p className="text-[14px] text-ink-500 dark:text-ink-400 max-w-sm text-balance">
-            Inspections you've submitted and that have been reviewed will appear here.
+          <p className="text-[13px] text-text-secondary max-w-[360px] mx-auto">
+            Inspections you have submitted and that have been reviewed will appear here.
           </p>
         </div>
       ) : (
-        <div className="space-y-10">
-          <div className="space-y-4">
-            <div className="relative max-w-2xl">
-              <Icon name="search" className="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-ink-400" />
-              <input
-                type="text"
-                placeholder="Search by template, area, site, or number…"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-12 py-3 rounded-xl border hairline bg-white dark:bg-ink-900 text-[14px] focus-ring shadow-sm"
-              />
-              {searchQuery && (
-                <button
-                  onClick={() => setSearchQuery('')}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-ink-400 hover:text-ink-900 dark:hover:text-ink-50"
-                >
-                  <Icon name="close" className="w-4 h-4" />
-                </button>
-              )}
-            </div>
-
-            <div className="flex flex-wrap items-center gap-2">
+        <div className="space-y-6">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="inline-flex items-center gap-1 p-1 bg-accent-light rounded-xl">
               {DATE_FILTERS.map(filter => (
                 <button
                   key={filter.id}
                   onClick={() => setDateFilter(filter.id)}
-                  className={`px-4 py-1.5 text-[13px] font-medium rounded-full transition-colors ${
-                    dateFilter === filter.id
-                      ? 'bg-ink-900 text-ink-50 dark:bg-ink-50 dark:text-ink-900'
-                      : 'border hairline text-ink-600 dark:text-ink-300 hover:bg-ink-50 dark:hover:bg-ink-800 bg-white dark:bg-ink-900/50'
-                  }`}
+                  className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-lg text-[13px] font-semibold transition ${ dateFilter === filter.id ? 'bg-white text-text-primary shadow-soft' : 'text-text-secondary hover:text-text-primary' }`}
                 >
                   {filter.label}
                 </button>
               ))}
             </div>
+
+            <div className="relative min-w-[240px] max-w-sm">
+              <Icon name="search" className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-secondary" />
+              <input
+                type="text"
+                placeholder="Search history..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full bg-white border border-text-secondary/15 rounded-lg pl-10 pr-8 py-2 text-[14px] text-text-primary placeholder:text-text-secondary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/15 transition"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-text-secondary hover:text-text-primary transition-colors"
+                >
+                  <Icon name="close" className="w-3 h-3" />
+                </button>
+              )}
+            </div>
           </div>
 
           {filteredHistory.length === 0 ? (
-            <div className="py-20 text-center border hairline border-dashed rounded-xl">
-              <h3 className="text-[15px] font-medium text-ink-900 dark:text-ink-50 mb-1">No results found.</h3>
-              <p className="text-[14px] text-ink-500">Try adjusting your search query or filters.</p>
+            <div className="text-center py-20 border border-dashed border-text-secondary/15 rounded-2xl bg-white shadow-soft">
+              <h3 className="text-[15px] font-semibold text-text-primary mb-1">No results found.</h3>
+              <p className="text-[13px] text-text-secondary">Try adjusting your search query or filters.</p>
             </div>
           ) : (
-            <div className="space-y-12">
+            <div className="space-y-8">
               {groupedByMonth.map(group => (
-                <div key={group.monthStr} className="space-y-4">
-                  <h3 className="font-mono text-[11px] uppercase tracking-widest text-ink-500 dark:text-ink-400 ml-2">
+                <div key={group.monthStr} className="space-y-3">
+                  <h3 className="font-mono text-[11px] font-bold uppercase tracking-widest text-text-secondary ml-2">
                     {group.monthStr}
                   </h3>
-                  <div className="flex flex-col gap-2">
+                  <div className="flex flex-col gap-3">
                     {group.items.map(insp => {
                       const dateObj = new Date(insp.publishedAt || insp.reviewedAt || insp.updatedAt)
                       const dateStr = dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
@@ -186,21 +173,21 @@ export function HistoryPage({ domain = 'quality' }: { domain?: InspectionDomain 
                         <button
                           key={insp.id}
                           onClick={() => nav.push(`${prefix}/inspections/${insp.id}`)}
-                          className="w-full text-left group flex flex-col md:flex-row md:items-center justify-between p-4 md:p-5 rounded-xl border hairline bg-white dark:bg-ink-900/50 hover:border-ink-300 dark:hover:border-ink-600 transition-all hover:shadow-md shadow-[0_2px_8px_rgba(0,0,0,0.02)]"
+                          className="w-full text-left group flex flex-col md:flex-row md:items-center justify-between p-5 rounded-2xl border border-text-secondary/15 bg-white hover:bg-accent-light transition shadow-soft hover:shadow-medium"
                         >
-                          <div className="flex flex-col md:flex-row md:items-center gap-3 md:gap-6 mb-3 md:mb-0">
-                            <div className="w-16 shrink-0 font-mono text-[14px] text-ink-900 dark:text-ink-50 tracking-tight">
+                          <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-8 mb-3 md:mb-0 min-w-0">
+                            <div className="w-16 shrink-0 font-mono text-[13px] text-text-primary font-bold tracking-tight">
                               {dateStr}
                             </div>
-                            <div className="flex-1 min-w-0">
-                              <h4 className="text-[15px] font-medium text-ink-900 dark:text-ink-50 group-hover:text-accent-600 dark:group-hover:text-accent-400 transition-colors truncate">
+                            <div className="min-w-0">
+                              <h4 className="text-[15px] font-semibold text-text-primary group-hover:text-primary transition-colors truncate">
                                 {insp.templateName}
                               </h4>
-                              <div className="text-[13px] text-ink-500 flex items-center gap-2 mt-1 truncate">
+                              <div className="text-[12px] text-text-secondary flex items-center gap-2 mt-1 truncate">
                                 <span>{insp.siteName}</span>
                                 {insp.area && (
                                   <>
-                                    <span className="w-1 h-1 rounded-full bg-ink-200 dark:bg-ink-700" />
+                                    <span className="w-1.5 h-1.5 rounded-full bg-accent-light" />
                                     <span>{insp.area}</span>
                                   </>
                                 )}
@@ -210,9 +197,7 @@ export function HistoryPage({ domain = 'quality' }: { domain?: InspectionDomain 
                           
                           <div className="flex items-center gap-4 shrink-0 self-end md:self-auto">
                             <StatusPill tone={STATUS_TONE[insp.status]}>{STATUS_LABEL[insp.status]}</StatusPill>
-                            <div className="w-5 flex justify-end text-ink-300 dark:text-ink-600 group-hover:text-ink-900 dark:group-hover:text-ink-50 transition-colors">
-                              <Icon name="arrow_right" className="w-4 h-4" />
-                            </div>
+                            <Icon name="chevron_right" className="w-4 h-4 text-text-secondary group-hover:text-text-primary group-hover:translate-x-0.5 transition-all" />
                           </div>
                         </button>
                       )

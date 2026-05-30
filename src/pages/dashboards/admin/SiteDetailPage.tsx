@@ -8,6 +8,7 @@ import { useTemplates } from '../../../lib/templates'
 import { Icon } from '../../../components/primitives/Icon'
 import { StatusPill } from '../../../components/primitives/StatusPill'
 import { Avatar } from '../../../components/primitives/Avatar'
+import { PageBanner } from '../../../components/shell/PageBanner'
 import { EditSiteModal } from '../../../components/admin/EditSiteModal'
 import { DepartmentModal } from '../../../components/admin/DepartmentModal'
 import type { Department } from '../../../types/site'
@@ -106,8 +107,11 @@ export function SiteDetailPage() {
 
   if (!site || !stats) {
     return (
-      <div className="p-8 text-center text-ink-500">
-        Site not found. <button onClick={() => nav.push('/admin/organization')} className="underline">Go back</button>
+      <div className="p-8 text-center text-text-secondary bg-white shadow-soft rounded-2xl border border-text-secondary/15 max-w-[400px] mx-auto mt-12">
+        Site not found.{' '}
+        <button onClick={() => nav.push('/admin/organization')} className="underline font-bold text-text-primary ml-1">
+          Go Back
+        </button>
       </div>
     )
   }
@@ -123,360 +127,361 @@ export function SiteDetailPage() {
   }
 
   return (
-    <>
-      <div className="stagger max-w-[1200px] mx-auto pb-12">
-        {/* ============ Breadcrumb ============ */}
-        <div className="flex items-center gap-2 text-[12px] text-ink-500 dark:text-ink-400 mb-6">
-          <span>System Admin</span>
-          <Icon name="chevron_right" className="w-3 h-3" />
-          <button onClick={() => nav.push('/admin/organization')} className="hover:text-ink-900 dark:hover:text-ink-50 transition-colors">
-            Sites &amp; departments
+    <div className="space-y-6">
+      {/* Top Breadcrumb Row */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-1.5 text-[12px] text-text-secondary font-bold">
+          <span className="uppercase text-[10px] tracking-wider text-text-secondary">System Admin</span>
+          <Icon name="chevron_right" className="w-3.5 h-3.5 text-text-secondary" />
+          <button onClick={() => nav.push('/admin/organization')} className="hover:text-text-primary transition-colors">
+            Sites &amp; Departments
           </button>
-          <Icon name="chevron_right" className="w-3 h-3" />
-          <span className="text-ink-900 dark:text-ink-50">{site.name}</span>
+          <Icon name="chevron_right" className="w-3.5 h-3.5 text-text-secondary" />
+          <span className="text-text-primary">{site.name}</span>
         </div>
 
-        {/* ============ Status Banner ============ */}
-        {site.status === 'archived' && (
-          <div className="mb-6 rounded-md bg-ink-100/50 dark:bg-ink-800/50 px-4 py-3 flex items-start gap-3">
-            <Icon name="alert" className="w-4 h-4 text-ink-500 shrink-0 mt-0.5" />
-            <div className="text-[13px] text-ink-700 dark:text-ink-200">
-              This site was archived on {site.archivedAt ? formatDate(site.archivedAt) : 'a previous date'}. It's preserved for historical reference but not actively used.
-            </div>
-          </div>
-        )}
+        {/* Status badges */}
+        <div className="flex items-center gap-2">
+          <span className="font-mono text-[10px] font-bold text-text-primary bg-accent-light px-2 py-0.5 rounded-lg border border-text-secondary/15 uppercase tracking-wider">
+            {site.primaryDomain}
+          </span>
+          <StatusPill tone={site.status === 'active' ? 'green' : site.status === 'commissioning' ? 'amber' : 'neutral'}>
+            {site.status}
+          </StatusPill>
+        </div>
+      </div>
 
-        {/* ============ Hero ============ */}
-        <div className="flex items-start justify-between gap-6 flex-wrap mb-8">
-          <div>
-            <div className="flex items-center gap-2 flex-wrap mb-3">
-              <div className="capitalize">
-                <StatusPill tone={site.status === 'active' ? 'green' : site.status === 'commissioning' ? 'amber' : 'neutral'}>
-                  {site.status}
-                </StatusPill>
-              </div>
-              <span className="px-2 py-0.5 rounded border hairline text-[10px] font-medium uppercase tracking-[0.12em] text-ink-500 bg-white dark:bg-ink-900">
-                {site.primaryDomain}
-              </span>
-              {site.certifications.map(cert => (
-                <span key={cert} className="px-2 py-0.5 rounded bg-ink-100 dark:bg-ink-800 text-[10px] font-mono text-ink-700 dark:text-ink-200">
-                  {cert}
-                </span>
-              ))}
-            </div>
-            <h1 className="font-display text-[36px] leading-[1.1] tracking-tight text-ink-900 dark:text-ink-50">
-              {site.name}
-            </h1>
-            <div className="mt-1 font-mono text-[13px] text-ink-500 dark:text-ink-400">
-              {site.code}
-            </div>
+      {/* ============ Status Banner ============ */}
+      {site.status === 'archived' && (
+        <div className="rounded-xl bg-accent-light border border-text-secondary/15 p-4 flex items-start gap-3 shadow-sm">
+          <Icon name="alert" className="w-4 h-4 text-text-secondary shrink-0 mt-0.5 animate-pulse" />
+          <div className="text-[13px] text-text-primary font-medium">
+            This site was archived on {site.archivedAt ? formatDate(site.archivedAt) : 'a previous date'}. It is preserved for historical reference and inactive.
           </div>
-          
-          <div className="flex items-center gap-3">
+        </div>
+      )}
+
+      {/* Page Banner with Action Slot */}
+      <PageBanner
+        title={site.name}
+        subline={`${site.city}, ${site.country} · Timezone: ${site.timezone} · Code: ${site.code}`}
+        actions={
+          <div className="flex items-center gap-2">
             {site.status !== 'archived' ? (
               <>
                 <button
                   onClick={handleArchive}
-                  className="px-4 py-2 rounded-md border border-signal-red/20 text-signal-red hover:bg-signal-red/5 transition-colors text-[13px] font-medium"
+                  className="px-3.5 py-2 rounded-lg border border-white/40 bg-white/10 hover:bg-white/20 text-[12px] font-bold text-white transition-all shadow-sm"
                 >
-                  Archive site
+                  Archive Site
                 </button>
                 <button
                   onClick={() => setEditOpen(true)}
-                  className="px-4 py-2 rounded-md border hairline bg-white dark:bg-ink-900 hover:bg-ink-50 dark:hover:bg-ink-800 transition-colors text-[13px] font-medium text-ink-900 dark:text-ink-50"
+                  className="px-3.5 py-2 rounded-lg bg-warning hover:bg-warning/90 text-text-primary text-[12px] font-bold transition-all shadow-sm"
                 >
-                  Edit details
+                  Edit Details
                 </button>
               </>
             ) : (
               <button
                 onClick={handleRestore}
-                className="px-4 py-2 rounded-md border hairline bg-white dark:bg-ink-900 hover:bg-ink-50 dark:hover:bg-ink-800 transition-colors text-[13px] font-medium text-ink-900 dark:text-ink-50"
+                className="px-3.5 py-2 rounded-lg bg-warning hover:bg-warning/90 text-text-primary text-[12px] font-bold transition-all shadow-sm"
               >
-                Restore site
+                Restore Site
               </button>
             )}
           </div>
-        </div>
+        }
+      />
 
-        {/* ============ Stat Strip ============ */}
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-px bg-ink-200/60 dark:bg-ink-800 border hairline rounded-xl overflow-hidden mb-8">
-          <StatCell 
-            label="Departments" 
-            value={departments.length.toString()} 
-            sub={<span>/ {stats.totalAreas} areas</span>} 
-          />
-          <StatCell 
-            label="Active personnel" 
-            value={stats.activePersonnel.toString()} 
-            sub="Assigned to site"
-          />
-          <StatCell 
-            label="Inspections / 30d" 
-            value={stats.current30d.toString()} 
-            sub={<span className={stats.delta > 0 ? 'text-signal-green' : stats.delta < 0 ? 'text-signal-amber' : ''}>{stats.delta > 0 ? `+${stats.delta}` : stats.delta} vs previous 30d</span>}
-          />
-          <StatCell 
-            label="Open issues" 
-            value={stats.openIssuesCount.toString()} 
-            sub="Awaiting resolution"
-          />
-          <StatCell 
-            label="Compliance" 
-            value={stats.compliancePercent !== null ? `${stats.compliancePercent}%` : '—'} 
-            sub="Pass rate last 30d"
-          />
+      {/* Certifications badges row */}
+      {site.certifications.length > 0 && (
+        <div className="flex items-center gap-1.5 flex-wrap">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-text-secondary mr-1">Certifications:</span>
+          {site.certifications.map(cert => (
+            <span key={cert} className="text-[11px] font-mono font-bold text-text-primary px-2 py-0.5 rounded-lg bg-white border border-text-secondary/15 shadow-sm">
+              {cert}
+            </span>
+          ))}
         </div>
+      )}
 
-        {/* ============ Two Column Layout ============ */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      {/* ============ Stat Strip ============ */}
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-px bg-accent-light border border-text-secondary/15 rounded-2xl overflow-hidden shadow-soft">
+        <StatCell 
+          label="Departments" 
+          value={departments.length.toString()} 
+          sub={<span>/ {stats.totalAreas} areas</span>} 
+        />
+        <StatCell 
+          label="Active Personnel" 
+          value={stats.activePersonnel.toString()} 
+          sub="Assigned to site"
+        />
+        <StatCell 
+          label="Inspections / 30d" 
+          value={stats.current30d.toString()} 
+          sub={<span className={stats.delta > 0 ? 'text-status-pass' : stats.delta < 0 ? 'text-warning' : ''}>{stats.delta > 0 ? `+${stats.delta}` : stats.delta} vs prev 30d</span>}
+        />
+        <StatCell 
+          label="Open Issues" 
+          value={stats.openIssuesCount.toString()} 
+          sub="Awaiting resolution"
+        />
+        <StatCell 
+          label="Compliance" 
+          value={stats.compliancePercent !== null ? `${stats.compliancePercent}%` : '—'} 
+          sub="Pass rate last 30d"
+        />
+      </div>
+
+      {/* ============ Two Column Layout ============ */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        {/* LEFT COLUMN */}
+        <div className="lg:col-span-2 space-y-6">
           
-          {/* LEFT COLUMN */}
-          <div className="lg:col-span-2 space-y-6">
-            
-            {/* Site Overview */}
-            <div className="rounded-xl border hairline bg-white dark:bg-ink-900 p-6">
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
-                <div>
-                  <div className="text-[11px] font-medium uppercase tracking-[0.12em] text-ink-500 dark:text-ink-400 mb-1">Location</div>
-                  <div className="font-mono text-[13px] text-ink-900 dark:text-ink-50">{site.city}, {site.country}</div>
-                </div>
-                <div>
-                  <div className="text-[11px] font-medium uppercase tracking-[0.12em] text-ink-500 dark:text-ink-400 mb-1">Timezone</div>
-                  <div className="font-mono text-[13px] text-ink-900 dark:text-ink-50">{site.timezone}</div>
-                </div>
-                <div>
-                  <div className="text-[11px] font-medium uppercase tracking-[0.12em] text-ink-500 dark:text-ink-400 mb-1">Commissioned</div>
-                  <div className="text-[13px] text-ink-900 dark:text-ink-50">{formatDate(site.commissionedAt)}</div>
-                </div>
-                <div>
-                  <div className="text-[11px] font-medium uppercase tracking-[0.12em] text-ink-500 dark:text-ink-400 mb-1">Primary Domain</div>
-                  <div className="text-[13px] text-ink-900 dark:text-ink-50 capitalize">{site.primaryDomain}</div>
-                </div>
+          {/* Site Overview */}
+          <div className="rounded-2xl border border-text-secondary/15 bg-white p-6 shadow-soft">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
+              <div>
+                <div className="text-[10px] font-bold uppercase tracking-wider text-text-secondary mb-1">Location</div>
+                <div className="font-mono text-[13px] text-text-primary font-bold">{site.city}, {site.country}</div>
               </div>
-              {site.notes && (
-                <div className="mt-6 pt-4 border-t hairline">
-                  <div className="text-[11px] font-medium uppercase tracking-[0.12em] text-ink-500 dark:text-ink-400 mb-1">Notes</div>
-                  <div className="text-[13px] text-ink-700 dark:text-ink-300 italic">{site.notes}</div>
-                </div>
+              <div>
+                <div className="text-[10px] font-bold uppercase tracking-wider text-text-secondary mb-1">Timezone</div>
+                <div className="font-mono text-[13px] text-text-primary font-bold">{site.timezone}</div>
+              </div>
+              <div>
+                <div className="text-[10px] font-bold uppercase tracking-wider text-text-secondary mb-1">Commissioned</div>
+                <div className="text-[13px] text-text-primary font-bold">{formatDate(site.commissionedAt)}</div>
+              </div>
+              <div>
+                <div className="text-[10px] font-bold uppercase tracking-wider text-text-secondary mb-1">Primary Domain</div>
+                <div className="text-[13px] text-text-primary font-bold capitalize">{site.primaryDomain}</div>
+              </div>
+            </div>
+            {site.notes && (
+              <div className="mt-6 pt-4 border-t border-text-secondary/15">
+                <div className="text-[10px] font-bold uppercase tracking-wider text-text-secondary mb-1">Notes</div>
+                <div className="text-[13px] text-text-primary italic font-semibold">"{site.notes}"</div>
+              </div>
+            )}
+          </div>
+
+          {/* Departments Panel */}
+          <div className="rounded-2xl border border-text-secondary/15 bg-white overflow-hidden shadow-soft">
+            <div className="px-5 py-4 border-b border-text-secondary/15 bg-accent-light/50 flex items-center justify-between">
+              <div className="text-[13px] font-bold text-text-primary">Departments</div>
+              {site.status !== 'archived' && (
+                <button 
+                  onClick={() => { setEditingDept(null); setDeptModalOpen(true); }}
+                  className="inline-flex items-center gap-1.5 text-[12px] font-bold text-text-primary hover:text-primary transition-colors"
+                >
+                  <Icon name="plus" className="w-3.5 h-3.5" />
+                  Add Department
+                </button>
               )}
             </div>
-
-            {/* Departments Panel - The Design Moment */}
-            <div className="rounded-xl border hairline bg-white dark:bg-ink-900 overflow-hidden">
-              <div className="px-5 py-4 border-b hairline flex items-center justify-between">
-                <div className="text-[14px] font-medium text-ink-900 dark:text-ink-50">Departments</div>
-                {site.status !== 'archived' && (
-                  <button 
-                    onClick={() => { setEditingDept(null); setDeptModalOpen(true); }}
-                    className="inline-flex items-center gap-1.5 text-[13px] font-medium text-accent-600 dark:text-accent-400 hover:text-accent-700 dark:hover:text-accent-300 transition-colors"
-                  >
-                    <Icon name="plus" className="w-3.5 h-3.5" />
-                    Add department
-                  </button>
-                )}
-              </div>
-              
-              {departments.length === 0 ? (
-                <div className="px-5 py-12 text-center">
-                  <div className="inline-flex items-center justify-center w-12 h-12 rounded-full border hairline border-dashed mb-4">
-                    <Icon name="box" className="w-5 h-5 text-ink-400 dark:text-ink-500" />
-                  </div>
-                  <div className="text-[14px] font-medium text-ink-900 dark:text-ink-50 mb-1">No departments configured</div>
-                  <p className="text-[13px] text-ink-500 dark:text-ink-400 mb-5">
-                    Break this site down into manageable departments and areas.
-                  </p>
-                  <button
-                    onClick={() => { setEditingDept(null); setDeptModalOpen(true); }}
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-white dark:bg-ink-800 border hairline text-[13px] font-medium text-ink-900 dark:text-ink-50 hover:bg-ink-50 dark:hover:bg-ink-700 transition-colors"
-                  >
-                    Create the first department
-                  </button>
+            
+            {departments.length === 0 ? (
+              <div className="px-5 py-12 text-center">
+                <div className="inline-flex items-center justify-center w-12 h-12 rounded-full border border-dashed border-text-secondary/15 bg-accent-light mb-4">
+                  <Icon name="box" className="w-5 h-5 text-text-secondary" />
                 </div>
-              ) : (
-                <div className="flex flex-col">
-                  {departments.map((dept, idx) => (
-                    <div 
-                      key={dept.id}
-                      onClick={() => { setEditingDept(dept); setDeptModalOpen(true); }}
-                      className={`px-5 py-4 hover:bg-ink-50 dark:hover:bg-ink-800/60 transition-colors cursor-pointer group flex flex-col sm:flex-row sm:items-start justify-between gap-4 ${idx !== 0 ? 'border-t hairline' : ''}`}
-                    >
-                      <div className="flex-1 min-w-0 space-y-3">
-                        <div className="flex items-center gap-3">
-                          <span className="font-mono text-[12px] text-ink-500 dark:text-ink-400">{dept.code}</span>
-                          <span className="text-[14px] font-medium text-ink-900 dark:text-ink-50">{dept.name}</span>
-                          <span className="px-2 py-0.5 rounded bg-ink-100 dark:bg-ink-800 text-[10px] uppercase tracking-[0.12em] font-medium text-ink-600 dark:text-ink-300">
-                            {dept.kind.replace('_', ' ')}
-                          </span>
-                        </div>
-                        
-                        <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
-                          <div className="flex items-center gap-2">
-                            {dept.headId ? (
-                              <>
-                                <Avatar name={dept.headName || ''} size="sm" />
-                                <span className="text-[12px] text-ink-700 dark:text-ink-200">{dept.headName}</span>
-                              </>
-                            ) : (
-                              <span className="text-[12px] text-ink-400 dark:text-ink-500">— Unassigned</span>
-                            )}
-                          </div>
-                          
-                          <div className="flex items-center gap-1.5 flex-wrap">
-                            {dept.areas.length > 0 ? (
-                              dept.areas.map((area, i) => (
-                                <div key={i} className="flex items-center">
-                                  <span className="font-mono text-[11px] text-ink-600 dark:text-ink-300">{area}</span>
-                                  {i < dept.areas.length - 1 && <span className="mx-1.5 text-ink-300 dark:text-ink-600">·</span>}
-                                </div>
-                              ))
-                            ) : (
-                              <span className="text-[11px] text-ink-400 italic">No areas defined</span>
-                            )}
-                          </div>
-                        </div>
+                <div className="text-[14px] font-bold text-text-primary mb-1">No departments configured</div>
+                <p className="text-[13px] text-text-secondary mb-5 font-medium leading-relaxed">
+                  Break this site down into manageable departments and areas.
+                </p>
+                <button
+                  onClick={() => { setEditingDept(null); setDeptModalOpen(true); }}
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white border border-text-secondary/15 text-[12px] font-bold text-text-primary hover:bg-accent-light transition-colors shadow-sm"
+                >
+                  Create the First Department
+                </button>
+              </div>
+            ) : (
+              <div className="flex flex-col divide-y divide-text-secondary/15">
+                {departments.map((dept) => (
+                  <div 
+                    key={dept.id}
+                    onClick={() => { setEditingDept(dept); setDeptModalOpen(true); }}
+                    className="px-5 py-4 hover:bg-accent-light/20 transition-colors cursor-pointer group flex flex-col sm:flex-row sm:items-start justify-between gap-4"
+                  >
+                    <div className="flex-1 min-w-0 space-y-3">
+                      <div className="flex items-center gap-3">
+                        <span className="font-mono text-[11px] font-bold text-text-secondary">{dept.code}</span>
+                        <span className="text-[13px] font-bold text-text-primary">{dept.name}</span>
+                        <span className="px-2 py-0.5 rounded bg-accent-light border border-text-secondary/15 text-[10px] uppercase tracking-wider font-bold text-text-primary shadow-sm">
+                          {dept.kind.replace('_', ' ')}
+                        </span>
                       </div>
                       
-                      <div className="sm:text-right shrink-0">
-                        <div className="font-mono text-[11px] text-ink-500 dark:text-ink-400 group-hover:text-ink-700 dark:group-hover:text-ink-200 transition-colors">
-                          <span className="font-medium text-ink-900 dark:text-ink-50">{
-                            // Approximation of activity for this department based on areas
-                            inspections.filter(i => i.siteName === site.name && (i.area && dept.areas.includes(i.area))).length
-                          }</span> inspections / 30d
+                      <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
+                        <div className="flex items-center gap-2">
+                          {dept.headId ? (
+                            <>
+                              <Avatar name={dept.headName || ''} size="sm" />
+                              <span className="text-[12px] text-text-primary font-bold">{dept.headName}</span>
+                            </>
+                          ) : (
+                            <span className="text-[12px] text-text-secondary font-medium">— Unassigned</span>
+                          )}
+                        </div>
+                        
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          {dept.areas.length > 0 ? (
+                            dept.areas.map((area, i) => (
+                              <div key={i} className="flex items-center">
+                                <span className="font-mono text-[11px] text-text-primary font-bold bg-accent-light px-1.5 py-0.5 rounded border border-text-secondary/15 shadow-sm">{area}</span>
+                                {i < dept.areas.length - 1 && <span className="mx-1 text-text-secondary font-bold">·</span>}
+                              </div>
+                            ))
+                          ) : (
+                            <span className="text-[11px] text-text-secondary italic">No areas defined</span>
+                          )}
                         </div>
                       </div>
                     </div>
-                  ))}
-                </div>
+                    
+                    <div className="sm:text-right shrink-0">
+                      <div className="font-mono text-[11px] text-text-secondary font-bold group-hover:text-text-primary transition-colors">
+                        <span className="font-bold text-text-primary">{
+                          inspections.filter(i => i.siteName === site.name && (i.area && dept.areas.includes(i.area))).length
+                        }</span> inspections / 30d
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Recent Activity */}
+          <div className="rounded-2xl border border-text-secondary/15 bg-white overflow-hidden shadow-soft">
+            <div className="px-5 py-4 border-b border-text-secondary/15 bg-accent-light/50 flex items-center justify-between">
+              <div className="text-[13px] font-bold text-text-primary">Recent Inspections</div>
+              <button className="text-[12px] font-bold text-text-secondary hover:text-primary transition-colors">
+                View All
+              </button>
+            </div>
+            <div className="divide-y divide-text-secondary/15">
+              {stats.recentActivity.length === 0 ? (
+                <div className="px-5 py-8 text-center text-[13px] text-text-secondary">No recent inspections at this site.</div>
+              ) : (
+                stats.recentActivity.map(ins => (
+                  <div key={ins.id} onClick={() => nav.push(`/qm/inspections/${ins.id}`)} className="px-5 py-3.5 flex items-center justify-between hover:bg-accent-light/20 transition-colors cursor-pointer group gap-4">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-3">
+                        <span className="font-mono text-[11px] text-text-secondary font-bold">{ins.number}</span>
+                        <span className="text-[13px] font-bold text-text-primary truncate">{ins.templateName}</span>
+                      </div>
+                      <div className="text-[12px] text-text-secondary mt-0.5 truncate font-medium">{ins.area || 'General'}</div>
+                    </div>
+                    <div className="flex items-center gap-3 shrink-0">
+                      <div className="hidden sm:inline-block">
+                        <StatusPill tone={['approved', 'published'].includes(ins.status) ? 'green' : ['under_review', 'issues_open'].includes(ins.status) ? 'amber' : 'neutral'}>
+                          {ins.status.replace('_', ' ')}
+                        </StatusPill>
+                      </div>
+                      <span className="font-mono text-[10px] text-text-secondary w-12 text-right font-bold">{formatRelativeTime(ins.submittedAt || ins.createdAt)}</span>
+                    </div>
+                  </div>
+                ))
               )}
             </div>
+          </div>
 
-            {/* Recent Activity */}
-            <div className="rounded-xl border hairline bg-white dark:bg-ink-900 overflow-hidden">
-              <div className="px-5 py-4 border-b hairline flex items-center justify-between">
-                <div className="text-[14px] font-medium text-ink-900 dark:text-ink-50">Recent activity</div>
-                <button className="text-[12px] text-ink-500 hover:text-ink-900 dark:hover:text-ink-50 transition-colors">
-                  View all
-                </button>
+        </div>
+
+        {/* RIGHT COLUMN */}
+        <div className="space-y-6">
+          
+          {/* Site Manager */}
+          <div className="rounded-2xl border border-text-secondary/15 bg-white p-5 shadow-soft">
+            <div className="text-[10px] font-bold uppercase tracking-wider text-text-secondary mb-4">Site Manager</div>
+            {site.managerName ? (
+              <div className="flex items-center gap-3">
+                <Avatar name={site.managerName} size="lg" />
+                <div>
+                  <div className="text-[14px] font-bold text-text-primary">{site.managerName}</div>
+                  <div className="text-[11px] text-text-secondary font-medium mt-0.5">Manager Role</div>
+                </div>
               </div>
-              <div className="divide-y hairline">
-                {stats.recentActivity.length === 0 ? (
-                  <div className="px-5 py-8 text-center text-[13px] text-ink-500">No recent inspections at this site.</div>
+            ) : (
+              <div className="text-[13px] text-text-secondary italic">No manager assigned.</div>
+            )}
+            {site.status !== 'archived' && (
+              <button onClick={() => setEditOpen(true)} className="mt-4 text-[12px] font-bold text-text-primary hover:text-primary transition-colors">
+                Reassign Manager
+              </button>
+            )}
+          </div>
+
+          {/* Personnel Breakdown */}
+          <div className="rounded-2xl border border-text-secondary/15 bg-white p-5 space-y-5 shadow-soft">
+            <div>
+              <div className="text-[10px] font-bold uppercase tracking-wider text-text-secondary mb-3">Personnel Breakdown</div>
+              <div className="space-y-2">
+                {Array.from(stats.rolesMap.entries()).length === 0 ? (
+                  <div className="text-[12px] text-text-secondary italic">No personnel assigned.</div>
                 ) : (
-                  stats.recentActivity.map(ins => (
-                    <div key={ins.id} onClick={() => nav.push(`/qm/inspections/${ins.id}`)} className="px-5 py-3.5 flex items-center justify-between hover:bg-ink-50 dark:hover:bg-ink-800/60 transition-colors cursor-pointer group gap-4">
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-3">
-                          <span className="font-mono text-[11px] text-ink-500">{ins.number}</span>
-                          <span className="text-[13px] font-medium text-ink-900 dark:text-ink-50 truncate">{ins.templateName}</span>
-                        </div>
-                        <div className="text-[12px] text-ink-500 dark:text-ink-400 mt-0.5 truncate">{ins.area || 'General'}</div>
-                      </div>
-                      <div className="flex items-center gap-3 shrink-0">
-                        <div className="hidden sm:inline-block">
-                          <StatusPill tone={['approved', 'published'].includes(ins.status) ? 'green' : ['under_review', 'issues_open'].includes(ins.status) ? 'amber' : 'neutral'}>
-                            {ins.status.replace('_', ' ')}
-                          </StatusPill>
-                        </div>
-                        <span className="font-mono text-[10px] text-ink-400 w-12 text-right">{formatRelativeTime(ins.submittedAt || ins.createdAt)}</span>
-                      </div>
+                  Array.from(stats.rolesMap.entries()).map(([role, count]) => (
+                    <div key={role} className="flex justify-between text-[13px] font-medium text-text-primary">
+                      <span className="capitalize">{role.replace('_', ' ')}s</span>
+                      <span className="font-mono font-bold">{count}</span>
                     </div>
                   ))
                 )}
               </div>
             </div>
-
-          </div>
-
-          {/* RIGHT COLUMN */}
-          <div className="space-y-6">
             
-            {/* Site Manager */}
-            <div className="rounded-xl border hairline bg-white dark:bg-ink-900 p-5">
-              <div className="text-[11px] font-medium uppercase tracking-[0.12em] text-ink-500 dark:text-ink-400 mb-4">Site Manager</div>
-              {site.managerName ? (
-                <div className="flex items-center gap-3">
-                  <Avatar name={site.managerName} size="lg" />
-                  <div>
-                    <div className="text-[14px] font-medium text-ink-900 dark:text-ink-50">{site.managerName}</div>
-                    <div className="text-[12px] text-ink-500 mt-0.5">Manager role</div>
-                  </div>
-                </div>
-              ) : (
-                <div className="text-[13px] text-ink-500 italic">No manager assigned.</div>
-              )}
-              {site.status !== 'archived' && (
-                <button onClick={() => setEditOpen(true)} className="mt-4 text-[12px] font-medium text-accent-600 dark:text-accent-400 hover:underline">
-                  Reassign
-                </button>
-              )}
-            </div>
-
-            {/* Quick Stats */}
-            <div className="rounded-xl border hairline bg-white dark:bg-ink-900 p-5 space-y-5">
-              <div>
-                <div className="text-[11px] font-medium uppercase tracking-[0.12em] text-ink-500 dark:text-ink-400 mb-3">Personnel Breakdown</div>
-                <div className="space-y-2">
-                  {Array.from(stats.rolesMap.entries()).length === 0 ? (
-                    <div className="text-[12px] text-ink-500 italic">No personnel assigned.</div>
-                  ) : (
-                    Array.from(stats.rolesMap.entries()).map(([role, count]) => (
-                      <div key={role} className="flex justify-between text-[13px]">
-                        <span className="text-ink-700 dark:text-ink-200 capitalize">{role.replace('_', ' ')}</span>
-                        <span className="font-mono text-ink-900 dark:text-ink-50">{count}</span>
-                      </div>
-                    ))
-                  )}
-                </div>
-              </div>
-              
-              <div className="border-t hairline pt-5">
-                <div className="text-[11px] font-medium uppercase tracking-[0.12em] text-ink-500 dark:text-ink-400 mb-3">Template Scopes</div>
-                <div className="flex justify-between text-[13px]">
-                  <span className="text-ink-700 dark:text-ink-200">Site-specific templates</span>
-                  <span className="font-mono text-ink-900 dark:text-ink-50">{stats.scopeCount}</span>
-                </div>
+            <div className="border-t border-text-secondary/15 pt-5">
+              <div className="text-[10px] font-bold uppercase tracking-wider text-text-secondary mb-3">Template Scopes</div>
+              <div className="flex justify-between text-[13px] font-medium text-text-primary">
+                <span>Site-specific templates</span>
+                <span className="font-mono font-bold">{stats.scopeCount}</span>
               </div>
             </div>
-
-            {/* Certifications */}
-            <div className="rounded-xl border hairline bg-white dark:bg-ink-900 p-5">
-              <div className="text-[11px] font-medium uppercase tracking-[0.12em] text-ink-500 dark:text-ink-400 mb-4">Certifications</div>
-              {site.certifications.length === 0 ? (
-                <div className="text-[12px] text-ink-500 italic">No active certifications.</div>
-              ) : (
-                <div className="space-y-3">
-                  {site.certifications.map(cert => (
-                    <div key={cert} className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <span className="w-1.5 h-1.5 rounded-full bg-signal-green shrink-0" />
-                        <span className="text-[13px] font-medium text-ink-900 dark:text-ink-50">{cert}</span>
-                      </div>
-                      <span className="text-[11px] text-ink-500">Valid</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Activity Log (Mocked last 4) */}
-            <div className="rounded-xl border hairline bg-white dark:bg-ink-900 p-5">
-              <div className="text-[11px] font-medium uppercase tracking-[0.12em] text-ink-500 dark:text-ink-400 mb-4">Activity Log</div>
-              <div className="space-y-4">
-                <div className="relative pl-3 border-l border-ink-200 dark:border-ink-700">
-                  <div className="absolute -left-[3px] top-1.5 w-1.5 h-1.5 rounded-full bg-ink-400 dark:bg-ink-500" />
-                  <div className="text-[12px] text-ink-900 dark:text-ink-50">Department added: Packaging</div>
-                  <div className="text-[11px] text-ink-500 mt-0.5">2 days ago by System Admin</div>
-                </div>
-                <div className="relative pl-3 border-l border-ink-200 dark:border-ink-700">
-                  <div className="absolute -left-[3px] top-1.5 w-1.5 h-1.5 rounded-full bg-ink-400 dark:bg-ink-500" />
-                  <div className="text-[12px] text-ink-900 dark:text-ink-50">Site details updated</div>
-                  <div className="text-[11px] text-ink-500 mt-0.5">5 days ago by System Admin</div>
-                </div>
-              </div>
-            </div>
-
           </div>
+
+          {/* Certifications */}
+          <div className="rounded-2xl border border-text-secondary/15 bg-white p-5 shadow-soft">
+            <div className="text-[10px] font-bold uppercase tracking-wider text-text-secondary mb-4">Certifications</div>
+            {site.certifications.length === 0 ? (
+              <div className="text-[12px] text-text-secondary italic">No active certifications.</div>
+            ) : (
+              <div className="space-y-3">
+                {site.certifications.map(cert => (
+                  <div key={cert} className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className="w-1.5 h-1.5 rounded-full bg-status-pass shrink-0 animate-pulse" />
+                      <span className="text-[13px] font-bold text-text-primary">{cert}</span>
+                    </div>
+                    <span className="text-[10px] font-bold uppercase text-status-pass bg-status-pass/10 px-1.5 py-0.5 rounded border border-status-pass/20 shadow-sm">Valid</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Activity Log */}
+          <div className="rounded-2xl border border-text-secondary/15 bg-white p-5 shadow-soft">
+            <div className="text-[10px] font-bold uppercase tracking-wider text-text-secondary mb-4">Activity Log</div>
+            <div className="space-y-4">
+              <div className="relative pl-3 border-l border-text-secondary/15">
+                <div className="absolute -left-[3.5px] top-1.5 w-1.5 h-1.5 rounded-full bg-accent-light" />
+                <div className="text-[12px] text-text-primary font-bold">Department added: Packaging</div>
+                <div className="text-[10px] text-text-secondary mt-0.5 font-bold font-mono">2 days ago · System Admin</div>
+              </div>
+              <div className="relative pl-3 border-l border-text-secondary/15">
+                <div className="absolute -left-[3.5px] top-1.5 w-1.5 h-1.5 rounded-full bg-accent-light" />
+                <div className="text-[12px] text-text-primary font-bold">Site details updated</div>
+                <div className="text-[10px] text-text-secondary mt-0.5 font-bold font-mono">5 days ago · System Admin</div>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
 
@@ -492,21 +497,21 @@ export function SiteDetailPage() {
         siteId={site.id}
         department={editingDept}
       />
-    </>
+    </div>
   )
 }
 
 function StatCell({ label, value, sub }: { label: string, value: string, sub: React.ReactNode }) {
   return (
-    <div className="bg-white dark:bg-ink-900 p-4 flex flex-col justify-between h-[104px]">
-      <div className="text-[11px] font-medium uppercase tracking-[0.12em] text-ink-500 dark:text-ink-400 line-clamp-1">
+    <div className="bg-white p-4 flex flex-col justify-between h-[104px]">
+      <div className="text-[10px] font-bold uppercase tracking-wider text-text-secondary line-clamp-1">
         {label}
       </div>
       <div>
-        <div className="font-display text-[32px] leading-none tracking-tight text-ink-900 dark:text-ink-50 mb-1.5">
+        <div className="text-[28px] font-bold leading-none tracking-tight text-text-primary mb-1.5">
           {value}
         </div>
-        <div className="text-[11px] font-medium text-ink-500 dark:text-ink-400 line-clamp-1">
+        <div className="text-[11px] font-bold text-text-secondary line-clamp-1">
           {sub}
         </div>
       </div>

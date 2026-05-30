@@ -6,6 +6,7 @@ import { Icon } from '../../../components/primitives/Icon'
 import { StatusPill } from '../../../components/primitives/StatusPill'
 import type { Inspection, InspectionDomain } from '../../../types/inspection'
 import { STATUS_LABEL, STATUS_TONE } from '../../../types/inspection'
+import { PageBanner } from '../../../components/shell/PageBanner'
 
 function filterToMyInspections(
   inspections: Inspection[],
@@ -39,9 +40,8 @@ export function MyDayPage({ domain = 'quality' }: { domain?: InspectionDomain })
     nextInspection,
     returned,
     drafts,
-    thisWeekSubmitted,
-    thisWeekPublished,
     recentActivity,
+    upcomingScheduled,
   } = useMemo(() => {
     const todays = myInspections
       .filter((i) => isToday(i.scheduledFor) || isToday(i.startedAt || ''))
@@ -62,19 +62,22 @@ export function MyDayPage({ domain = 'quality' }: { domain?: InspectionDomain })
       .filter((i) => i.status === 'in_progress')
       .sort((a, b) => new Date(b.startedAt || b.updatedAt).getTime() - new Date(a.startedAt || a.updatedAt).getTime())
 
-    const last7 = Date.now() - 7 * 86400000
-    const thisWeekSubmitted = myInspections.filter((i) => i.submittedAt && new Date(i.submittedAt).getTime() > last7).length
-    const thisWeekPublished = myInspections.filter((i) => i.publishedAt && new Date(i.publishedAt).getTime() > last7).length
+
+
+    const upcomingScheduled = myInspections
+      .filter((i) => i.status === 'scheduled')
+      .sort((a, b) => new Date(a.scheduledFor).getTime() - new Date(b.scheduledFor).getTime())
 
     const recentActivity = myInspections
       .flatMap((i) => i.timeline.map((e) => ({ event: e, inspection: i })))
       .sort((a, b) => new Date(b.event.at).getTime() - new Date(a.event.at).getTime())
       .slice(0, 6)
 
-    return { todays, inProgressNext, scheduledNext, nextInspection, returned, drafts, thisWeekSubmitted, thisWeekPublished, recentActivity }
+    return { todays, inProgressNext, scheduledNext, nextInspection, returned, drafts, recentActivity, upcomingScheduled }
   }, [myInspections])
 
   const firstName = user?.name?.split(/\s+/)[0] ?? 'Inspector'
+  const timeOfDay = greetByHour()
 
   const subheading = useMemo(() => {
     if (returned.length > 0) {
@@ -96,166 +99,127 @@ export function MyDayPage({ domain = 'quality' }: { domain?: InspectionDomain })
   }, [returned, inProgressNext, scheduledNext, todays])
 
   return (
-    <div className="stagger max-w-[1000px] mx-auto pb-12">
-      {/* Hero header */}
-      <div className="mb-8">
-        <h1 className="font-display text-[44px] leading-[1.05] tracking-tight text-ink-900 dark:text-ink-50">
-          {greetByHour()}, <span className="italic text-ink-500 dark:text-ink-400">{firstName}</span>.
-        </h1>
-        <p className="mt-1 text-[16px] text-ink-600 dark:text-ink-300">
-          {subheading}
-        </p>
-        <div className="mt-5">
-          {nextInspection ? (
+    <div className="space-y-6">
+      <PageBanner
+        title={`Good ${timeOfDay}, ${firstName}.`}
+        subline={subheading}
+        actions={
+          nextInspection ? (
             <button
               onClick={() => nav.push(`${prefix}/inspections/${nextInspection.id}`)}
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-accent-500 text-white text-[14px] font-medium hover:bg-accent-600 transition-colors"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-warning hover:bg-warning/90 text-text-primary text-[13px] font-bold transition shadow-sm"
             >
-              Start your next inspection
+              Start next inspection
               <Icon name="arrow_right" className="w-4 h-4 ml-1" />
             </button>
-          ) : (
-            <button
-              disabled
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border hairline bg-transparent text-[14px] font-medium text-ink-400 dark:text-ink-600 cursor-not-allowed"
-            >
-              Nothing scheduled right now
-            </button>
-          )}
-        </div>
-      </div>
+          ) : null
+        }
+      />
 
-      {/* What's left for today */}
-      <div className="rounded-xl border hairline bg-white dark:bg-ink-900 overflow-hidden mb-8 shadow-sm">
-        <div className="px-6 py-5 border-b hairline">
-          <div className="text-[13px] font-medium uppercase tracking-[0.14em] text-ink-500 dark:text-ink-400">
-            What's left for today
+      {/* Big "what's left today" card */}
+      <div className="relative rounded-2xl bg-white shadow-soft border border-text-secondary/10 p-6 lg:p-7 overflow-hidden">
+        <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary" aria-hidden="true" />
+        <div className="pl-3">
+          <div className="text-[11px] font-bold uppercase tracking-[0.12em] text-text-secondary mb-2">
+            What's left today
           </div>
-        </div>
-        {todays.length === 0 ? (
-          <div className="px-6 py-12 flex flex-col items-center justify-center text-center">
-            <div className="w-12 h-12 rounded-full border hairline border-dashed flex items-center justify-center">
-              <Icon name="check" className="w-5 h-5 text-signal-green" />
-            </div>
-            <div className="mt-4 text-[15px] font-medium text-ink-900 dark:text-ink-50">
-              Nothing on your plate today.
-            </div>
-            <p className="mt-1 text-[13px] text-ink-500 dark:text-ink-400">
-              Check back tomorrow or browse all your inspections.
-            </p>
+          <div className="font-mono text-[40px] font-bold text-text-primary leading-none mb-1">
+            {todays.filter(i => !['submitted', 'approved', 'published'].includes(i.status)).length}
           </div>
-        ) : (
-          <div className="divide-y hairline">
-            {todays.map(i => <TodayRow key={i.id} inspection={i} onClick={() => nav.push(`${prefix}/inspections/${i.id}`)} />)}
+          <div className="text-[13px] text-text-secondary mb-5">
+            inspections waiting
           </div>
-        )}
-      </div>
 
-      {/* 3 smaller cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-        {/* Returned to me */}
-        <div className={`rounded-xl border hairline p-5 ${returned.length > 0 ? 'bg-signal-red/5' : 'bg-white dark:bg-ink-900'}`}>
-          <div className="flex justify-between items-start mb-4">
-            <h3 className="text-[14px] font-medium text-ink-900 dark:text-ink-50">Returned to me</h3>
-            {returned.length > 0 && (
-              <StatusPill tone="red">{returned.length}</StatusPill>
-            )}
-          </div>
-          {returned.length === 0 ? (
-            <p className="text-[13px] text-ink-500 dark:text-ink-400">Nothing returned.</p>
-          ) : (
-            <div className="space-y-4">
-              {returned.slice(0, 3).map(i => {
-                const rejectEvent = i.timeline.find(e => e.action === 'rejected')
-                return (
-                  <button key={i.id} onClick={() => nav.push(`${prefix}/inspections/${i.id}`)} className="block w-full text-left group">
-                    <div className="font-mono text-[11px] text-ink-500 dark:text-ink-400 group-hover:text-ink-900 dark:group-hover:text-ink-50 transition-colors">{i.number}</div>
-                    <div className="text-[13px] font-medium text-ink-900 dark:text-ink-50 mt-0.5 truncate">{i.templateName}</div>
-                    {rejectEvent?.note && (
-                      <div className="mt-1.5 pl-2.5 border-l-2 border-signal-red/30 text-[12px] italic text-ink-600 dark:text-ink-300 line-clamp-2">
-                        "{rejectEvent.note}"
-                      </div>
-                    )}
-                  </button>
-                )
-              })}
-              {returned.length > 3 && (
-                <button onClick={() => nav.push(`${prefix}/returned`)} className="text-[12px] text-accent-600 dark:text-accent-400 font-medium">
-                  +{returned.length - 3} more
-                </button>
-              )}
+          {todays.length === 0 ? (
+            <div className="text-center py-6">
+              <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-white mb-2 shadow-soft">
+                <Icon name="check" className="w-5 h-5 text-status-pass" />
+              </div>
+              <div className="text-[14px] font-semibold text-text-primary">
+                You're all done for today.
+              </div>
             </div>
-          )}
-        </div>
-
-        {/* Drafts */}
-        <div className="rounded-xl border hairline bg-white dark:bg-ink-900 p-5">
-          <div className="flex justify-between items-start mb-4">
-            <h3 className="text-[14px] font-medium text-ink-900 dark:text-ink-50">Drafts</h3>
-            {drafts.length > 0 && <span className="text-[12px] text-ink-500 dark:text-ink-400">{drafts.length} total</span>}
-          </div>
-          {drafts.length === 0 ? (
-            <p className="text-[13px] text-ink-500 dark:text-ink-400">No drafts in progress.</p>
           ) : (
-            <div className="space-y-4">
-              {drafts.slice(0, 3).map(i => (
-                <button key={i.id} onClick={() => nav.push(`${prefix}/inspections/${i.id}`)} className="block w-full text-left group">
-                  <div className="font-mono text-[11px] text-ink-500 dark:text-ink-400 group-hover:text-ink-900 dark:group-hover:text-ink-50 transition-colors">{i.number}</div>
-                  <div className="text-[13px] font-medium text-ink-900 dark:text-ink-50 mt-0.5 truncate">{i.templateName}</div>
-                  <div className="text-[11px] text-ink-500 dark:text-ink-400 mt-0.5">Started {formatRelativeTime(i.startedAt || i.updatedAt)}</div>
+            <div className="space-y-2">
+              {todays.map((i) => (
+                <button
+                  key={i.id}
+                  onClick={() => nav.push(`${prefix}/inspections/${i.id}`)}
+                  className="w-full bg-white hover:bg-accent-light p-4 rounded-xl border border-text-secondary/15 flex items-center justify-between text-left transition shadow-soft"
+                >
+                  <div>
+                    <div className="text-[14px] font-semibold text-text-primary truncate">
+                      {i.templateName}
+                    </div>
+                    <div className="text-[12px] text-text-secondary mt-0.5 truncate">
+                      {i.siteName} · {formatClockTime(i.scheduledFor)}
+                    </div>
+                  </div>
+                  <StatusPill tone={STATUS_TONE[i.status]}>{STATUS_LABEL[i.status]}</StatusPill>
                 </button>
               ))}
-              {drafts.length > 3 && (
-                <button onClick={() => nav.push(`${prefix}/drafts`)} className="text-[12px] text-ink-600 dark:text-ink-300 font-medium hover:text-ink-900 dark:hover:text-ink-50">
-                  +{drafts.length - 3} more
-                </button>
-              )}
             </div>
           )}
         </div>
-
-        {/* This week */}
-        <div className="rounded-xl border hairline bg-white dark:bg-ink-900 p-5">
-          <h3 className="text-[14px] font-medium text-ink-900 dark:text-ink-50 mb-4">This week</h3>
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-[13px] text-ink-600 dark:text-ink-300">Submitted</span>
-              <span className="font-mono text-[14px] text-ink-900 dark:text-ink-50">{thisWeekSubmitted}</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-[13px] text-ink-600 dark:text-ink-300">Published</span>
-              <span className="font-mono text-[14px] text-signal-green">{thisWeekPublished}</span>
-            </div>
-          </div>
-        </div>
       </div>
 
-      {/* Recent activity */}
-      <div>
-        <h3 className="text-[14px] font-medium text-ink-900 dark:text-ink-50 mb-4 px-2">Recent activity</h3>
-        <div className="space-y-1 px-2">
+      {/* Three smaller cards in a row */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <SupportingCard
+          label="Returned to me"
+          count={returned.length}
+          tone="amber"
+          items={returned.slice(0, 2).map((i) => ({ id: i.id, title: i.templateName }))}
+          onClick={() => nav.push(`${prefix}/returned`)}
+        />
+        <SupportingCard
+          label="Drafts"
+          count={drafts.length}
+          tone="neutral"
+          items={drafts.slice(0, 2).map((i) => ({ id: i.id, title: i.templateName }))}
+          onClick={() => nav.push(`${prefix}/drafts`)}
+        />
+        <SupportingCard
+          label="This week"
+          count={upcomingScheduled.length}
+          tone="green"
+          items={upcomingScheduled.slice(0, 2).map((i) => ({ id: i.id, title: i.templateName }))}
+          onClick={() => nav.push(`${prefix}/schedule`)}
+        />
+      </div>
+
+      {/* Recent activity feed */}
+      <div className="rounded-2xl bg-white shadow-soft border border-text-secondary/15 p-6">
+        <div className="text-[11px] font-bold uppercase tracking-[0.12em] text-text-secondary mb-4">
+          Recent activity
+        </div>
+        <div className="space-y-3">
           {recentActivity.length === 0 ? (
-            <p className="text-[12px] text-ink-500 dark:text-ink-400 py-2">No recent activity.</p>
+            <p className="text-[13px] text-text-secondary">No recent activity.</p>
           ) : (
             recentActivity.map(({ event, inspection }) => (
-              <button
+              <div
                 key={event.id}
                 onClick={() => nav.push(`${prefix}/inspections/${inspection.id}`)}
-                className="w-full flex items-start gap-3 text-[12px] hover:bg-ink-50 dark:hover:bg-ink-800/60 -mx-2 px-2 py-1.5 rounded transition-colors text-left group"
+                className="flex items-start justify-between p-3 rounded-xl border border-text-secondary/15 hover:bg-accent-light transition cursor-pointer"
               >
-                <div className={`mt-1.5 w-1.5 h-1.5 rounded-full shrink-0 ${dotForAction(event.action)}`} />
-                <div className="flex-1 min-w-0">
-                  <span className="text-ink-900 dark:text-ink-50 font-medium">{event.byName}</span>
-                  <span className="text-ink-500 dark:text-ink-400"> {actionToText(event.action)} </span>
-                  <span className="text-ink-900 dark:text-ink-50 font-medium">{inspection.number}</span>
-                  {event.note && (
-                    <div className="mt-0.5 text-ink-600 dark:text-ink-300 line-clamp-1 italic">"{event.note}"</div>
-                  )}
-                  <div className="mt-1 text-[10px] text-ink-400 dark:text-ink-500">
-                    {formatRelativeTime(event.at)}
+                <div className="flex items-start gap-3">
+                  <span className={`mt-1.5 w-2 h-2 rounded-full shrink-0 ${dotForAction(event.action)}`} />
+                  <div>
+                    <div className="text-[14px] font-semibold text-text-primary">
+                      {event.byName} <span className="text-[13px] font-normal text-text-secondary">{actionToText(event.action)}</span> {inspection.number}
+                    </div>
+                    {event.note && (
+                      <p className="text-[12px] italic text-text-secondary mt-0.5">
+                        "{event.note}"
+                      </p>
+                    )}
                   </div>
                 </div>
-              </button>
+                <span className="font-mono text-[11px] text-text-secondary">
+                  {formatRelativeTime(event.at)}
+                </span>
+              </div>
             ))
           )}
         </div>
@@ -264,48 +228,56 @@ export function MyDayPage({ domain = 'quality' }: { domain?: InspectionDomain })
   )
 }
 
-function TodayRow({ inspection, onClick }: { inspection: Inspection; onClick: () => void }) {
-  const time = formatClockTime(inspection.scheduledFor)
+function SupportingCard({
+  label,
+  count,
+  tone,
+  items,
+  onClick,
+}: {
+  label: string
+  count: number
+  tone: 'amber' | 'neutral' | 'green'
+  items: { id: string; title: string }[]
+  onClick?: () => void
+}) {
+  const leftAccentMap = {
+    amber:   'bg-warning',
+    neutral: 'bg-primary',
+    green:   'bg-status-pass',
+  }
   
-  let actionLabel = 'View'
-  if (inspection.status === 'scheduled') actionLabel = 'Start'
-  else if (inspection.status === 'in_progress') actionLabel = 'Continue'
-  else if (inspection.status === 'rejected') actionLabel = 'Open returned'
-
   return (
-    <button
-      onClick={onClick}
-      className="w-full px-6 py-4 flex flex-col sm:flex-row sm:items-center gap-4 text-left hover:bg-ink-50 dark:hover:bg-ink-800/60 transition-colors group"
-    >
-      <div className="sm:w-20 shrink-0">
-        <div className="font-mono text-[16px] text-ink-900 dark:text-ink-50 tracking-tight">{time}</div>
-      </div>
-      <div className="flex-1 min-w-0">
-        <div className="text-[15px] font-medium text-ink-900 dark:text-ink-50 truncate">
-          {inspection.templateName}
-        </div>
-        <div className="flex items-center gap-2 mt-1">
-          <div className="text-[13px] text-ink-500 dark:text-ink-400 truncate">
-            {inspection.siteName} {inspection.area ? `· ${inspection.area}` : ''}
+    <div onClick={onClick} className="relative rounded-2xl bg-white shadow-soft border border-text-secondary/10 p-5 flex flex-col justify-between h-full hover:shadow-lift transition-shadow cursor-pointer overflow-hidden">
+      {/* Left accent stripe */}
+      <div className={`absolute left-0 top-0 bottom-0 w-1 ${leftAccentMap[tone]}`} aria-hidden="true" />
+      
+      <div className="pl-2">
+        <div>
+          <div className="text-[11px] font-bold uppercase tracking-[0.12em] text-text-secondary mb-2">
+            {label}
           </div>
-          <StatusPill tone={STATUS_TONE[inspection.status]}>{STATUS_LABEL[inspection.status]}</StatusPill>
+          <div className="font-mono text-[28px] font-bold text-text-primary leading-none mb-3">
+            {count}
+          </div>
+        </div>
+        <div className="space-y-1.5 mt-2">
+          {items.map((item) => (
+            <div key={item.id} className="text-[12px] text-text-secondary truncate font-semibold">
+              {item.title}
+            </div>
+          ))}
         </div>
       </div>
-      <div className="shrink-0 sm:pl-4">
-        <div className="inline-flex items-center gap-1.5 text-[12px] font-medium text-accent-600 dark:text-accent-400 group-hover:text-accent-700 dark:group-hover:text-accent-300 transition-colors">
-          {actionLabel}
-          <Icon name="arrow_right" className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
-        </div>
-      </div>
-    </button>
+    </div>
   )
 }
 
 function dotForAction(action: string) {
-  if (action === 'issue_created' || action === 'rejected') return 'bg-signal-red'
-  if (action === 'submitted' || action === 'issue_fix_submitted') return 'bg-signal-amber'
-  if (action === 'published' || action === 'approved') return 'bg-signal-green'
-  return 'bg-ink-300 dark:bg-ink-600'
+  if (action === 'issue_created' || action === 'rejected') return 'bg-status-fail'
+  if (action === 'submitted' || action === 'issue_fix_submitted') return 'bg-warning'
+  if (action === 'published' || action === 'approved') return 'bg-status-pass'
+  return 'bg-accent-light'
 }
 
 function actionToText(action: string) {

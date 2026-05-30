@@ -4,7 +4,8 @@ import { useNav } from '../../../lib/router'
 import { useInspections, formatRelativeTime, flattenIssues } from '../../../lib/inspections'
 import { Icon } from '../../../components/primitives/Icon'
 import { IssueStatePill } from '../../../components/primitives/IssueStatePill'
-import type { InspectionIssue, Inspection } from '../../../types/inspection'
+import { PageBanner } from '../../../components/shell/PageBanner'
+
 
 function greetByHour() {
   const h = new Date().getHours()
@@ -59,14 +60,12 @@ export function MyDayPage() {
       .sort((a: any, b: any) => new Date(b.issue.verifiedAt || '').getTime() - new Date(a.issue.verifiedAt || '').getTime())
 
     // 2. In My Area
-    // Heuristic: areas where this user has EVER had an issue
     const myAreas = new Set(assignedToMe.map((f: any) => f.inspection.area).filter(Boolean))
     const inAreaIssues = allIssues
       .filter((f: any) => f.inspection.area && myAreas.has(f.inspection.area) && new Date(f.issue.createdAt).getTime() > last7)
       .sort((a: any, b: any) => new Date(b.issue.createdAt).getTime() - new Date(a.issue.createdAt).getTime())
 
     // 3. Recent Activity
-    // Events on inspections where she has issues assigned, or events on her own issues directly.
     const relevantInspectionIds = new Set(assignedToMe.map((f: any) => f.inspection.id))
     const recentActivity = inspections
       .filter((i: any) => relevantInspectionIds.has(i.id))
@@ -78,197 +77,148 @@ export function MyDayPage() {
   }, [inspections, user])
 
   const firstName = user?.name?.split(/\s+/)[0] ?? 'Employee'
+  const timeOfDay = greetByHour()
 
   const subheading = useMemo(() => {
     const activeCount = myIssues.filter((f: any) => f.issue.state === 'in_progress' || f.issue.state === 'reopened').length
     const reviewCount = awaitingReview.length
 
     if (activeCount > 0 && reviewCount > 0) {
-      return `${activeCount} corrective action${activeCount === 1 ? '' : 's'} assigned to you · ${reviewCount} awaiting your manager's verification.`
+      return `${activeCount} corrective action${activeCount === 1 ? '' : 's'} assigned to you · ${reviewCount} awaiting verification.`
     }
     if (activeCount > 0) {
       return `${activeCount} corrective action${activeCount === 1 ? '' : 's'} assigned to you.`
     }
     if (reviewCount > 0) {
-      return `${reviewCount} corrective action${reviewCount === 1 ? '' : 's'} awaiting your manager's verification.`
+      return `${reviewCount} corrective action${reviewCount === 1 ? '' : 's'} awaiting verification.`
     }
     return `No corrective actions assigned right now.`
   }, [myIssues, awaitingReview])
 
+  const remainingActions = myIssues.filter((f: any) => f.issue.state === 'in_progress' || f.issue.state === 'reopened')
+
   return (
-    <div className="stagger max-w-[1000px] mx-auto pb-12">
-      {/* Hero header */}
-      <div className="mb-8">
-        <h1 className="font-display text-[44px] leading-[1.05] tracking-tight text-ink-900 dark:text-ink-50">
-          {greetByHour()}, <span className="italic text-ink-500 dark:text-ink-400">{firstName}</span>.
-        </h1>
-        <p className="mt-1 text-[16px] text-ink-600 dark:text-ink-300">
-          {subheading}
-        </p>
-        <div className="mt-5">
-          {inProgressNext ? (
+    <div className="space-y-6">
+      <PageBanner
+        title={`Good ${timeOfDay}, ${firstName}.`}
+        subline={subheading}
+        actions={
+          inProgressNext ? (
             <button
               onClick={() => nav.push(`/emp/issues/${inProgressNext.issue.id}`)}
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-accent-500 text-white text-[14px] font-medium hover:bg-accent-600 transition-colors"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-warning hover:bg-warning/90 text-text-primary text-[13px] font-bold transition shadow-sm"
             >
-              Open your next action
+              Open next action
               <Icon name="arrow_right" className="w-4 h-4 ml-1" />
             </button>
-          ) : (
-            <button
-              disabled
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border hairline bg-transparent text-[14px] font-medium text-ink-400 dark:text-ink-600 cursor-not-allowed"
-            >
-              No actions assigned
-            </button>
-          )}
-        </div>
-      </div>
+          ) : null
+        }
+      />
 
-      {/* Your actions */}
-      <div className="rounded-xl border hairline bg-white dark:bg-ink-900 overflow-hidden mb-8 shadow-sm">
-        <div className="px-6 py-5 border-b hairline">
-          <div className="text-[13px] font-medium uppercase tracking-[0.14em] text-ink-500 dark:text-ink-400">
-            Your actions
+      {/* Big "corrective actions waiting" card */}
+      <div className="relative rounded-2xl bg-white shadow-soft border border-text-secondary/10 p-6 lg:p-7 overflow-hidden">
+        <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary" aria-hidden="true" />
+        <div className="pl-3">
+          <div className="text-[11px] font-bold uppercase tracking-[0.12em] text-text-secondary mb-2">
+            Your active actions
           </div>
-        </div>
-        {myIssues.length === 0 ? (
-          <div className="px-6 py-12 flex flex-col items-center justify-center text-center">
-            <div className="w-12 h-12 rounded-full border hairline border-dashed flex items-center justify-center">
-              <Icon name="check" className="w-5 h-5 text-signal-green" />
-            </div>
-            <div className="mt-4 text-[15px] font-medium text-ink-900 dark:text-ink-50">
-              You're all clear.
-            </div>
-            <p className="mt-1 text-[13px] text-ink-500 dark:text-ink-400">
-              When your Quality or Safety Manager assigns you a corrective action, it'll appear here.
-            </p>
+          <div className="font-mono text-[40px] font-bold text-text-primary leading-none mb-1">
+            {remainingActions.length}
           </div>
-        ) : (
-          <div className="divide-y hairline">
-            {myIssues.map((f: any) => (
-              <ActionRow 
-                key={f.issue.id} 
-                issue={f.issue} 
-                inspection={f.inspection} 
-                onClick={() => nav.push(`/emp/issues/${f.issue.id}`)} 
-              />
-            ))}
+          <div className="text-[13px] text-text-secondary mb-5">
+            corrective actions pending
           </div>
-        )}
-      </div>
 
-      {/* 3 smaller cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-        {/* Awaiting your manager */}
-        <div className="rounded-xl border hairline bg-white dark:bg-ink-900 p-5">
-          <div className="flex justify-between items-start mb-4">
-            <h3 className="text-[14px] font-medium text-ink-900 dark:text-ink-50">Awaiting your manager</h3>
-            {awaitingReview.length > 0 && <span className="text-[12px] text-ink-500 dark:text-ink-400">{awaitingReview.length} total</span>}
-          </div>
-          {awaitingReview.length === 0 ? (
-            <p className="text-[13px] text-ink-500 dark:text-ink-400">Nothing waiting on review.</p>
+          {remainingActions.length === 0 ? (
+            <div className="text-center py-6">
+              <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-white mb-2 shadow-soft">
+                <Icon name="check" className="w-5 h-5 text-status-pass" />
+              </div>
+              <div className="text-[14px] font-semibold text-text-primary">
+                You're all clear.
+              </div>
+            </div>
           ) : (
-            <div className="space-y-4">
-              {awaitingReview.slice(0, 2).map((f: any) => (
-                <button key={f.issue.id} onClick={() => nav.push(`/emp/issues/${f.issue.id}`)} className="block w-full text-left group">
-                  <div className="font-mono text-[11px] text-ink-500 dark:text-ink-400 group-hover:text-ink-900 dark:group-hover:text-ink-50 transition-colors">{f.issue.id}</div>
-                  <div className="text-[13px] font-medium text-ink-900 dark:text-ink-50 mt-0.5 truncate">{f.issue.itemPrompt}</div>
-                  <div className="text-[11px] text-ink-500 dark:text-ink-400 mt-0.5">Submitted {formatRelativeTime(f.issue.fixSubmittedAt || f.issue.updatedAt)}</div>
+            <div className="space-y-2">
+              {remainingActions.map((f: any) => (
+                <button
+                  key={f.issue.id}
+                  onClick={() => nav.push(`/emp/issues/${f.issue.id}`)}
+                  className="w-full bg-white hover:bg-accent-light p-4 rounded-xl border border-text-secondary/15 flex items-center justify-between text-left transition shadow-soft"
+                >
+                  <div>
+                    <div className="text-[14px] font-semibold text-text-primary truncate">
+                      {f.issue.itemPrompt}
+                    </div>
+                    <div className="text-[12px] text-text-secondary mt-0.5 truncate">
+                      {f.inspection.number} · {f.inspection.templateName}
+                    </div>
+                  </div>
+                  <IssueStatePill state={f.issue.state} />
                 </button>
               ))}
-              {awaitingReview.length > 2 && (
-                <button onClick={() => nav.push(`/emp/under_review`)} className="text-[12px] text-ink-600 dark:text-ink-300 font-medium hover:text-ink-900 dark:hover:text-ink-50">
-                  +{awaitingReview.length - 2} more
-                </button>
-              )}
-            </div>
-          )}
-        </div>
-
-        {/* Recently closed */}
-        <div className="rounded-xl border hairline bg-white dark:bg-ink-900 p-5">
-          <div className="flex justify-between items-start mb-4">
-            <h3 className="text-[14px] font-medium text-ink-900 dark:text-ink-50">Recently closed</h3>
-            {recentlyClosed.length > 0 && <span className="text-[12px] text-ink-500 dark:text-ink-400">{recentlyClosed.length} total</span>}
-          </div>
-          {recentlyClosed.length === 0 ? (
-            <p className="text-[13px] text-ink-500 dark:text-ink-400">No issues closed recently.</p>
-          ) : (
-            <div className="space-y-4">
-              {recentlyClosed.slice(0, 2).map((f: any) => (
-                <button key={f.issue.id} onClick={() => nav.push(`/emp/issues/${f.issue.id}`)} className="block w-full text-left group">
-                  <div className="font-mono text-[11px] text-ink-500 dark:text-ink-400 group-hover:text-ink-900 dark:group-hover:text-ink-50 transition-colors">{f.issue.id}</div>
-                  <div className="text-[13px] font-medium text-ink-900 dark:text-ink-50 mt-0.5 truncate">{f.issue.itemPrompt}</div>
-                  <div className="text-[11px] text-ink-500 dark:text-ink-400 mt-0.5">Closed {formatRelativeTime(f.issue.verifiedAt || f.issue.updatedAt)}</div>
-                </button>
-              ))}
-              {recentlyClosed.length > 2 && (
-                <button onClick={() => nav.push(`/emp/closed`)} className="text-[12px] text-ink-600 dark:text-ink-300 font-medium hover:text-ink-900 dark:hover:text-ink-50">
-                  +{recentlyClosed.length - 2} more
-                </button>
-              )}
-            </div>
-          )}
-        </div>
-
-        {/* In your area */}
-        <div className="rounded-xl border hairline bg-white dark:bg-ink-900 p-5">
-          <div className="flex justify-between items-start mb-4">
-            <h3 className="text-[14px] font-medium text-ink-900 dark:text-ink-50">In your area</h3>
-            {inAreaIssues.length > 0 && <span className="text-[12px] text-ink-500 dark:text-ink-400">{inAreaIssues.length} total</span>}
-          </div>
-          {inAreaIssues.length === 0 ? (
-            <p className="text-[13px] text-ink-500 dark:text-ink-400">No area set.</p>
-          ) : (
-            <div className="space-y-4">
-              {inAreaIssues.slice(0, 2).map((f: any) => (
-                <button key={f.issue.id} onClick={() => nav.push(`/emp/issues/${f.issue.id}`)} className="block w-full text-left group">
-                  <div className="font-mono text-[11px] text-ink-500 dark:text-ink-400 group-hover:text-ink-900 dark:group-hover:text-ink-50 transition-colors">{f.issue.id}</div>
-                  <div className="text-[13px] font-medium text-ink-900 dark:text-ink-50 mt-0.5 truncate">{f.issue.itemPrompt}</div>
-                  <div className="text-[11px] text-ink-500 dark:text-ink-400 mt-0.5">{f.inspection.area}</div>
-                </button>
-              ))}
-              {inAreaIssues.length > 2 && (
-                <button onClick={() => nav.push(`/emp/in_area`)} className="text-[12px] text-ink-600 dark:text-ink-300 font-medium hover:text-ink-900 dark:hover:text-ink-50">
-                  +{inAreaIssues.length - 2} more
-                </button>
-              )}
             </div>
           )}
         </div>
       </div>
 
-      {/* Recent activity */}
-      <div>
-        <h3 className="text-[14px] font-medium text-ink-900 dark:text-ink-50 mb-4 px-2">Recent activity</h3>
-        <div className="space-y-1 px-2">
+      {/* Three smaller cards in a row */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <SupportingCard
+          label="Awaiting manager"
+          count={awaitingReview.length}
+          tone="amber"
+          items={awaitingReview.slice(0, 2).map((f: any) => ({ id: f.issue.id, title: f.issue.itemPrompt }))}
+          onClick={() => nav.push(`/emp/under_review`)}
+        />
+        <SupportingCard
+          label="Recently closed"
+          count={recentlyClosed.length}
+          tone="green"
+          items={recentlyClosed.slice(0, 2).map((f: any) => ({ id: f.issue.id, title: f.issue.itemPrompt }))}
+          onClick={() => nav.push(`/emp/closed`)}
+        />
+        <SupportingCard
+          label="In your area"
+          count={inAreaIssues.length}
+          tone="neutral"
+          items={inAreaIssues.slice(0, 2).map((f: any) => ({ id: f.issue.id, title: f.issue.itemPrompt }))}
+          onClick={() => nav.push(`/emp/in_area`)}
+        />
+      </div>
+
+      {/* Recent activity feed */}
+      <div className="rounded-2xl bg-white shadow-soft border border-text-secondary/15 p-6">
+        <div className="text-[11px] font-bold uppercase tracking-[0.12em] text-text-secondary mb-4">
+          Recent activity
+        </div>
+        <div className="space-y-3">
           {recentActivity.length === 0 ? (
-            <p className="text-[12px] text-ink-500 dark:text-ink-400 py-2">No recent activity.</p>
+            <p className="text-[13px] text-text-secondary">No recent activity.</p>
           ) : (
             recentActivity.map(({ event, inspection }: any) => (
-              <button
+              <div
                 key={event.id}
                 onClick={() => nav.push(event.target ? `/emp/issues/${event.target}` : `/emp`)}
-                className="w-full flex items-start gap-3 text-[12px] hover:bg-ink-50 dark:hover:bg-ink-800/60 -mx-2 px-2 py-1.5 rounded transition-colors text-left group"
+                className="flex items-start justify-between p-3 rounded-xl border border-text-secondary/15 hover:bg-accent-light transition cursor-pointer"
               >
-                <div className={`mt-1.5 w-1.5 h-1.5 rounded-full shrink-0 ${dotForAction(event.action)}`} />
-                <div className="flex-1 min-w-0">
-                  <span className="text-ink-900 dark:text-ink-50 font-medium">{event.byName}</span>
-                  <span className="text-ink-500 dark:text-ink-400"> {actionToText(event.action)} </span>
-                  {event.target ? (
-                    <span className="text-ink-900 dark:text-ink-50 font-mono font-medium">{event.target}</span>
-                  ) : (
-                    <span className="text-ink-900 dark:text-ink-50 font-medium">{inspection.number}</span>
-                  )}
-                  {event.note && (
-                    <div className="mt-0.5 text-ink-600 dark:text-ink-300 line-clamp-1 italic">"{event.note}"</div>
-                  )}
-                  <div className="mt-1 text-[10px] text-ink-400 dark:text-ink-500">
-                    {formatRelativeTime(event.at)}
+                <div className="flex items-start gap-3">
+                  <span className={`mt-1.5 w-2 h-2 rounded-full shrink-0 ${dotForAction(event.action)}`} />
+                  <div>
+                    <div className="text-[14px] font-semibold text-text-primary">
+                      {event.byName} <span className="text-[13px] font-normal text-text-secondary">{actionToText(event.action)}</span> {event.target || inspection.number}
+                    </div>
+                    {event.note && (
+                      <p className="text-[12px] italic text-text-secondary mt-0.5">
+                        "{event.note}"
+                      </p>
+                    )}
                   </div>
                 </div>
-              </button>
+                <span className="font-mono text-[11px] text-text-secondary">
+                  {formatRelativeTime(event.at)}
+                </span>
+              </div>
             ))
           )}
         </div>
@@ -277,45 +227,56 @@ export function MyDayPage() {
   )
 }
 
-function ActionRow({ issue, inspection, onClick }: { issue: InspectionIssue; inspection: Inspection; onClick: () => void }) {
-  let actionLabel = 'Open'
-  if (issue.state === 'reopened') actionLabel = 'Open (reopened)'
-  else if (issue.state === 'awaiting_verification') actionLabel = 'View status'
-
+function SupportingCard({
+  label,
+  count,
+  tone,
+  items,
+  onClick,
+}: {
+  label: string
+  count: number
+  tone: 'amber' | 'neutral' | 'green'
+  items: { id: string; title: string }[]
+  onClick?: () => void
+}) {
+  const leftAccentMap = {
+    amber:   'bg-warning',
+    neutral: 'bg-primary',
+    green:   'bg-status-pass',
+  }
+  
   return (
-    <button
-      onClick={onClick}
-      className="w-full px-6 py-4 flex flex-col sm:flex-row sm:items-center gap-4 text-left hover:bg-ink-50 dark:hover:bg-ink-800/60 transition-colors group"
-    >
-      <div className="sm:w-20 shrink-0">
-        <div className="font-mono text-[13px] text-ink-500 dark:text-ink-400 tracking-tight">{issue.id}</div>
-      </div>
-      <div className="flex-1 min-w-0">
-        <div className="text-[15px] font-medium text-ink-900 dark:text-ink-50 truncate">
-          {issue.itemPrompt}
-        </div>
-        <div className="flex items-center gap-2 mt-1 flex-wrap">
-          <div className="text-[13px] text-ink-500 dark:text-ink-400 truncate">
-            {inspection.number} · {inspection.templateName} {inspection.area ? `· ${inspection.area}` : ''}
+    <div onClick={onClick} className="relative rounded-2xl bg-white shadow-soft border border-text-secondary/10 p-5 flex flex-col justify-between h-full hover:shadow-lift transition-shadow cursor-pointer overflow-hidden">
+      {/* Left accent stripe */}
+      <div className={`absolute left-0 top-0 bottom-0 w-1 ${leftAccentMap[tone]}`} aria-hidden="true" />
+      
+      <div className="pl-2">
+        <div>
+          <div className="text-[11px] font-bold uppercase tracking-[0.12em] text-text-secondary mb-2">
+            {label}
           </div>
-          <IssueStatePill state={issue.state} />
+          <div className="font-mono text-[28px] font-bold text-text-primary leading-none mb-3">
+            {count}
+          </div>
+        </div>
+        <div className="space-y-1.5 mt-2">
+          {items.map((item) => (
+            <div key={item.id} className="text-[12px] text-text-secondary truncate font-semibold">
+              {item.title}
+            </div>
+          ))}
         </div>
       </div>
-      <div className="shrink-0 sm:pl-4">
-        <div className="inline-flex items-center gap-1.5 text-[12px] font-medium text-accent-600 dark:text-accent-400 group-hover:text-accent-700 dark:group-hover:text-accent-300 transition-colors">
-          {actionLabel}
-          <Icon name="arrow_right" className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
-        </div>
-      </div>
-    </button>
+    </div>
   )
 }
 
 function dotForAction(action: string) {
-  if (action === 'issue_created' || action === 'rejected' || action === 'issue_reopened') return 'bg-signal-red'
-  if (action === 'submitted' || action === 'issue_fix_submitted') return 'bg-signal-amber'
-  if (action === 'published' || action === 'approved' || action === 'issue_verified') return 'bg-signal-green'
-  return 'bg-ink-300 dark:bg-ink-600'
+  if (action === 'issue_created' || action === 'rejected' || action === 'issue_reopened') return 'bg-status-fail'
+  if (action === 'submitted' || action === 'issue_fix_submitted') return 'bg-warning'
+  if (action === 'published' || action === 'approved' || action === 'issue_verified') return 'bg-status-pass'
+  return 'bg-accent-light'
 }
 
 function actionToText(action: string) {

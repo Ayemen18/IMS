@@ -18,12 +18,12 @@ export const INSPECTION_TYPES: Record<
   InspectionTypeKey,
   { key: InspectionTypeKey; label: string; shortLabel: string; accent: string }
 > = {
-  gmp:         { key: 'gmp',         label: 'GMP',                shortLabel: 'GMP',        accent: 'bg-accent-500' },
-  haccp:       { key: 'haccp',       label: 'HACCP',              shortLabel: 'HACCP',      accent: 'bg-signal-amber' },
-  safety_walk: { key: 'safety_walk', label: 'Safety walkthrough', shortLabel: 'Safety',     accent: 'bg-signal-red' },
-  sanitation:  { key: 'sanitation',  label: 'Sanitation',         shortLabel: 'Sanitation', accent: 'bg-signal-green' },
-  allergen:    { key: 'allergen',    label: 'Allergen control',   shortLabel: 'Allergen',   accent: 'bg-accent-700' },
-  custom:      { key: 'custom',      label: 'Custom',             shortLabel: 'Custom',     accent: 'bg-ink-700 dark:bg-ink-200' },
+  gmp:         { key: 'gmp',         label: 'GMP',                shortLabel: 'GMP',        accent: 'bg-primary' },
+  haccp:       { key: 'haccp',       label: 'HACCP',              shortLabel: 'HACCP',      accent: 'bg-warning' },
+  safety_walk: { key: 'safety_walk', label: 'Safety walkthrough', shortLabel: 'Safety',     accent: 'bg-status-fail' },
+  sanitation:  { key: 'sanitation',  label: 'Sanitation',         shortLabel: 'Sanitation', accent: 'bg-status-pass' },
+  allergen:    { key: 'allergen',    label: 'Allergen control',   shortLabel: 'Allergen',   accent: 'bg-primary' },
+  custom:      { key: 'custom',      label: 'Custom',             shortLabel: 'Custom',     accent: 'bg-accent-light ' },
 }
 
 /* ============================================================

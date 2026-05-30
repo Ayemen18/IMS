@@ -1,9 +1,7 @@
 import { Icon } from '../components/primitives/Icon'
-import { StatusPill } from '../components/primitives/StatusPill'
 import { Wordmark } from '../components/primitives/Wordmark'
 import { useNav } from '../lib/router'
 import { useReveal } from '../lib/useReveal'
-import { ROLES } from '../lib/roles'
 
 export function Landing() {
   const nav = useNav()
@@ -12,90 +10,81 @@ export function Landing() {
   return (
     <div className="relative">
       {/* ================= HERO ================= */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-grid-light dark:bg-grid-dark opacity-40 pointer-events-none [mask-image:radial-gradient(ellipse_at_center,black_30%,transparent_75%)]" />
-
-        {/* Atmospheric brand gradients */}
+      <section className="relative px-6 sm:px-10 lg:px-16 pt-16 pb-24 lg:pt-24 lg:pb-32 overflow-hidden bg-white">
+        {/* Subtle atmospheric brand glow behind the right card */}
         <div 
-          className="absolute top-0 right-0 w-[60%] h-[80%] pointer-events-none hidden dark:block"
+          className="absolute top-0 right-0 w-[55%] h-[80%] pointer-events-none"
           style={{
-            background: 'radial-gradient(ellipse at top right, rgba(40, 81, 184, 0.18), transparent 60%)',
+            background: 'radial-gradient(ellipse at top right, rgba(40, 81, 184, 0.06), transparent 65%)',
           }}
           aria-hidden="true"
         />
-        <div 
-          className="absolute top-0 right-0 w-[60%] h-[80%] pointer-events-none block dark:hidden"
-          style={{
-            background: 'radial-gradient(ellipse at top right, rgba(40, 81, 184, 0.08), transparent 60%)',
-          }}
-          aria-hidden="true"
-        />
-        <div 
-          className="absolute bottom-0 left-0 w-[40%] h-[40%] pointer-events-none"
-          style={{
-            background: 'radial-gradient(ellipse at bottom left, rgba(245, 184, 0, 0.04), transparent 70%)',
-          }}
-          aria-hidden="true"
-        />
-
-        <div className="max-w-[1400px] mx-auto px-6 pt-20 pb-24 relative">
-          <div className="grid grid-cols-12 gap-8 items-end">
-            {/* Headline column */}
-            <div className="col-span-12 lg:col-span-8 stagger">
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-accent-50 dark:bg-accent-500/10 border border-accent-100 dark:border-accent-500/20 text-[12px] font-medium text-accent-700 dark:text-accent-300">
-                <Icon name="sparkle" className="w-3 h-3 text-accent-500" />
-                Built for GMP and HACCP-regulated environments
+        
+        <div className="relative max-w-[1280px] mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-12 lg:gap-16 items-center">
+            {/* LEFT COLUMN — content */}
+            <div className="stagger">
+              {/* Yellow pill badge */}
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-warning/15 border border-warning/30">
+                <span className="w-1.5 h-1.5 rounded-full bg-warning" aria-hidden="true" />
+                <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-warning">
+                  Inspection Management Platform
+                </span>
               </div>
 
-              <h1 className="mt-6 font-display text-[64px] sm:text-[88px] lg:text-[108px] leading-[0.92] tracking-[-0.02em] text-ink-900 dark:text-ink-50 text-balance">
-                Inspections that
-                <br />
+              {/* Headline */}
+              <h1 className="mt-8 font-sans text-[44px] sm:text-[56px] lg:text-[68px] xl:text-[76px] leading-[1.05] font-bold tracking-tight text-text-primary">
+                Where inspections become<br />
                 <span className="relative inline-block">
-                  <span className="italic text-accent-500 dark:text-accent-400">hold up</span>
+                  audit-ready evidence
                   <span 
-                    className="absolute -bottom-1 left-0 h-1 bg-brand-yellow-500 origin-left"
+                    className="absolute -bottom-1 left-0 h-1.5 bg-warning origin-left rounded-full"
                     style={{
                       width: '100%',
-                      animation: 'drawIn 800ms cubic-bezier(0.16, 1, 0.3, 1) 600ms both',
+                      animation: 'drawIn 800ms cubic-bezier(0.16, 1, 0.3, 1) 400ms both',
                       transform: 'scaleX(0)',
                     }}
                     aria-hidden="true"
                   />
-                </span> under audit.
+                </span>
+                .
               </h1>
 
-              <p className="mt-7 max-w-[560px] text-[17px] leading-[1.55] text-ink-600 dark:text-ink-300 text-pretty">
-                InspectSphere is the inspection management system for pharma and food manufacturers who
-                can't afford ambiguity. Schedule, execute, review, and close out — with a trail
-                that survives the auditor's first question.
+              {/* Subhead */}
+              <p className="mt-6 max-w-[560px] text-[16px] sm:text-[17px] leading-[1.6] text-text-secondary">
+                Build, track, and certify inspection programs across pharma and food manufacturing — in one place. 
+                Schedule, execute, review, and close out, with a trail that survives the auditor's first question.
               </p>
 
+              {/* CTAs */}
               <div className="mt-10 flex flex-wrap items-center gap-3">
-                <button
+                {/* Primary navy CTA */}
+                <button 
                   onClick={() => nav.push('/login')}
-                  className="btn-primary relative overflow-hidden inline-flex items-center gap-2 px-5 py-3 rounded-md bg-accent-500 text-white text-[14px] font-medium hover:bg-accent-600 hover:translate-y-[-1px] active:translate-y-0 transition-all duration-200"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-primary hover:bg-primary text-white text-[15px] font-semibold transition shadow-sm hover:shadow-md"
                 >
-                  <span className="relative z-10 flex items-center gap-2">
-                    Explore the demo
-                    <Icon name="arrow_right" className="w-4 h-4" />
-                  </span>
-                  <span className="absolute right-0 top-0 bottom-0 w-1 bg-brand-yellow-500" aria-hidden="true" />
+                  Get Started
+                  <Icon name="arrow_right" className="w-4 h-4" />
                 </button>
-                <button
+                
+                {/* Secondary outlined CTA */}
+                <button 
                   onClick={() => nav.push('/login')}
-                  className="inline-flex items-center gap-2 px-5 py-3 rounded-md border hairline bg-white/60 dark:bg-ink-800/60 backdrop-blur-sm text-ink-900 dark:text-ink-50 text-[14px] font-medium hover:bg-white dark:hover:bg-ink-800 transition-colors"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-lg border border-text-secondary/15 bg-white hover:bg-accent-light text-text-primary text-[15px] font-semibold transition"
                 >
-                  Sign in
+                  See How It Works
                 </button>
-                <span className="text-[12px] text-ink-500 dark:text-ink-400 ml-2">
+                
+                {/* Trust signal */}
+                <span className="ml-2 text-[13px] text-text-secondary font-mono">
                   No credit card · 14-day trial
                 </span>
               </div>
             </div>
 
-            {/* Mock inspection card */}
+            {/* RIGHT COLUMN — demo card */}
             <div 
-              className="col-span-12 lg:col-span-4 hidden lg:block"
+              className="hidden lg:block"
               style={{
                 animation: 'fadeUp 700ms cubic-bezier(0.16, 1, 0.3, 1) 400ms both',
                 opacity: 0,
@@ -104,169 +93,229 @@ export function Landing() {
               <HeroMockCard />
             </div>
           </div>
-
-          {/* Logo marquee */}
-          <LogoMarquee />
         </div>
       </section>
 
-      {/* ================= PRINCIPLES ================= */}
-      <section className="border-t hairline">
-        <div className="max-w-[1400px] mx-auto px-6 py-24">
-          <div ref={addReveal} className="reveal max-w-[760px]">
-            <div className="text-[11px] font-medium uppercase tracking-[0.18em] text-ink-500 dark:text-ink-400">
-              Why teams switch
+      {/* ================= SECTION 1 — COMPANY MARQUEE ================= */}
+      <LogoMarquee />
+
+      {/* ================= SECTION 2 — PRINCIPLES ================= */}
+      <section className="py-24 lg:py-32 px-6 sm:px-10 lg:px-16 bg-white">
+        <div className="max-w-[1280px] mx-auto">
+          {/* Section header */}
+          <div ref={addReveal} className="reveal text-center mb-14">
+            {/* Yellow section pill */}
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-warning/15 border border-warning/30 mb-6">
+              <span className="w-1.5 h-1.5 rounded-full bg-warning" aria-hidden="true" />
+              <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-warning">
+                Why InspectSphere
+              </span>
             </div>
-            <h2 className="mt-3 font-display text-[44px] sm:text-[56px] leading-[1.05] tracking-tight text-ink-900 dark:text-ink-50">
-              The inspection record is a legal artifact.
-              <br />
-              <span className="italic text-ink-500 dark:text-ink-400">We treat it like one.</span>
+            
+            {/* Bold sans headline */}
+            <h2 className="font-sans text-[36px] sm:text-[44px] lg:text-[52px] leading-[1.1] font-bold tracking-tight text-text-primary max-w-[820px] mx-auto">
+              Built for the inspections that matter most.
+            </h2>
+            
+            <p className="mt-5 text-[16px] leading-relaxed text-text-secondary max-w-[640px] mx-auto">
+              Every feature exists because a quality team asked for it. Every workflow holds up under scrutiny.
+            </p>
+          </div>
+          
+          {/* Three principle cards in a row */}
+          <div ref={addReveal} className="reveal grid grid-cols-1 md:grid-cols-3 gap-5 lg:gap-6">
+            {/* Card 1 — Audit-ready trails */}
+            <div className="relative rounded-2xl bg-white shadow-soft border border-text-secondary/10 p-7 lg:p-8 overflow-hidden">
+              <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary" aria-hidden="true" />
+              {/* Decorative icon top-right */}
+              <div className="absolute top-5 right-5 w-10 h-10 rounded-xl bg-accent-light flex items-center justify-center">
+                <Icon name="layers" className="w-5 h-5 text-primary" />
+              </div>
+              
+              {/* Card label */}
+              <div className="text-[11px] font-bold uppercase tracking-[0.12em] text-primary mb-3">
+                Audit Ready
+              </div>
+              
+              {/* Card title */}
+              <h3 className="font-sans text-[22px] lg:text-[24px] font-bold leading-tight tracking-tight text-text-primary mb-3">
+                Every action leaves a trail.
+              </h3>
+              
+              {/* Card body */}
+              <p className="text-[14px] leading-relaxed text-text-secondary">
+                Submissions, approvals, rejections, corrective actions — all timestamped, all attributed, all exportable in a single click when the auditor arrives.
+              </p>
+            </div>
+            
+            {/* Card 2 — Role-based workflows */}
+            <div className="relative rounded-2xl bg-white shadow-soft border border-text-secondary/10 p-7 lg:p-8 overflow-hidden">
+              <div className="absolute left-0 top-0 bottom-0 w-1 bg-warning" aria-hidden="true" />
+              <div className="absolute top-5 right-5 w-10 h-10 rounded-xl bg-accent-light flex items-center justify-center">
+                <Icon name="check" className="w-5 h-5 text-warning" />
+              </div>
+              
+              <div className="text-[11px] font-bold uppercase tracking-[0.12em] text-warning mb-3">
+                Role-Based
+              </div>
+              
+              <h3 className="font-sans text-[22px] lg:text-[24px] font-bold leading-tight tracking-tight text-text-primary mb-3">
+                Seven roles, one source of truth.
+              </h3>
+              
+              <p className="text-[14px] leading-relaxed text-text-secondary">
+                Managers schedule. Inspectors execute. Employees fix. Top management sees the operation. Each role gets exactly the surface they need — no more, no less.
+              </p>
+            </div>
+            
+            {/* Card 3 — Compliance-first */}
+            <div className="relative rounded-2xl bg-white shadow-soft border border-text-secondary/10 p-7 lg:p-8 overflow-hidden">
+              <div className="absolute left-0 top-0 bottom-0 w-1 bg-status-pass" aria-hidden="true" />
+              <div className="absolute top-5 right-5 w-10 h-10 rounded-xl bg-accent-light flex items-center justify-center">
+                <Icon name="alert" className="w-5 h-5 text-status-pass" />
+              </div>
+              
+              <div className="text-[11px] font-bold uppercase tracking-[0.12em] text-status-pass mb-3">
+                Compliance First
+              </div>
+              
+              <h3 className="font-sans text-[22px] lg:text-[24px] font-bold leading-tight tracking-tight text-text-primary mb-3">
+                Made for GMP, HACCP, ISO 22000.
+              </h3>
+              
+              <p className="text-[14px] leading-relaxed text-text-secondary">
+                Templates ship with the controls regulators expect. Versioning, electronic signatures, deviation tracking — all built in, all defensible.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ================= SECTION 3 — METRICS ================= */}
+      <section className="py-24 lg:py-32 px-6 sm:px-10 lg:px-16 bg-primary text-white">
+        <div className="max-w-[1280px] mx-auto">
+          {/* Section header */}
+          <div ref={addReveal} className="reveal text-center mb-14">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-warning/20 border border-warning/40 mb-6">
+              <span className="w-1.5 h-1.5 rounded-full bg-warning" aria-hidden="true" />
+              <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-warning">
+                By the numbers
+              </span>
+            </div>
+            
+            <h2 className="font-sans text-[36px] sm:text-[44px] lg:text-[52px] leading-[1.1] font-bold tracking-tight text-white max-w-[820px] mx-auto">
+              Inspections that scale with your operation.
             </h2>
           </div>
-
-          <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-px bg-ink-200/60 dark:bg-ink-800 border hairline rounded-xl overflow-hidden">
-            {PRINCIPLES.map((card, i) => (
-              <div
-                key={i}
-                ref={addReveal}
-                className="reveal bg-white dark:bg-ink-900 p-8 transition-colors hover:bg-ink-50 dark:hover:bg-ink-800/50"
-              >
-                <div className="flex items-start justify-between">
-                  <div className="font-mono text-[11px] text-ink-400 dark:text-ink-500">{card.k}</div>
-                  <Icon name={card.icon} className="w-5 h-5 text-ink-400 dark:text-ink-500" />
-                </div>
-                <h3 className="mt-12 text-[19px] font-medium text-ink-900 dark:text-ink-50 tracking-tight">
-                  {card.title}
-                </h3>
-                <p className="mt-2 text-[14px] leading-relaxed text-ink-600 dark:text-ink-300">
-                  {card.body}
-                </p>
+          
+          {/* Stat grid */}
+          <div ref={addReveal} className="reveal grid grid-cols-2 lg:grid-cols-4 gap-5 lg:gap-6">
+            <div className="text-center">
+              <div className="font-mono text-[48px] lg:text-[64px] font-bold text-warning leading-none">
+                250K+
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ================= MODULES / ROLES ================= */}
-      <section className="border-t hairline bg-ink-50 dark:bg-ink-950">
-        <div className="max-w-[1400px] mx-auto px-6 py-24">
-          <div className="grid grid-cols-12 gap-8">
-            <div className="col-span-12 lg:col-span-4">
-              <div ref={addReveal} className="reveal sticky top-24">
-                <div className="text-[11px] font-medium uppercase tracking-[0.18em] text-ink-500 dark:text-ink-400">
-                  Inside the platform
-                </div>
-                <h2 className="mt-3 font-display text-[44px] sm:text-[52px] leading-[1.05] tracking-tight text-ink-900 dark:text-ink-50">
-                  Seven roles.
-                  <br />
-                  One source of truth.
-                </h2>
-                <p className="mt-5 text-[15px] leading-relaxed text-ink-600 dark:text-ink-300 max-w-[420px]">
-                  Each role sees only what they need. The system underneath is one continuous
-                  record — from the moment an inspection is scheduled to the moment its findings
-                  are closed out.
-                </p>
-                <button
-                  onClick={() => nav.push('/login')}
-                  className="mt-8 inline-flex items-center gap-2 text-[14px] font-medium text-ink-900 dark:text-ink-50 hover:gap-3 transition-all"
-                >
-                  Tour each role
-                  <Icon name="arrow_right" className="w-4 h-4" />
-                </button>
+              <div className="mt-3 text-[13px] uppercase tracking-wide text-white/60 font-semibold">
+                Inspections completed
               </div>
             </div>
-
-            <div className="col-span-12 lg:col-span-8">
-              <div ref={addReveal} className="reveal grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {ROLES.map((r, i) => (
-                  <div
-                    key={r.key}
-                    onClick={() => nav.push('/login')}
-                    className="group rounded-lg border hairline bg-white dark:bg-ink-900 p-5 hover:border-ink-300 dark:hover:border-ink-600 transition-all cursor-pointer"
-                  >
-                    <div className="flex items-start justify-between">
-                      <div
-                        className={`w-9 h-9 rounded-md ${r.accent} flex items-center justify-center text-white dark:text-ink-900`}
-                      >
-                        <Icon name={r.glyph} className="w-4 h-4" />
-                      </div>
-                      <div className="font-mono text-[10px] text-ink-400 dark:text-ink-500">
-                        {String(i + 1).padStart(2, '0')}
-                      </div>
-                    </div>
-                    <h3 className="mt-5 text-[15px] font-medium text-ink-900 dark:text-ink-50">
-                      {r.label}
-                    </h3>
-                    <p className="mt-1 text-[13px] leading-relaxed text-ink-600 dark:text-ink-300 line-clamp-2">
-                      {r.description}
-                    </p>
-                  </div>
-                ))}
+            
+            <div className="text-center">
+              <div className="font-mono text-[48px] lg:text-[64px] font-bold text-white leading-none">
+                99.4%
+              </div>
+              <div className="mt-3 text-[13px] uppercase tracking-wide text-white/60 font-semibold">
+                Audit pass rate
+              </div>
+            </div>
+            
+            <div className="text-center">
+              <div className="font-mono text-[48px] lg:text-[64px] font-bold text-warning leading-none">
+                7
+              </div>
+              <div className="mt-3 text-[13px] uppercase tracking-wide text-white/60 font-semibold">
+                Roles, one platform
+              </div>
+            </div>
+            
+            <div className="text-center">
+              <div className="font-mono text-[48px] lg:text-[64px] font-bold text-white leading-none">
+                12min
+              </div>
+              <div className="mt-3 text-[13px] uppercase tracking-wide text-white/60 font-semibold">
+                Avg inspection time
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ================= METRICS ================= */}
-      <section className="border-t hairline">
-        <div className="max-w-[1400px] mx-auto px-6 py-24">
-          <div
-            ref={addReveal}
-            className="reveal grid grid-cols-2 md:grid-cols-4 gap-px bg-ink-200/60 dark:bg-ink-800 border hairline rounded-xl overflow-hidden"
-          >
-            {METRICS.map((s, i) => (
-              <div key={i} className="bg-white dark:bg-ink-900 p-8">
-                <div className="font-display text-[56px] leading-none tracking-tight text-ink-900 dark:text-ink-50">
-                  {s.v}
-                </div>
-                <div className="mt-3 text-[13px] text-ink-600 dark:text-ink-300">{s.l}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ================= FINAL CTA + FOOTER ================= */}
-      <section className="border-t hairline bg-ink-900 dark:bg-ink-50 text-ink-50 dark:text-ink-900 relative overflow-hidden noise">
-        <div className="max-w-[1400px] mx-auto px-6 py-24 relative">
-          <div ref={addReveal} className="reveal grid grid-cols-12 gap-8 items-end">
-            <div className="col-span-12 lg:col-span-8">
-              <h2 className="font-display text-[52px] sm:text-[72px] leading-[1] tracking-tight text-balance">
-                Stop preparing for audits.
-                <br />
-                <span className="italic opacity-60">Just be ready.</span>
-              </h2>
+      {/* ================= SECTION 4 — FOOTER CTA ================= */}
+      <section className="py-24 lg:py-32 px-6 sm:px-10 lg:px-16 bg-white">
+        <div className="max-w-[1280px] mx-auto">
+          <div ref={addReveal} className="reveal max-w-[900px] mx-auto text-center mb-24">
+            {/* Yellow pill */}
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-warning/15 border border-warning/30 mb-7">
+              <span className="w-1.5 h-1.5 rounded-full bg-warning" aria-hidden="true" />
+              <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-warning">
+                Get Started Today
+              </span>
             </div>
-            <div className="col-span-12 lg:col-span-4 flex flex-col gap-3">
-              <button
+            
+            {/* Big closing headline */}
+            <h2 className="font-sans text-[40px] sm:text-[52px] lg:text-[64px] leading-[1.05] font-bold tracking-tight text-text-primary mb-6">
+              Ready for inspections that<br />
+              <span className="relative inline-block">
+                hold up under audit
+                <span 
+                  className="absolute -bottom-1 left-0 h-1.5 bg-warning origin-left rounded-full"
+                  style={{ width: '100%' }}
+                  aria-hidden="true"
+                />
+              </span>
+              ?
+            </h2>
+            
+            {/* Subhead */}
+            <p className="text-[17px] leading-relaxed text-text-secondary max-w-[560px] mx-auto mb-10">
+              Start your free trial in under 60 seconds. No credit card. No sales call. Just the product.
+            </p>
+            
+            {/* CTAs */}
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              <button 
                 onClick={() => nav.push('/login')}
-                className="inline-flex items-center justify-between px-5 py-4 rounded-md bg-ink-50 dark:bg-ink-900 text-ink-900 dark:text-ink-50 text-[14px] font-medium hover:bg-white dark:hover:bg-ink-800 transition-colors"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-primary hover:bg-primary text-white text-[15px] font-semibold transition shadow-sm hover:shadow-md"
               >
-                Explore the demo
+                Start Free Trial
                 <Icon name="arrow_right" className="w-4 h-4" />
               </button>
-              <button
+              
+              <button 
                 onClick={() => nav.push('/login')}
-                className="inline-flex items-center justify-between px-5 py-4 rounded-md border border-ink-700 dark:border-ink-300 text-ink-50 dark:text-ink-900 text-[14px] font-medium hover:bg-ink-800 dark:hover:bg-ink-100 transition-colors"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-lg border border-text-secondary/15 bg-white hover:bg-accent-light text-text-primary text-[15px] font-semibold transition"
               >
-                Sign in to your workspace
-                <Icon name="arrow_up_right" className="w-4 h-4" />
+                Book a Demo
               </button>
             </div>
+            
+            {/* Trust signal */}
+            <p className="mt-8 text-[13px] text-text-secondary font-mono">
+              No credit card · 14-day trial · Cancel anytime
+            </p>
           </div>
 
-          <div className="mt-24 pt-8 border-t border-ink-700 dark:border-ink-300 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          {/* Footer links */}
+          <div className="pt-8 border-t border-text-secondary/15 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="flex items-center gap-6">
               <Wordmark />
-              <span className="text-[11px] font-mono opacity-60">est. 2026</span>
+              <span className="text-[11px] font-mono text-text-secondary">est. 2026</span>
             </div>
-            <div className="flex items-center gap-6 text-[12px] opacity-70">
-              <a className="hover:opacity-100 cursor-pointer">Product</a>
-              <a className="hover:opacity-100 cursor-pointer">Compliance</a>
-              <a className="hover:opacity-100 cursor-pointer">Customers</a>
-              <a className="hover:opacity-100 cursor-pointer">Docs</a>
-              <a className="hover:opacity-100 cursor-pointer">Contact</a>
+            <div className="flex items-center gap-6 text-[12px] text-text-secondary font-semibold font-sans">
+              <a className="hover:text-text-primary cursor-pointer transition">Product</a>
+              <a className="hover:text-text-primary cursor-pointer transition">Compliance</a>
+              <a className="hover:text-text-primary cursor-pointer transition">Customers</a>
+              <a className="hover:text-text-primary cursor-pointer transition">Docs</a>
+              <a className="hover:text-text-primary cursor-pointer transition">Contact</a>
             </div>
           </div>
         </div>
@@ -275,79 +324,74 @@ export function Landing() {
   )
 }
 
-/* ============================================================
- * Helper components — kept in the same file because they're
- * only used by Landing. Move out later if reused.
- * ============================================================ */
-
 function HeroMockCard() {
-  const checklistRows = [
-    { k: 'Pre-op sanitation',     v: 'pass' },
-    { k: 'Allergen changeover',   v: 'pass' },
-    { k: 'CCP-2 temperature',     v: 'fail' },
-    { k: 'CCP-3 metal detector',  v: 'pass' },
-    { k: 'GMP — handwashing log', v: 'fail' },
-  ]
   return (
     <div className="relative">
-      <div className="absolute -inset-4 bg-gradient-to-br from-accent-500/10 to-transparent rounded-2xl blur-2xl" />
-      <div className="relative rounded-xl border hairline bg-white dark:bg-ink-800 shadow-[0_20px_60px_-20px_rgba(40,81,184,0.15)] dark:shadow-[0_20px_60px_-20px_rgba(40,81,184,0.4)] overflow-hidden">
-        <div className="px-4 py-3 border-b hairline flex items-center justify-between">
+      {/* Decorative yellow square behind the card */}
+      <div 
+        className="absolute -top-4 -right-4 w-24 h-24 bg-warning/20 rounded-2xl rotate-6" 
+        aria-hidden="true"
+      />
+      
+      {/* Main card */}
+      <div className="relative rounded-2xl bg-white shadow-lift border border-text-secondary/15 p-6 lg:p-8">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-5">
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-signal-green" />
-            <span className="text-[11px] font-mono text-ink-500 dark:text-ink-400">
-              INS-2026-04829
-            </span>
+            <span className="w-2 h-2 rounded-full bg-status-pass" aria-hidden="true" />
+            <span className="font-mono text-[12px] text-text-primary">INS-2026-04829</span>
           </div>
-          <StatusPill tone="amber">
-            <span className="inline-flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-signal-amber animate-pulse-dot" />
-              <span>Under review</span>
-            </span>
-          </StatusPill>
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-warning/10 text-warning text-[11px] font-semibold uppercase tracking-wide ring-1 ring-warning/20">
+            <span className="w-1.5 h-1.5 rounded-full bg-warning animate-pulse" />
+            Under review
+          </span>
         </div>
-        <div className="p-4 space-y-3">
-          <div>
-            <div className="text-[11px] font-medium uppercase tracking-wider text-ink-500 dark:text-ink-400">
-              Inspection
-            </div>
-            <div className="text-[15px] font-medium text-ink-900 dark:text-ink-50 mt-0.5">
-              Daily CCP verification · Line 3
-            </div>
+        
+        {/* Title */}
+        <div className="mb-6">
+          <div className="text-[11px] uppercase tracking-[0.14em] text-text-secondary font-semibold">Inspection</div>
+          <div className="mt-1 text-[18px] font-bold text-text-primary">Daily CCP verification · Line 3</div>
+        </div>
+        
+        {/* Stat grid */}
+        <div className="grid grid-cols-3 gap-3 mb-6">
+          <div className="rounded-xl bg-accent-light p-3 border border-text-secondary/5">
+            <div className="text-[11px] text-text-secondary font-semibold uppercase tracking-wide">Items</div>
+            <div className="mt-1 font-mono text-[18px] font-bold text-text-primary">24 / 24</div>
           </div>
-          <div className="grid grid-cols-3 gap-2 text-[11px]">
-            <div className="rounded-md bg-ink-50 dark:bg-ink-900 px-2 py-2">
-              <div className="text-ink-500 dark:text-ink-400">Items</div>
-              <div className="font-mono text-ink-900 dark:text-ink-50 mt-0.5">24 / 24</div>
-            </div>
-            <div className="rounded-md bg-ink-50 dark:bg-ink-900 px-2 py-2">
-              <div className="text-ink-500 dark:text-ink-400">Fails</div>
-              <div className="font-mono text-signal-red mt-0.5">2</div>
-            </div>
-            <div className="rounded-md bg-ink-50 dark:bg-ink-900 px-2 py-2">
-              <div className="text-ink-500 dark:text-ink-400">Evidence</div>
-              <div className="font-mono text-ink-900 dark:text-ink-50 mt-0.5">11</div>
-            </div>
+          <div className="rounded-xl bg-status-fail/10 p-3 border border-status-fail/20">
+            <div className="text-[11px] text-text-secondary font-semibold uppercase tracking-wide">Fails</div>
+            <div className="mt-1 font-mono text-[18px] font-bold text-status-fail">2</div>
           </div>
-          <div className="pt-2 border-t hairline space-y-1.5">
-            {checklistRows.map((row, i) => (
-              <div key={i} className="flex items-center justify-between text-[12px]">
-                <span className="text-ink-700 dark:text-ink-200 truncate">{row.k}</span>
-                <span
-                  className={`font-mono uppercase text-[10px] ${
-                    row.v === 'pass' ? 'text-signal-green' : 'text-signal-red'
-                  }`}
-                >
-                  {row.v}
-                </span>
-              </div>
-            ))}
+          <div className="rounded-xl bg-warning/15 p-3 border border-warning/30">
+            <div className="text-[11px] text-text-secondary font-semibold uppercase tracking-wide">Evidence</div>
+            <div className="mt-1 font-mono text-[18px] font-bold text-text-primary">11</div>
           </div>
         </div>
-      </div>
-      <div className="absolute -bottom-3 -right-3 rounded-md border border-accent-500/20 dark:border-accent-500/30 bg-white dark:bg-ink-800 px-3 py-2 shadow-sm text-[11px]">
-        <div className="text-ink-500 dark:text-ink-400">Auditor view</div>
-        <div className="font-medium text-ink-900 dark:text-ink-50">Ready in 3 clicks</div>
+        
+        {/* Pass/fail rows */}
+        <div className="space-y-2.5">
+          {[
+            { name: 'Pre-op sanitation', status: 'pass' },
+            { name: 'Allergen changeover', status: 'pass' },
+            { name: 'CCP-2 temperature', status: 'fail' },
+            { name: 'CCP-3 metal detector', status: 'pass' },
+            { name: 'GMP — handwashing log', status: 'pass' },
+          ].map((item) => (
+            <div key={item.name} className="flex items-center justify-between text-[13px]">
+              <span className="text-text-secondary">{item.name}</span>
+              <span className={`font-mono text-[11px] font-bold uppercase ${ item.status === 'pass' ? 'text-status-pass' : 'text-status-fail' }`}>
+                {item.status === 'pass' ? 'PASS' : 'FAIL'}
+              </span>
+            </div>
+          ))}
+        </div>
+        
+        {/* Footer hint */}
+        <div className="mt-6 pt-5 border-t border-text-secondary/15">
+          <div className="text-[11px] uppercase tracking-wide text-text-secondary font-semibold">Auditor view</div>
+          <div className="mt-1 text-[13px] font-semibold text-text-primary">Ready in 3 clicks</div>
+        </div>
       </div>
     </div>
   )
@@ -366,55 +410,27 @@ function LogoMarquee() {
     'Calix Therapeutics',
   ]
   return (
-    <div ref={addReveal} className="reveal mt-24 relative">
-      <div className="text-[11px] font-medium uppercase tracking-[0.18em] text-ink-500 dark:text-ink-400 text-center mb-6">
-        Trusted by quality teams at
-      </div>
-      <div className="relative overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_15%,black_85%,transparent)]">
-        <div className="marquee-track flex gap-12 whitespace-nowrap">
-          {[0, 1].map((dup) => (
-            <div key={dup} className="flex gap-12 items-center">
-              {names.map((n, i) => (
-                <div key={i} className="font-display text-[22px] italic text-ink-300 dark:text-ink-600">
-                  {n}
-                </div>
-              ))}
-            </div>
-          ))}
+    <section className="py-16 px-6 sm:px-10 lg:px-16 border-y border-text-secondary/15 bg-accent-light">
+      <div ref={addReveal} className="reveal max-w-[1280px] mx-auto">
+        <div className="text-center mb-10">
+          <span className="inline-block text-[11px] font-bold uppercase tracking-[0.18em] text-text-secondary">
+            Trusted by quality teams at
+          </span>
+        </div>
+        <div className="relative overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_15%,black_85%,transparent)]">
+          <div className="marquee-track flex gap-12 whitespace-nowrap">
+            {[0, 1].map((dup) => (
+              <div key={dup} className="flex gap-12 items-center">
+                {names.map((n, i) => (
+                  <div key={i} className="font-sans text-[22px] font-bold tracking-tight text-text-secondary/40">
+                    {n}
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
-    </div>
+    </section>
   )
 }
-
-/* ============================================================
- * Content data — kept inline; move to a CMS later
- * ============================================================ */
-
-const PRINCIPLES = [
-  {
-    k: '01',
-    title: 'Designed around the lifecycle',
-    body: 'Schedule, execute, review, correct, verify, publish. Every state is explicit and every transition is logged.',
-    icon: 'layers' as const,
-  },
-  {
-    k: '02',
-    title: 'Built for the floor, not the office',
-    body: 'Inspectors capture observations, photos, and evidence in the moment. No re-keying from paper.',
-    icon: 'check' as const,
-  },
-  {
-    k: '03',
-    title: 'Audit-ready by default',
-    body: 'Reports render the way regulators expect. Trail is complete, not curated.',
-    icon: 'eye' as const,
-  },
-]
-
-const METRICS = [
-  { v: '47%',   l: 'Faster inspection closeout' },
-  { v: '99.2%', l: 'Audit-trail completeness' },
-  { v: '0',     l: 'Critical Form 483 findings (2025)' },
-  { v: '6×',    l: 'Reduction in repeat NCs' },
-]

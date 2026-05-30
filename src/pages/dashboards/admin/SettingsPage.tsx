@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from 'react'
 import { useSettings } from '../../../lib/settings'
 import { formatRelativeTime } from '../../../lib/users'
 import { Icon } from '../../../components/primitives/Icon'
+import { PageBanner } from '../../../components/shell/PageBanner'
 import { GeneralSettingsSection } from '../../../components/admin/settings/GeneralSettingsSection'
 import { SecuritySettingsSection } from '../../../components/admin/settings/SecuritySettingsSection'
 import { IntegrationsSettingsSection } from '../../../components/admin/settings/IntegrationsSettingsSection'
@@ -14,7 +15,7 @@ const SECTIONS = [
   { id: 'security', label: 'Security', icon: 'shield' },
   { id: 'integrations', label: 'Integrations', icon: 'layers' },
   { id: 'billing', label: 'Billing', icon: 'file' },
-  { id: 'data', label: 'Data & retention', icon: 'box' },
+  { id: 'data', label: 'Data & Retention', icon: 'box' },
   { id: 'branding', label: 'Branding', icon: 'eye' },
 ]
 
@@ -55,56 +56,43 @@ export function SettingsPage() {
   }
 
   return (
-    <div className="stagger max-w-[1200px] mx-auto pb-24">
-      {/* ============ Header ============ */}
-      <div className="mb-12">
-        <div className="flex items-center gap-2 text-[12px] text-ink-500 dark:text-ink-400 mb-2">
-          <span>System Admin</span>
-          <Icon name="chevron_right" className="w-3 h-3" />
-          <span className="text-ink-900 dark:text-ink-50">Settings</span>
-        </div>
-        
-        <div className="flex items-start justify-between flex-wrap gap-4">
-          <div>
-            <h1 className="font-display text-[44px] leading-[1.05] tracking-tight text-ink-900 dark:text-ink-50">
-              Workspace <span className="italic text-ink-500 dark:text-ink-400">settings</span>.
-            </h1>
-            <p className="mt-2 text-[14px] text-ink-600 dark:text-ink-300">
-              Configure your InspectSphere workspace · Last updated {formatRelativeTime(settings.updatedAt)} by {settings.updatedBy === 'usr_maya_chen' ? 'System Admin' : settings.updatedBy}.
-            </p>
-          </div>
-          <div>
-            <button className="text-[13px] font-medium text-ink-500 hover:text-ink-900 dark:hover:text-ink-50 transition-colors">
-              View change history
-            </button>
-          </div>
-        </div>
+    <div className="space-y-6">
+      {/* Top Breadcrumb Row */}
+      <div className="flex items-center gap-1.5 text-[12px] text-text-secondary font-bold">
+        <span className="uppercase text-[10px] tracking-wider text-text-secondary">System Admin</span>
+        <Icon name="chevron_right" className="w-3.5 h-3.5 text-text-secondary" />
+        <span className="text-text-primary">Settings</span>
       </div>
 
+      {/* Page Banner with History Action */}
+      <PageBanner
+        title="Workspace Settings"
+        subline={`Configure your InspectSphere workspace · Last updated ${formatRelativeTime(settings.updatedAt)} by ${settings.updatedBy === 'usr_maya_chen' ? 'System Admin' : settings.updatedBy}.`}
+        actions={
+          <button className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg border border-white/40 bg-white/10 hover:bg-white/20 text-[12px] font-bold text-white transition-all shadow-sm">
+            <Icon name="activity" className="w-3.5 h-3.5" />
+            Change History
+          </button>
+        }
+      />
+
       {/* ============ Two Column Layout ============ */}
-      <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] lg:grid-cols-[240px_1fr] gap-12 items-start">
+      <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] lg:grid-cols-[240px_1fr] gap-8 items-start pt-4">
         
         {/* Sticky sub-nav */}
-        <nav className="hidden md:block sticky top-32 self-start pr-4 space-y-1">
+        <nav className="hidden md:block sticky top-32 self-start space-y-1 bg-white border border-text-secondary/15 rounded-2xl p-3 shadow-soft">
           {SECTIONS.map(s => {
             const isActive = activeSection === s.id
             return (
               <button
                 key={s.id}
                 onClick={() => scrollToSection(s.id)}
-                className={`w-full flex items-center gap-3 px-3 py-2 text-[13px] font-medium rounded-r-md transition-colors relative ${
-                  isActive 
-                    ? 'text-ink-900 dark:text-ink-50 bg-ink-50/50 dark:bg-ink-800/30' 
-                    : 'text-ink-500 dark:text-ink-400 hover:text-ink-900 dark:hover:text-ink-50'
-                }`}
+                className={`w-full flex items-center gap-3 px-3 py-2 text-[12px] font-bold rounded-lg transition-all relative ${ isActive ? 'text-text-primary bg-accent-light/70 border border-text-secondary/15/50 shadow-sm' : 'text-text-secondary hover:text-text-primary hover:bg-accent-light/30' }`}
               >
                 {isActive && (
-                  <div className="absolute left-0 top-0 bottom-0 w-[4px] rounded-r-full bg-brand-yellow" />
+                  <div className="absolute left-0 top-1.5 bottom-1.5 w-[3.5px] rounded-r-full bg-warning" />
                 )}
-                {!isActive && (
-                  <div className="absolute left-0 top-0 bottom-0 w-[4px] rounded-r-full bg-transparent" />
-                )}
-                <Icon name={s.icon as any} className="w-4 h-4 shrink-0" />
+                <Icon name={s.icon as any} className={`w-4 h-4 shrink-0 ${isActive ? 'text-text-primary' : 'text-text-secondary'}`} />
                 {s.label}
               </button>
             )
@@ -112,7 +100,7 @@ export function SettingsPage() {
         </nav>
 
         {/* Scrollable content with section anchors */}
-        <div className="space-y-24">
+        <div className="space-y-16">
           <GeneralSettingsSection />
           <SecuritySettingsSection />
           <IntegrationsSettingsSection />

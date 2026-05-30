@@ -17,20 +17,30 @@ interface DashboardShellProps {
 
 export function DashboardShell({
   defaultItem = 'overview',
-  primaryActionLabel,
-  onPrimaryAction,
   hideTopbar = false,
   hideSidebar = false,
   children,
 }: DashboardShellProps) {
   const [activeItem, setActiveItem] = useState(defaultItem)
   return (
-    <div className="min-h-[calc(100vh-48px)] flex bg-ink-50 dark:bg-ink-950">
-      {!hideSidebar && <Sidebar activeItem={activeItem} onSelectItem={setActiveItem} />}
-      <main className="flex-1 min-w-0">
-        {!hideTopbar && <Topbar primaryActionLabel={primaryActionLabel} onPrimaryAction={onPrimaryAction} />}
-        <div className={hideTopbar && hideSidebar ? "" : "p-6 lg:p-8"}>{children(activeItem)}</div>
-      </main>
+    <div className="min-h-screen flex flex-col bg-white">
+      {/* Yellow utility strip */}
+      {!hideTopbar && (
+        <div className="h-2 bg-warning shrink-0" aria-hidden="true" />
+      )}
+
+      {/* Navy Topbar */}
+      {!hideTopbar && <Topbar />}
+
+      {/* Two-column layout */}
+      <div className="flex-1 flex min-h-0">
+        {!hideSidebar && <Sidebar activeItem={activeItem} onSelectItem={setActiveItem} />}
+        <main className="flex-1 min-w-0 overflow-y-auto bg-accent-light">
+          <div className={hideTopbar && hideSidebar ? "" : "p-6 lg:p-8"}>
+            {children(activeItem)}
+          </div>
+        </main>
+      </div>
     </div>
   )
 }

@@ -5,6 +5,7 @@ import { useInspections, formatRelativeTime, filterToInspectorInspections } from
 import { useTemplates } from '../../../lib/templates'
 import { Icon } from '../../../components/primitives/Icon'
 import type { InspectionDomain } from '../../../types/inspection'
+import { PageBanner } from '../../../components/shell/PageBanner'
 
 export function DraftsPage({ domain = 'quality' }: { domain?: InspectionDomain }) {
   const nav = useNav()
@@ -18,7 +19,7 @@ export function DraftsPage({ domain = 'quality' }: { domain?: InspectionDomain }
     return my
       .filter((i) => i.status === 'in_progress')
       .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
-  }, [inspections, user])
+  }, [inspections, user, domain])
 
   const oldestStarted = useMemo(() => {
     if (drafts.length === 0) return null
@@ -32,36 +33,26 @@ export function DraftsPage({ domain = 'quality' }: { domain?: InspectionDomain }
   }, [drafts])
 
   return (
-    <div className="max-w-[1200px] mx-auto px-6 py-8 pb-32 animate-fade-in">
-      <div className="mb-10">
-        <div className="flex items-center gap-2 text-[12px] font-medium text-ink-500 mb-3">
-          <span>{domain === 'safety' ? 'Safety Inspector' : 'Quality Inspector'}</span>
-          <Icon name="chevron_right" className="w-3 h-3" />
-          <span className="text-ink-900 dark:text-ink-50">Drafts</span>
-        </div>
-        <h1 className="font-display text-4xl text-ink-900 dark:text-ink-50 tracking-tight mb-2">
-          Your <span className="italic text-ink-500 dark:text-ink-400">drafts</span>.
-        </h1>
-        <p className="text-[14px] text-ink-600 dark:text-ink-300">
-          {drafts.length} drafts in progress
-          {oldestStarted && ` · oldest started ${formatRelativeTime(oldestStarted)}`}
-        </p>
-      </div>
+    <div className="space-y-6">
+      <PageBanner
+        title={`Your drafts`}
+        subline={`${drafts.length} drafts in progress${ oldestStarted ? ` · oldest started ${formatRelativeTime(oldestStarted)}` : '' }`}
+      />
 
       {drafts.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-24 text-center">
-          <div className="w-16 h-16 rounded-full border hairline border-dashed flex items-center justify-center mb-6">
-            <Icon name="check" className="w-8 h-8 text-ink-300 dark:text-ink-600" />
+        <div className="flex flex-col items-center justify-center border border-dashed border-text-secondary/15 rounded-2xl py-32 text-center bg-white shadow-soft">
+          <div className="w-14 h-14 rounded-full bg-accent-light flex items-center justify-center mb-4 text-text-secondary">
+            <Icon name="check" className="w-6 h-6" />
           </div>
-          <h2 className="text-[18px] font-medium text-ink-900 dark:text-ink-50 mb-2">
+          <h2 className="text-[16px] font-semibold text-text-primary mb-1">
             No drafts in progress.
           </h2>
-          <p className="text-[14px] text-ink-500 dark:text-ink-400 mb-6 max-w-sm text-balance">
-            When you start an inspection but don't submit it, it'll wait here for you.
+          <p className="text-[13px] text-text-secondary mb-6 max-w-[360px] mx-auto">
+            When you start an inspection but don't submit it, it will wait here for you.
           </p>
           <button
             onClick={() => nav.push(prefix)}
-            className="px-5 py-2.5 rounded-lg border hairline bg-white dark:bg-ink-900 text-[14px] font-medium text-ink-900 dark:text-ink-50 hover:bg-ink-50 dark:hover:bg-ink-800 transition-colors"
+            className="px-4 py-2 rounded-lg border border-text-secondary/15 bg-white text-[13px] font-semibold text-text-secondary hover:bg-accent-light transition-colors"
           >
             View My day
           </button>
@@ -87,37 +78,37 @@ export function DraftsPage({ domain = 'quality' }: { domain?: InspectionDomain }
             return (
               <div
                 key={draft.id}
-                className="flex flex-col rounded-xl border hairline bg-white dark:bg-ink-900 overflow-hidden transition-all duration-300 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:hover:shadow-[0_8px_30px_rgba(255,255,255,0.02)] hover:-translate-y-[1px]"
+                className="flex flex-col rounded-2xl border border-text-secondary/15 bg-white overflow-hidden shadow-soft transition-all duration-300 hover:shadow-medium hover:-translate-y-0.5"
               >
                 <div className="p-6 flex-1 flex flex-col">
-                  <div className="font-mono text-[11px] text-ink-500 mb-2">
+                  <div className="font-mono text-[11px] text-text-secondary mb-2">
                     {draft.number}
                   </div>
-                  <h3 className="text-[16px] font-medium text-ink-900 dark:text-ink-50 leading-snug line-clamp-2 mb-1">
+                  <h3 className="text-[15px] font-semibold text-text-primary leading-snug line-clamp-2 mb-1">
                     {draft.templateName}
                   </h3>
-                  <div className="text-[13px] text-ink-500 dark:text-ink-400 mb-8">
+                  <div className="text-[13px] text-text-secondary mb-6">
                     {draft.siteName} {draft.area && `· ${draft.area}`}
                   </div>
 
                   <div className="mt-auto">
-                    <div className="h-2 w-full bg-ink-200 dark:bg-ink-700 rounded-full overflow-hidden mb-2">
+                    <div className="h-1.5 w-full bg-accent-light rounded-full overflow-hidden mb-2">
                       <div
-                        className="h-full bg-signal-green rounded-full transition-all duration-1000 ease-out"
+                        className="h-full bg-status-pass rounded-full transition-all duration-1000 ease-out"
                         style={{ width: `${clampedPct}%` }}
                       />
                     </div>
-                    <div className="font-mono text-[11px] text-ink-600 dark:text-ink-300 mb-6">
+                    <div className="font-mono text-[11px] text-text-secondary mb-6">
                       {answeredItems} of {totalItems} items · {clampedPct}% complete
                     </div>
                     
                     <button
                       onClick={() => nav.push(`${prefix}/inspections/${draft.id}`)}
-                      className="w-full py-2.5 rounded-lg bg-accent-500 text-white text-[14px] font-medium hover:bg-accent-600 transition-colors"
+                      className="w-full py-2 rounded-lg bg-primary hover:bg-primary text-white text-[13px] font-bold transition shadow-sm"
                     >
                       Continue
                     </button>
-                    <div className="font-mono text-[10px] text-center text-ink-400 dark:text-ink-500 mt-3">
+                    <div className="font-mono text-[10px] text-center text-text-secondary mt-3">
                       Last saved {formatRelativeTime(draft.updatedAt)}
                     </div>
                   </div>

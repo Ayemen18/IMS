@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react'
 import { useInspections, computeThroughput } from '../../../lib/inspections'
+import { PageBanner } from '../../../components/shell/PageBanner'
 
 type DomainFilter = 'all' | 'quality' | 'safety'
 type WindowFilter = 7 | 30 | 90 | 365
@@ -8,8 +9,6 @@ export function TrendsPage() {
   const { inspections } = useInspections()
   const [domain, setDomain] = useState<DomainFilter>('all')
   const [windowDays, setWindowDays] = useState<WindowFilter>(30)
-
-  // removed unused timeStr
 
   // 1. Throughput Data
   const throughputData = useMemo(() => {
@@ -85,63 +84,51 @@ export function TrendsPage() {
   }, [inspections, windowDays, domain])
 
   return (
-    <div className="max-w-4xl mx-auto px-6 py-12 space-y-12 mb-24">
-      {/* Header */}
-      <div className="flex items-start justify-between">
-        <div className="space-y-4">
-          <div className="text-[11px] font-mono text-ink-500 dark:text-ink-400 uppercase tracking-widest">
-            Top Management {'>'} Trends
-          </div>
-          <div>
-            <h1 className="font-display text-[40px] leading-tight text-ink-900 dark:text-ink-50">
-              <span className="italic">Trends</span> over time.
-            </h1>
-            <div className="flex items-center gap-4 mt-4">
-              <div className="flex bg-ink-100 dark:bg-ink-800 p-1 rounded-md w-fit">
-                {(['all', 'quality', 'safety'] as const).map(d => (
-                  <button
-                    key={d}
-                    onClick={() => setDomain(d)}
-                    className={`px-4 py-1 text-[12px] font-medium rounded capitalize transition-colors ${
-                      domain === d 
-                        ? 'bg-accent-500/10 dark:bg-accent-500/15 text-accent-700 dark:text-accent-300 border border-accent-500/20' 
-                        : 'text-ink-500 dark:text-ink-400 hover:text-ink-900 dark:hover:text-ink-50'
-                    }`}
-                  >
-                    {d}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="flex flex-col items-end gap-2">
-          <div className="flex bg-ink-100 dark:bg-ink-800 p-1 rounded-md">
-            {([7, 30, 90, 365] as const).map(w => (
-              <button
-                key={w}
-                onClick={() => setWindowDays(w)}
-                className={`px-3 py-1 text-[12px] font-mono rounded transition-colors ${
-                  windowDays === w 
-                    ? 'bg-accent-500/10 dark:bg-accent-500/15 text-accent-700 dark:text-accent-300 border border-accent-500/20' 
-                    : 'text-ink-500 dark:text-ink-400 hover:text-ink-900 dark:hover:text-ink-50'
-                }`}
-              >
-                {w}d
-              </button>
-            ))}
-          </div>
-          <div className="text-[11px] font-mono text-ink-500 dark:text-ink-400">
-            last {windowDays} days
-          </div>
-        </div>
+    <div className="space-y-6">
+      {/* Breadcrumb */}
+      <div className="text-[11px] font-bold uppercase tracking-[0.12em] text-text-secondary">
+        Top Management &gt; Trends
       </div>
 
-      <div className="space-y-12">
+      {/* Page Banner with elegant visual controls */}
+      <PageBanner
+        title="Trends & Metrics"
+        subline={`Performance analytics plotted across the last ${windowDays} days.`}
+        actions={
+          <div className="flex flex-wrap items-center gap-3">
+            {/* Domain Filter */}
+            <div className="flex bg-white/10 p-0.5 rounded-xl border border-white/10">
+              {(['all', 'quality', 'safety'] as const).map(d => (
+                <button
+                  key={d}
+                  onClick={() => setDomain(d)}
+                  className={`px-3 py-1.5 text-[11px] font-bold rounded-lg capitalize transition-all ${ domain === d ? 'bg-warning text-text-primary shadow-sm' : 'text-white hover:text-warning' }`}
+                >
+                  {d}
+                </button>
+              ))}
+            </div>
+
+            {/* Time Window Filter */}
+            <div className="flex bg-white/10 p-0.5 rounded-xl border border-white/10">
+              {([7, 30, 90, 365] as const).map(w => (
+                <button
+                  key={w}
+                  onClick={() => setWindowDays(w)}
+                  className={`px-3 py-1.5 text-[11px] font-mono rounded-lg transition-all ${ windowDays === w ? 'bg-warning text-text-primary shadow-sm' : 'text-white hover:text-warning' }`}
+                >
+                  {w}d
+                </button>
+              ))}
+            </div>
+          </div>
+        }
+      />
+
+      <div className="grid grid-cols-1 gap-6">
         {/* Trend 1: Throughput */}
         <TrendCard 
-          title="Inspection throughput" 
+          title="Inspection Throughput" 
           description="Inspections completed per day. A steady or rising line indicates healthy cadence."
         >
           <LineChart data={throughputData.map(d => d.count)} labels={throughputData.map(d => d.date)} isDate />
@@ -149,7 +136,7 @@ export function TrendsPage() {
 
         {/* Trend 2: Compliance */}
         <TrendCard 
-          title="Compliance rate" 
+          title="Compliance Rate" 
           description="Daily compliance percentage across completed inspections. Target is 95%."
         >
           <LineChart 
@@ -163,7 +150,7 @@ export function TrendsPage() {
 
         {/* Trend 3: Issue Lifecycle */}
         <TrendCard 
-          title="Issue lifecycle" 
+          title="Issue Lifecycle" 
           description="Average days from issue creation to closure, plotted per week. Lower is better."
         >
           <BarChart 
@@ -172,19 +159,18 @@ export function TrendsPage() {
           />
         </TrendCard>
       </div>
-
     </div>
   )
 }
 
 function TrendCard({ title, description, children }: { title: string, description: string, children: React.ReactNode }) {
   return (
-    <div className="bg-white dark:bg-ink-950 border hairline rounded-lg p-8 space-y-6">
+    <div className="bg-white border border-text-secondary/15 rounded-2xl p-6 shadow-soft space-y-4">
       <div>
-        <h2 className="font-display text-[24px] italic text-ink-900 dark:text-ink-50">{title}</h2>
-        <p className="text-[14px] text-ink-600 dark:text-ink-300 mt-1">{description}</p>
+        <h2 className="text-[16px] font-bold text-text-primary">{title}</h2>
+        <p className="text-[13px] text-text-secondary mt-0.5">{description}</p>
       </div>
-      <div className="w-full">
+      <div className="w-full pt-2">
         {children}
       </div>
     </div>
@@ -198,7 +184,7 @@ function TrendCard({ title, description, children }: { title: string, descriptio
 function LineChart({ data, labels, target, isDate, yMax: forceYMax }: { data: (number|null)[], labels: string[], target?: number, isDate?: boolean, yMax?: number }) {
   const validData = data.filter(d => d !== null) as number[]
   if (validData.length === 0) {
-    return <div className="h-[240px] flex items-center justify-center text-[13px] font-mono text-ink-400">Limited data for this window.</div>
+    return <div className="h-[200px] flex items-center justify-center text-[13px] font-mono text-text-secondary">Limited data for this window.</div>
   }
 
   const w = 800
@@ -232,26 +218,26 @@ function LineChart({ data, labels, target, isDate, yMax: forceYMax }: { data: (n
 
   return (
     <div className="space-y-4">
-      <div className="relative w-full aspect-[4/1] bg-ink-50 dark:bg-ink-900/20 rounded">
+      <div className="relative w-full aspect-[4/1] bg-accent-light/50 rounded-xl p-3 border border-text-secondary/15">
         <svg viewBox={`0 0 ${w} ${h}`} className="w-full h-full overflow-visible">
           {/* Grid */}
-          <line x1={padX} y1={h - padY} x2={w - padX} y2={h - padY} className="stroke-ink-200 dark:stroke-ink-800" strokeWidth="1" />
-          <line x1={padX} y1={padY} x2={w - padX} y2={padY} className="stroke-ink-200 dark:stroke-ink-800" strokeWidth="1" strokeDasharray="4 4" />
-          <line x1={padX} y1={padY + chartH/2} x2={w - padX} y2={padY + chartH/2} className="stroke-ink-200 dark:stroke-ink-800" strokeWidth="1" strokeDasharray="4 4" />
+          <line x1={padX} y1={h - padY} x2={w - padX} y2={h - padY} className="stroke-text-secondary/15" strokeWidth="1" />
+          <line x1={padX} y1={padY} x2={w - padX} y2={padY} className="stroke-text-secondary/15" strokeWidth="1" strokeDasharray="4 4" />
+          <line x1={padX} y1={padY + chartH/2} x2={w - padX} y2={padY + chartH/2} className="stroke-text-secondary/15" strokeWidth="1" strokeDasharray="4 4" />
           
           {/* Target Line */}
           {target !== undefined && (
-            <line x1={padX} y1={getY(target)} x2={w - padX} y2={getY(target)} className="stroke-signal-green" strokeWidth="1" strokeDasharray="2 2" />
+            <line x1={padX} y1={getY(target)} x2={w - padX} y2={getY(target)} className="stroke-status-pass" strokeWidth="1" strokeDasharray="2 2" />
           )}
 
-        {/* Line */}
-        <polyline points={points} fill="none" className="stroke-ink-900 dark:stroke-ink-50" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
-        
-        {/* Dots */}
-        {data.map((d: any, i: number) => {
-          if (d === null) return null
-          return <circle key={i} cx={getX(i)} cy={getY(d)} r="3" className="fill-ink-900 dark:fill-ink-50" />
-        })}
+          {/* Line */}
+          <polyline points={points} fill="none" className="stroke-primary" strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" />
+          
+          {/* Dots */}
+          {data.map((d: any, i: number) => {
+            if (d === null) return null
+            return <circle key={i} cx={getX(i)} cy={getY(d)} r="3.5" className="fill-primary" />
+          })}
 
           {/* X Axis Labels */}
           {tickIndices.map(i => {
@@ -261,7 +247,7 @@ function LineChart({ data, labels, target, isDate, yMax: forceYMax }: { data: (n
               label = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
             }
             return (
-              <text key={i} x={getX(i)} y={h} className="fill-ink-400 dark:fill-ink-500 font-mono text-[10px]" textAnchor="middle">
+              <text key={i} x={getX(i)} y={h} className="fill-text-secondary/70 font-mono text-[10px]" textAnchor="middle">
                 {label}
               </text>
             )
@@ -269,22 +255,22 @@ function LineChart({ data, labels, target, isDate, yMax: forceYMax }: { data: (n
         </svg>
       </div>
 
-      <div className="flex items-center gap-6 border-t hairline pt-4">
+      <div className="flex items-center gap-6 border-t border-text-secondary/15 pt-3">
         <div className="space-y-0.5">
-          <div className="text-[10px] uppercase tracking-wider text-ink-500 dark:text-ink-400">Average</div>
-          <div className="font-mono text-[13px] text-ink-900 dark:text-ink-50">{avg}</div>
+          <div className="text-[10px] font-bold uppercase tracking-wider text-text-secondary">Average</div>
+          <div className="font-mono text-[13px] text-text-primary font-bold">{avg}</div>
         </div>
         <div className="space-y-0.5">
-          <div className="text-[10px] uppercase tracking-wider text-ink-500 dark:text-ink-400">Peak</div>
-          <div className="font-mono text-[13px] text-ink-900 dark:text-ink-50">{peak}</div>
+          <div className="text-[10px] font-bold uppercase tracking-wider text-text-secondary">Peak</div>
+          <div className="font-mono text-[13px] text-text-primary font-bold">{peak}</div>
         </div>
         <div className="space-y-0.5">
-          <div className="text-[10px] uppercase tracking-wider text-ink-500 dark:text-ink-400">Min</div>
-          <div className="font-mono text-[13px] text-ink-900 dark:text-ink-50">{min}</div>
+          <div className="text-[10px] font-bold uppercase tracking-wider text-text-secondary">Min</div>
+          <div className="font-mono text-[13px] text-text-primary font-bold">{min}</div>
         </div>
         <div className="space-y-0.5">
-          <div className="text-[10px] uppercase tracking-wider text-ink-500 dark:text-ink-400">Current</div>
-          <div className="font-mono text-[13px] text-ink-900 dark:text-ink-50">{current}</div>
+          <div className="text-[10px] font-bold uppercase tracking-wider text-text-secondary">Current</div>
+          <div className="font-mono text-[13px] text-text-primary font-bold">{current}</div>
         </div>
       </div>
     </div>
@@ -293,7 +279,7 @@ function LineChart({ data, labels, target, isDate, yMax: forceYMax }: { data: (n
 
 function BarChart({ data, labels }: { data: number[], labels: string[] }) {
   if (data.length === 0 || data.every(d => d === 0)) {
-    return <div className="h-[240px] flex items-center justify-center text-[13px] font-mono text-ink-400">Limited data for this window.</div>
+    return <div className="h-[200px] flex items-center justify-center text-[13px] font-mono text-text-secondary">Limited data for this window.</div>
   }
 
   const w = 800
@@ -320,10 +306,10 @@ function BarChart({ data, labels }: { data: number[], labels: string[] }) {
 
   return (
     <div className="space-y-4">
-      <div className="relative w-full aspect-[4/1] bg-ink-50 dark:bg-ink-900/20 rounded">
+      <div className="relative w-full aspect-[4/1] bg-accent-light/50 rounded-xl p-3 border border-text-secondary/15">
         <svg viewBox={`0 0 ${w} ${h}`} className="w-full h-full overflow-visible">
           {/* Grid */}
-          <line x1={padX} y1={h - padY} x2={w - padX} y2={h - padY} className="stroke-ink-200 dark:stroke-ink-800" strokeWidth="1" />
+          <line x1={padX} y1={h - padY} x2={w - padX} y2={h - padY} className="stroke-text-secondary/15" strokeWidth="1" />
           
           {/* Bars */}
           {data.map((d, i) => {
@@ -335,8 +321,8 @@ function BarChart({ data, labels }: { data: number[], labels: string[] }) {
                 y={getY(d)} 
                 width={barWidth} 
                 height={barH} 
-                className="fill-ink-900 dark:fill-ink-50" 
-                rx={2}
+                className="fill-primary" 
+                rx={3}
               />
             )
           })}
@@ -344,7 +330,7 @@ function BarChart({ data, labels }: { data: number[], labels: string[] }) {
           {/* X Axis Labels */}
           {tickIndices.map(i => {
             return (
-              <text key={i} x={getX(i) + barWidth/2} y={h} className="fill-ink-400 dark:fill-ink-500 font-mono text-[10px]" textAnchor="middle">
+              <text key={i} x={getX(i) + barWidth/2} y={h} className="fill-text-secondary/70 font-mono text-[10px]" textAnchor="middle">
                 {labels[i]}
               </text>
             )
@@ -352,14 +338,14 @@ function BarChart({ data, labels }: { data: number[], labels: string[] }) {
         </svg>
       </div>
 
-      <div className="flex items-center gap-6 border-t hairline pt-4">
+      <div className="flex items-center gap-6 border-t border-text-secondary/15 pt-3">
         <div className="space-y-0.5">
-          <div className="text-[10px] uppercase tracking-wider text-ink-500 dark:text-ink-400">Average Age</div>
-          <div className="font-mono text-[13px] text-ink-900 dark:text-ink-50">{avg} days</div>
+          <div className="text-[10px] font-bold uppercase tracking-wider text-text-secondary">Average Age</div>
+          <div className="font-mono text-[13px] text-text-primary font-bold">{avg} days</div>
         </div>
         <div className="space-y-0.5">
-          <div className="text-[10px] uppercase tracking-wider text-ink-500 dark:text-ink-400">Current Period</div>
-          <div className="font-mono text-[13px] text-ink-900 dark:text-ink-50">{current} days</div>
+          <div className="text-[10px] font-bold uppercase tracking-wider text-text-secondary">Current Period</div>
+          <div className="font-mono text-[13px] text-text-primary font-bold">{current} days</div>
         </div>
       </div>
     </div>

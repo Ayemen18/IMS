@@ -46,22 +46,22 @@ export function GeneralSettingsSection() {
   return (
     <SettingsSection
       id="general"
-      title={<>General <span className="italic text-ink-500">settings</span>.</>}
+      title={<>General <span className="italic text-text-secondary">settings</span>.</>}
       description="Workspace identity, locale, and operational defaults."
       isDirty={isDirty}
       onSave={handleSave}
       onDiscard={handleDiscard}
     >
       {/* Design Moment: Workspace Identity Card */}
-      <div className="rounded-lg border hairline bg-gradient-to-r from-accent-500/5 dark:from-accent-500/10 to-transparent p-6 mb-8 flex items-center gap-6">
+      <div className="rounded-lg border hairline bg-gradient-to-r from-primary/500 to-transparent p-6 mb-8 flex items-center gap-6">
         <div className="shrink-0">
           <img src={settings.branding.logoUrl} alt="Workspace Logo" className="h-12 object-contain" />
         </div>
         <div>
-          <h3 className="font-display text-[28px] leading-tight text-ink-900 dark:text-ink-50">
+          <h3 className="font-sans font-bold text-[28px] leading-tight text-text-primary">
             {form.workspaceName || 'Workspace'}
           </h3>
-          <div className="font-mono text-[12px] text-ink-500 mt-1 uppercase tracking-wide">
+          <div className="font-mono text-[12px] text-text-secondary mt-1 uppercase tracking-wide">
             {form.workspaceCode}
           </div>
         </div>
@@ -72,7 +72,7 @@ export function GeneralSettingsSection() {
           type="text"
           value={form.workspaceName}
           onChange={(e) => setForm({ ...form, workspaceName: e.target.value })}
-          className="focus-ring w-full max-w-sm px-3 py-2 rounded-md border border-ink-200 dark:border-ink-700 bg-white dark:bg-ink-800 text-[13px] text-ink-900 dark:text-ink-50 transition-colors"
+          className="focus-ring w-full max-w-sm px-3 py-2 rounded-md border border-text-secondary/15 bg-white text-[13px] text-text-primary transition-colors"
         />
       </SettingsField>
 
@@ -81,7 +81,7 @@ export function GeneralSettingsSection() {
           type="text"
           value={form.workspaceCode}
           disabled
-          className="w-full max-w-sm px-3 py-2 rounded-md border border-ink-200 dark:border-ink-700 bg-ink-50 dark:bg-ink-800/50 text-[13px] text-ink-500 dark:text-ink-400 font-mono cursor-not-allowed"
+          className="w-full max-w-sm px-3 py-2 rounded-md border border-text-secondary/15 bg-accent-light text-[13px] text-text-secondary font-mono cursor-not-allowed"
         />
       </SettingsField>
 
@@ -94,9 +94,9 @@ export function GeneralSettingsSection() {
                 name="domain"
                 checked={form.primaryDomain === d}
                 onChange={() => setForm({ ...form, primaryDomain: d })}
-                className="w-4 h-4 accent-accent-500"
+                className="w-4 h-4 accent-primary"
               />
-              <span className="text-[13px] text-ink-900 dark:text-ink-50 capitalize group-hover:text-accent-600 transition-colors">{d}</span>
+              <span className="text-[13px] text-text-primary capitalize group-hover:text-primary transition-colors">{d}</span>
             </label>
           ))}
         </div>
@@ -106,7 +106,7 @@ export function GeneralSettingsSection() {
         <select
           value={form.timezone}
           onChange={(e) => setForm({ ...form, timezone: e.target.value })}
-          className="focus-ring w-full max-w-sm px-3 py-2 rounded-md border border-ink-200 dark:border-ink-700 bg-white dark:bg-ink-800 text-[13px] text-ink-900 dark:text-ink-50 cursor-pointer"
+          className="focus-ring w-full max-w-sm px-3 py-2 rounded-md border border-text-secondary/15 bg-white text-[13px] text-text-primary cursor-pointer"
         >
           {TIMEZONES.map(tz => (
             <option key={tz} value={tz}>{tz}</option>
@@ -118,7 +118,7 @@ export function GeneralSettingsSection() {
         <select
           value={form.locale}
           onChange={(e) => setForm({ ...form, locale: e.target.value })}
-          className="focus-ring w-full max-w-sm px-3 py-2 rounded-md border border-ink-200 dark:border-ink-700 bg-white dark:bg-ink-800 text-[13px] text-ink-900 dark:text-ink-50 cursor-pointer"
+          className="focus-ring w-full max-w-sm px-3 py-2 rounded-md border border-text-secondary/15 bg-white text-[13px] text-text-primary cursor-pointer"
         >
           {LOCALES.map(loc => (
             <option key={loc.val} value={loc.val}>{loc.label}</option>
@@ -130,7 +130,7 @@ export function GeneralSettingsSection() {
         <select
           value={form.fiscalYearStartMonth}
           onChange={(e) => setForm({ ...form, fiscalYearStartMonth: parseInt(e.target.value) })}
-          className="focus-ring w-full max-w-sm px-3 py-2 rounded-md border border-ink-200 dark:border-ink-700 bg-white dark:bg-ink-800 text-[13px] text-ink-900 dark:text-ink-50 cursor-pointer"
+          className="focus-ring w-full max-w-sm px-3 py-2 rounded-md border border-text-secondary/15 bg-white text-[13px] text-text-primary cursor-pointer"
         >
           {MONTHS.map((m, i) => (
             <option key={i} value={i + 1}>{m}</option>
@@ -146,9 +146,9 @@ export function GeneralSettingsSection() {
               name="weekStart"
               checked={form.weekStart === 'monday'}
               onChange={() => setForm({ ...form, weekStart: 'monday' })}
-              className="w-4 h-4 accent-accent-500"
+              className="w-4 h-4 accent-primary"
             />
-            <span className="text-[13px] text-ink-900 dark:text-ink-50 group-hover:text-accent-600 transition-colors">Monday</span>
+            <span className="text-[13px] text-text-primary group-hover:text-primary transition-colors">Monday</span>
           </label>
           <label className="flex items-center gap-2.5 cursor-pointer group">
             <input
@@ -156,9 +156,9 @@ export function GeneralSettingsSection() {
               name="weekStart"
               checked={form.weekStart === 'sunday'}
               onChange={() => setForm({ ...form, weekStart: 'sunday' })}
-              className="w-4 h-4 accent-accent-500"
+              className="w-4 h-4 accent-primary"
             />
-            <span className="text-[13px] text-ink-900 dark:text-ink-50 group-hover:text-accent-600 transition-colors">Sunday</span>
+            <span className="text-[13px] text-text-primary group-hover:text-primary transition-colors">Sunday</span>
           </label>
         </div>
       </SettingsField>
@@ -171,9 +171,9 @@ export function GeneralSettingsSection() {
               name="dateFormat"
               checked={form.dateFormat === 'iso'}
               onChange={() => setForm({ ...form, dateFormat: 'iso' })}
-              className="w-4 h-4 accent-accent-500"
+              className="w-4 h-4 accent-primary"
             />
-            <span className="text-[13px] text-ink-900 dark:text-ink-50 group-hover:text-accent-600 transition-colors">ISO <span className="text-ink-400">(2026-05-29)</span></span>
+            <span className="text-[13px] text-text-primary group-hover:text-primary transition-colors">ISO <span className="text-text-secondary">(2026-05-29)</span></span>
           </label>
           <label className="flex items-center gap-2.5 cursor-pointer group">
             <input
@@ -181,9 +181,9 @@ export function GeneralSettingsSection() {
               name="dateFormat"
               checked={form.dateFormat === 'us'}
               onChange={() => setForm({ ...form, dateFormat: 'us' })}
-              className="w-4 h-4 accent-accent-500"
+              className="w-4 h-4 accent-primary"
             />
-            <span className="text-[13px] text-ink-900 dark:text-ink-50 group-hover:text-accent-600 transition-colors">US <span className="text-ink-400">(05/29/2026)</span></span>
+            <span className="text-[13px] text-text-primary group-hover:text-primary transition-colors">US <span className="text-text-secondary">(05/29/2026)</span></span>
           </label>
           <label className="flex items-center gap-2.5 cursor-pointer group">
             <input
@@ -191,9 +191,9 @@ export function GeneralSettingsSection() {
               name="dateFormat"
               checked={form.dateFormat === 'eu'}
               onChange={() => setForm({ ...form, dateFormat: 'eu' })}
-              className="w-4 h-4 accent-accent-500"
+              className="w-4 h-4 accent-primary"
             />
-            <span className="text-[13px] text-ink-900 dark:text-ink-50 group-hover:text-accent-600 transition-colors">EU <span className="text-ink-400">(29/05/2026)</span></span>
+            <span className="text-[13px] text-text-primary group-hover:text-primary transition-colors">EU <span className="text-text-secondary">(29/05/2026)</span></span>
           </label>
         </div>
       </SettingsField>

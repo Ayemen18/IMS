@@ -36,13 +36,13 @@ export function ItemTypeMenu({ value, onChange }: Props) {
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-mono uppercase tracking-wider text-ink-600 dark:text-ink-300 border hairline hover:bg-ink-50 dark:hover:bg-ink-800 transition-colors"
+        className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-mono uppercase tracking-wider text-text-secondary border hairline hover:bg-accent-light transition-colors"
       >
         {current.label}
         <Icon name="chevron_down" className="w-2.5 h-2.5" />
       </button>
       {open && (
-        <div className="absolute right-0 top-full mt-1 z-30 w-[220px] rounded-lg border hairline bg-white dark:bg-ink-900 shadow-xl overflow-hidden animate-fade-in">
+        <div className="absolute right-0 top-full mt-1 z-30 w-[220px] rounded-lg border hairline bg-white shadow-xl overflow-hidden animate-fade-in">
           {TYPES.map((t) => (
             <button
               key={t.key}
@@ -51,17 +51,15 @@ export function ItemTypeMenu({ value, onChange }: Props) {
                 onChange(t.key)
                 setOpen(false)
               }}
-              className={`w-full text-left px-3 py-2.5 flex items-start gap-2 hover:bg-ink-50 dark:hover:bg-ink-800/60 transition-colors ${
-                value === t.key ? 'bg-ink-50 dark:bg-ink-800/40' : ''
-              }`}
+              className={`w-full text-left px-3 py-2.5 flex items-start gap-2 hover:bg-accent-light transition-colors ${ value === t.key ? 'bg-accent-light ' : '' }`}
             >
               <Icon
                 name={value === t.key ? 'check' : 'dot'}
-                className={`w-3 h-3 mt-0.5 shrink-0 ${value === t.key ? 'text-ink-900 dark:text-ink-50' : 'text-transparent'}`}
+                className={`w-3 h-3 mt-0.5 shrink-0 ${value === t.key ? 'text-text-primary ' : 'text-transparent'}`}
               />
               <div className="min-w-0">
-                <div className="text-[12px] font-medium text-ink-900 dark:text-ink-50">{t.label}</div>
-                <div className="text-[11px] text-ink-500 dark:text-ink-400 mt-0.5 truncate">{t.hint}</div>
+                <div className="text-[12px] font-medium text-text-primary">{t.label}</div>
+                <div className="text-[11px] text-text-secondary mt-0.5 truncate">{t.hint}</div>
               </div>
             </button>
           ))}
